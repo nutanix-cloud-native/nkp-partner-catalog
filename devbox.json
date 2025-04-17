@@ -9,7 +9,8 @@
     "actionlint@latest",
     "shfmt@latest",
     "pre-commit@latest",
-    "golangci-lint@latest"
+    "golangci-lint@latest",
+    "go@latest"
   ],
   "shell": {
     "init_hook": [
