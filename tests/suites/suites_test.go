@@ -66,8 +66,6 @@ func SetupKindCluster() error {
 		ctx = context.Background()
 	}
 
-	kind.CreateCluster(ctx, "cat-clus")
-
 	err := env.Provision(ctx)
 	if err != nil {
 		return err
