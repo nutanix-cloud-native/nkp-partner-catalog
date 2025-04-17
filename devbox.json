@@ -7,7 +7,9 @@
     "oras@latest",
     "git@latest",
     "actionlint@latest",
-    "shfmt@latest"
+    "shfmt@latest",
+    "pre-commit@latest",
+    "golangci-lint@latest"
   ],
   "shell": {
     "init_hook": [
