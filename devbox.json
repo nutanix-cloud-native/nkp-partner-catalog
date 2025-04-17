@@ -5,7 +5,9 @@
     "gettext@latest",
     "just@latest",
     "oras@latest",
-    "git@latest"
+    "git@latest",
+    "actionlint@latest",
+    "shfmt@latest"
   ],
   "shell": {
     "init_hook": [
