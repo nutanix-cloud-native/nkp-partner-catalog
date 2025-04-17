@@ -2,6 +2,19 @@ module github.com/nutanix-cloud-native/nkp-partner-catalog/tests
 
 go 1.24.2
 
+replace github.com/mesosphere/kommander-applications/apptests => github.com/mesosphere/kommander-applications/apptests v0.0.0-20250417095542-419630f7efd6
+
+require (
+	github.com/fluxcd/helm-controller/api v1.0.1
+	github.com/fluxcd/pkg/apis/meta v1.10.0
+	github.com/mesosphere/kommander-applications/apptests v0.0.0-20250417095542-419630f7efd6
+	github.com/onsi/ginkgo/v2 v2.21.0
+	github.com/onsi/gomega v1.35.1
+	k8s.io/apimachinery v0.32.3
+	k8s.io/client-go v0.32.3
+	sigs.k8s.io/controller-runtime v0.20.1
+)
+
 require (
 	cel.dev/expr v0.18.0 // indirect
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24 // indirect
@@ -44,16 +57,14 @@ require (
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/fluxcd/cli-utils v0.36.0-flux.9 // indirect
 	github.com/fluxcd/flux2/v2 v2.3.0 // indirect
-	github.com/fluxcd/helm-controller/api v1.0.1 // indirect
 	github.com/fluxcd/kustomize-controller/api v1.3.0 // indirect
-	github.com/fluxcd/pkg/apis/acl v0.3.0 // indirect
+	github.com/fluxcd/pkg/apis/acl v0.6.0 // indirect
 	github.com/fluxcd/pkg/apis/kustomize v1.5.0 // indirect
-	github.com/fluxcd/pkg/apis/meta v1.6.1 // indirect
 	github.com/fluxcd/pkg/kustomize v1.11.0 // indirect
 	github.com/fluxcd/pkg/runtime v0.49.1 // indirect
 	github.com/fluxcd/pkg/ssa v0.41.1 // indirect
 	github.com/fluxcd/pkg/tar v0.7.0 // indirect
-	github.com/fluxcd/source-controller/api v1.3.0 // indirect
+	github.com/fluxcd/source-controller/api v1.5.0 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
 	github.com/go-acme/lego/v4 v4.21.0 // indirect
@@ -69,7 +80,7 @@ require (
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/google/btree v1.1.2 // indirect
+	github.com/google/btree v1.1.3 // indirect
 	github.com/google/cel-go v0.22.0 // indirect
 	github.com/google/gnostic-models v0.6.9-0.20230804172637-c7be7c783f49 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
@@ -100,7 +111,6 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
-	github.com/mesosphere/kommander-applications/apptests v0.0.0-20250414162601-a8198de6ab38 // indirect
 	github.com/miekg/dns v1.1.62 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
@@ -115,8 +125,6 @@ require (
 	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f // indirect
-	github.com/onsi/ginkgo/v2 v2.21.0 // indirect
-	github.com/onsi/gomega v1.35.1 // indirect
 	github.com/open-policy-agent/frameworks/constraint v0.0.0-20240411024313-c2efb00269a8 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
@@ -150,14 +158,14 @@ require (
 	go.opentelemetry.io/otel/trace v1.29.0 // indirect
 	go4.org/intern v0.0.0-20230525184215-6c62f75575cb // indirect
 	go4.org/unsafe/assume-no-moving-gc v0.0.0-20230525183740-e7c30c78aeb2 // indirect
-	golang.org/x/crypto v0.31.0 // indirect
+	golang.org/x/crypto v0.32.0 // indirect
 	golang.org/x/exp v0.0.0-20241210194714-1829a127f884 // indirect
 	golang.org/x/mod v0.22.0 // indirect
-	golang.org/x/net v0.33.0 // indirect
+	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/oauth2 v0.24.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/term v0.27.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/term v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	golang.org/x/time v0.8.0 // indirect
 	golang.org/x/tools v0.28.0 // indirect
@@ -173,17 +181,14 @@ require (
 	inet.af/netaddr v0.0.0-20230525184311-b8eac61e914a // indirect
 	k8s.io/api v0.32.3 // indirect
 	k8s.io/apiextensions-apiserver v0.32.3 // indirect
-	k8s.io/apimachinery v0.32.3 // indirect
 	k8s.io/apiserver v0.32.3 // indirect
 	k8s.io/cli-runtime v0.32.3 // indirect
-	k8s.io/client-go v0.32.3 // indirect
 	k8s.io/component-base v0.32.3 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20241105132330-32ad38e42d3f // indirect
 	k8s.io/kubectl v0.31.1 // indirect
 	k8s.io/utils v0.0.0-20241104100929-3ea5e8cea738 // indirect
 	oras.land/oras-go v1.2.5 // indirect
-	sigs.k8s.io/controller-runtime v0.19.0 // indirect
 	sigs.k8s.io/json v0.0.0-20241010143419-9aa6b5e7a4b3 // indirect
 	sigs.k8s.io/kind v0.24.0 // indirect
 	sigs.k8s.io/kustomize/api v0.18.0 // indirect
