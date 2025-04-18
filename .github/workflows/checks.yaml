@@ -52,6 +52,7 @@ jobs:
           golangci_lint_version: v${{ steps.versions.outputs.golangci-lint }}
           go_version: v${{ steps.versions.outputs.golang }}
           golangci_lint_flags: "--config=${{ github.workspace }}/.golangci.yml"
+          workdir: 'apptests'
 
   lint-gha:
     runs-on: ubuntu-22.04
