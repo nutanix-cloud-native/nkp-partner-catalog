@@ -5,7 +5,12 @@
     "gettext@latest",
     "just@latest",
     "oras@latest",
-    "git@latest"
+    "git@latest",
+    "actionlint@latest",
+    "shfmt@latest",
+    "pre-commit@latest",
+    "golangci-lint@latest",
+    "go@latest"
   ],
   "shell": {
     "init_hook": [
