@@ -17,7 +17,7 @@ type AppScenario interface {
 }
 
 // absolutePathTo returns the absolute path to the given application directory.
-func absolutePathTo(application string, appVersion string) (string, error) {
+func absolutePathTo(application, appVersion string) (string, error) {
 	wd, err := os.Getwd()
 	if err != nil {
 		return "", err
@@ -37,7 +37,7 @@ func absolutePathTo(application string, appVersion string) (string, error) {
 		return "", err
 	}
 
-	if len(appVersion) > 0 {
+	if appVersion != "" {
 		pathToApp := dir + "/" + appVersion
 		if !checkIfPathIsValid(pathToApp) {
 			return "", fmt.Errorf("no application directory found for app: %s of version: %s", application, appVersion)
@@ -67,7 +67,7 @@ func checkIfPathIsValid(absPathToApp string) bool {
 	return false
 }
 
-// get one version later from the latest version avaialble for a given application
+// get one version later from the latest version available for a given application.
 func getPrevVAppsUpgradePath(application string) (string, error) {
 	wd, err := os.Getwd()
 	if err != nil {

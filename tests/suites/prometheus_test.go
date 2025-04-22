@@ -8,23 +8,22 @@ import (
 	fluxHelmApiV2 "github.com/fluxcd/helm-controller/api/v2"
 	fluxhelmv2beta2 "github.com/fluxcd/helm-controller/api/v2beta2"
 	apimeta "github.com/fluxcd/pkg/apis/meta"
+	"github.com/nutanix-cloud-native/nkp-partner-catalog/tests/appscenarios"
+	"github.com/nutanix-cloud-native/nkp-partner-catalog/tests/appscenarios/constant"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrlClient "sigs.k8s.io/controller-runtime/pkg/client"
-
-	"github.com/nutanix-cloud-native/nkp-partner-catalog/tests/appscenarios"
-	"github.com/nutanix-cloud-native/nkp-partner-catalog/tests/appscenarios/constant"
 )
 
 var _ = Describe("prometheus Tests", Ordered, Label("prometheus"), func() {
 	// Print values passed from CLI flags
 	BeforeEach(OncePerOrdered, func() {
 		err := SetupKindCluster()
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 
 		err = env.InstallLatestFlux(ctx)
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(OncePerOrdered, func() {
@@ -45,8 +44,8 @@ var _ = Describe("prometheus Tests", Ordered, Label("prometheus"), func() {
 
 		It("should install successfully with default config", func() {
 			pr = appscenarios.NewPrometheusScenerio().(*appscenarios.Prometheus)
-			err := pr.Install(ctx, env, appVersion)
-			Expect(err).To(BeNil())
+			err := pr.Install(ctx, env, *appVersion)
+			Expect(err).ToNot(HaveOccurred())
 
 			hr = &fluxhelmv2beta2.HelmRelease{
 				TypeMeta: metav1.TypeMeta{
@@ -86,7 +85,7 @@ var _ = Describe("prometheus Tests", Ordered, Label("prometheus"), func() {
 		It("should install the previous version successfully", func() {
 			pr = appscenarios.NewPrometheusScenerio().(*appscenarios.Prometheus)
 			err := pr.InstallPreviousVersion(ctx, env)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 
 			hr = &fluxhelmv2beta2.HelmRelease{
 				TypeMeta: metav1.TypeMeta{
@@ -118,7 +117,7 @@ var _ = Describe("prometheus Tests", Ordered, Label("prometheus"), func() {
 
 		It("should upgrade redis successfully", func() {
 			err := pr.Upgrade(ctx, env)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 
 			hr = &fluxhelmv2beta2.HelmRelease{
 				TypeMeta: metav1.TypeMeta{
@@ -140,7 +139,7 @@ var _ = Describe("prometheus Tests", Ordered, Label("prometheus"), func() {
 
 				for _, cond := range hr.Status.Conditions {
 					if cond.Status == metav1.ConditionTrue &&
-						cond.Type == apimeta.ReadyCondition && 
+						cond.Type == apimeta.ReadyCondition &&
 						cond.Reason == fluxHelmApiV2.UpgradeSucceededReason {
 						return nil
 					}

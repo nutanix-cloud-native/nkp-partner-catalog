@@ -33,9 +33,8 @@ func (pr *Prometheus) Install(ctx context.Context, env *environment.Env, appVers
 }
 
 func (pr *Prometheus) install(ctx context.Context, env *environment.Env, appPath string) error {
-
 	// apply the kustomization for the source
-	sourcesPath := filepath.Join(appPath, "/sources")
+	sourcesPath := filepath.Join(appPath, "sources")
 	err := env.ApplyKustomizations(ctx, sourcesPath, map[string]string{
 		"releaseNamespace": constant.KOMMANDER_NAMESPACE,
 	})
@@ -44,7 +43,7 @@ func (pr *Prometheus) install(ctx context.Context, env *environment.Env, appPath
 	}
 
 	// apply the kustomization for the helmrelease
-	helmreleasePath := filepath.Join(appPath, "/helmrelease")
+	helmreleasePath := filepath.Join(appPath, "helmrelease")
 	err = env.ApplyKustomizations(ctx, helmreleasePath, map[string]string{
 		"releaseNamespace": constant.KOMMANDER_NAMESPACE,
 	})

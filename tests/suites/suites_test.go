@@ -3,17 +3,14 @@ package suites
 import (
 	"context"
 	"flag"
-	"os"
 	"testing"
-
-	"github.com/nutanix-cloud-native/nkp-partner-catalog/tests/appscenarios/constant"
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
 
 	"github.com/mesosphere/kommander-applications/apptests/docker"
 	"github.com/mesosphere/kommander-applications/apptests/environment"
 	"github.com/mesosphere/kommander-applications/apptests/flux"
 	"github.com/mesosphere/kommander-applications/apptests/kind"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/client-go/rest"
@@ -22,21 +19,15 @@ import (
 )
 
 var (
-	env                 *environment.Env
-	ctx                 context.Context
-	network             *docker.NetworkResource
-	k8sClient           genericClient.Client
-	restClientV1Pods    rest.Interface
-	upgradeAppsRepoPath string
-	appName             string
-	appVersion          string
+	env              *environment.Env
+	ctx              context.Context
+	network          *docker.NetworkResource
+	k8sClient        genericClient.Client
+	restClientV1Pods rest.Interface
 )
 
-func init() {
-	// Define custom flags
-	flag.StringVar(&appName, "app-name", "", "The name of the application")
-	flag.StringVar(&appVersion, "app-version", "", "The version of the application")
-}
+var appName = flag.String("app-name", "", "The name of the application")
+var appVersion = flag.String("app-version", "", "The version of the application")
 
 var _ = BeforeSuite(func() {
 	ctx = context.Background()
@@ -46,12 +37,6 @@ var _ = BeforeSuite(func() {
 
 	env = &environment.Env{
 		Network: network,
-	}
-
-	// Get the path to upgrade apps repository from the environment variable | (this is where the old version of apps are stored)
-	upgradeAppsRepoPath = os.Getenv(constant.UPGRADE_APPS_REPO_PATH_ENV)
-	if upgradeAppsRepoPath == "" {
-		upgradeAppsRepoPath = constant.DEFAULT_UPGRADE_APPS_REPO_PATH
 	}
 })
 

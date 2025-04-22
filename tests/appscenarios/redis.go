@@ -34,7 +34,7 @@ func (r *Redis) Install(ctx context.Context, env *environment.Env, appVersion st
 
 func (r *Redis) install(ctx context.Context, env *environment.Env, appPath string) error {
 	// apply defaults config maps first
-	defaultKustomization := filepath.Join(appPath, "/defaults")
+	defaultKustomization := filepath.Join(appPath, "defaults")
 	err := env.ApplyKustomizations(ctx, defaultKustomization, map[string]string{
 		"releaseNamespace": constant.KOMMANDER_NAMESPACE,
 	})
@@ -43,7 +43,7 @@ func (r *Redis) install(ctx context.Context, env *environment.Env, appPath strin
 	}
 
 	// apply the kustomization for the source
-	sourcesPath := filepath.Join(appPath, "/sources")
+	sourcesPath := filepath.Join(appPath, "sources")
 	err = env.ApplyKustomizations(ctx, sourcesPath, map[string]string{
 		"releaseNamespace": constant.KOMMANDER_NAMESPACE,
 	})
@@ -52,7 +52,7 @@ func (r *Redis) install(ctx context.Context, env *environment.Env, appPath strin
 	}
 
 	// apply the kustomization for the helmrelease
-	helmreleasePath := filepath.Join(appPath, "/helmrelease")
+	helmreleasePath := filepath.Join(appPath, "helmrelease")
 	err = env.ApplyKustomizations(ctx, helmreleasePath, map[string]string{
 		"releaseNamespace": constant.KOMMANDER_NAMESPACE,
 	})

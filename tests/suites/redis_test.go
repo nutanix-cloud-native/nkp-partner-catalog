@@ -19,10 +19,10 @@ var _ = Describe("redis Tests", Ordered, Label("redis"), func() {
 
 	BeforeEach(OncePerOrdered, func() {
 		err := SetupKindCluster()
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 
 		err = env.InstallLatestFlux(ctx)
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	AfterEach(OncePerOrdered, func() {
@@ -43,8 +43,8 @@ var _ = Describe("redis Tests", Ordered, Label("redis"), func() {
 
 		It("should install successfully with default config", func() {
 			rs = appscenarios.NewRedisScenerio().(*appscenarios.Redis)
-			err := rs.Install(ctx, env, appVersion)
-			Expect(err).To(BeNil())
+			err := rs.Install(ctx, env, *appVersion)
+			Expect(err).ToNot(HaveOccurred())
 
 			hr = &fluxhelmv2beta2.HelmRelease{
 				TypeMeta: metav1.TypeMeta{
