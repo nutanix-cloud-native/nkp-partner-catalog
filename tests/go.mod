@@ -2,12 +2,10 @@ module github.com/nutanix-cloud-native/nkp-partner-catalog/tests
 
 go 1.24.2
 
-replace github.com/mesosphere/kommander-applications/apptests => github.com/mesosphere/kommander-applications/apptests v0.0.0-20250417095542-419630f7efd6
-
 require (
 	github.com/fluxcd/helm-controller/api v1.0.1
 	github.com/fluxcd/pkg/apis/meta v1.10.0
-	github.com/mesosphere/kommander-applications/apptests v0.0.0-20250417095542-419630f7efd6
+	github.com/mesosphere/kommander-applications/apptests v0.0.0-20250423043016-24a0df188b22
 	github.com/onsi/ginkgo/v2 v2.21.0
 	github.com/onsi/gomega v1.35.1
 	k8s.io/apimachinery v0.32.3

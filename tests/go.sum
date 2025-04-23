@@ -287,6 +287,8 @@ github.com/mattn/go-sqlite3 v1.14.15/go.mod h1:2eHXhiwb8IkHr+BDWZGa96P6+rkvnG63S
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
 github.com/mesosphere/kommander-applications/apptests v0.0.0-20250417095542-419630f7efd6 h1:EO/OyfxfFnpbQmzSbuefldQzO39S0rBCQ2lFtys6UjA=
 github.com/mesosphere/kommander-applications/apptests v0.0.0-20250417095542-419630f7efd6/go.mod h1:gIHKwrU9IrXpT+SaYl48n92b6mIZhYOPTdYpavaGU9E=
+github.com/mesosphere/kommander-applications/apptests v0.0.0-20250423043016-24a0df188b22 h1:NZZdwh7IW9SchwlpITukuzs4d4B+7jnfS5pzFquzb+s=
+github.com/mesosphere/kommander-applications/apptests v0.0.0-20250423043016-24a0df188b22/go.mod h1:Z1r9tmzg4tSvrkzoHA/TRJm9/zoj4uzzQ2urPDcnBvk=
 github.com/miekg/dns v1.1.62 h1:cN8OuEF1/x5Rq6Np+h1epln8OiyPWV+lROx9LxcGgIQ=
 github.com/miekg/dns v1.1.62/go.mod h1:mvDlcItzm+br7MToIKqkglaGhlFMHJ9DTNNWONWXbNQ=
 github.com/mitchellh/copystructure v1.0.0/go.mod h1:SNtv71yrdKgLRyLFxmLdkAbkKEFWgYaq1OVrnRcwhnw=
