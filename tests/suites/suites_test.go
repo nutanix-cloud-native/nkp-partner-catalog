@@ -5,10 +5,6 @@ import (
 	"flag"
 	"testing"
 
-	"github.com/mesosphere/kommander-applications/apptests/docker"
-	"github.com/mesosphere/kommander-applications/apptests/environment"
-	"github.com/mesosphere/kommander-applications/apptests/flux"
-	"github.com/mesosphere/kommander-applications/apptests/kind"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -16,6 +12,11 @@ import (
 	"k8s.io/client-go/rest"
 	genericClient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
+
+	"github.com/mesosphere/kommander-applications/apptests/docker"
+	"github.com/mesosphere/kommander-applications/apptests/environment"
+	"github.com/mesosphere/kommander-applications/apptests/flux"
+	"github.com/mesosphere/kommander-applications/apptests/kind"
 )
 
 var (
@@ -26,7 +27,6 @@ var (
 	restClientV1Pods rest.Interface
 )
 
-var appName = flag.String("app-name", "", "The name of the application")
 var appVersion = flag.String("app-version", "", "The version of the application")
 
 var _ = BeforeSuite(func() {
@@ -73,7 +73,13 @@ func SetupKindCluster() error {
 		return err
 	}
 
-	restClientV1Pods, err = apiutil.RESTClientForGVK(gvk, false, env.K8sClient.Config(), serializer.NewCodecFactory(flux.NewScheme()), httpClient)
+	restClientV1Pods, err = apiutil.RESTClientForGVK(
+		gvk,
+		false,
+		env.K8sClient.Config(),
+		serializer.NewCodecFactory(flux.NewScheme()),
+		httpClient,
+	)
 	if err != nil {
 		return err
 	}

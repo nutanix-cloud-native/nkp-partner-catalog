@@ -36,7 +36,6 @@ var _ = Describe("prometheus Tests", Ordered, Label("prometheus"), func() {
 	})
 
 	Describe("Installing prometheus", Ordered, Label("install"), func() {
-
 		var (
 			pr *appscenarios.Prometheus
 			hr *fluxhelmv2beta2.HelmRelease

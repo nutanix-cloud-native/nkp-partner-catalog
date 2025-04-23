@@ -4,8 +4,9 @@ import (
 	"context"
 	"path/filepath"
 
-	"github.com/mesosphere/kommander-applications/apptests/environment"
 	"github.com/nutanix-cloud-native/nkp-partner-catalog/tests/appscenarios/constant"
+
+	"github.com/mesosphere/kommander-applications/apptests/environment"
 )
 
 type Redis struct{}

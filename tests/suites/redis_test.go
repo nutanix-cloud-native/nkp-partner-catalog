@@ -16,7 +16,6 @@ import (
 )
 
 var _ = Describe("redis Tests", Ordered, Label("redis"), func() {
-
 	BeforeEach(OncePerOrdered, func() {
 		err := SetupKindCluster()
 		Expect(err).ToNot(HaveOccurred())
@@ -35,7 +34,6 @@ var _ = Describe("redis Tests", Ordered, Label("redis"), func() {
 	})
 
 	Describe("Installing redis", Ordered, Label("install"), func() {
-
 		var (
 			rs *appscenarios.Redis
 			hr *fluxhelmv2beta2.HelmRelease
