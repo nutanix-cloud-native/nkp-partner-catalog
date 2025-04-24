@@ -8,12 +8,13 @@ import (
 	fluxHelmApiV2 "github.com/fluxcd/helm-controller/api/v2"
 	fluxhelmv2beta2 "github.com/fluxcd/helm-controller/api/v2beta2"
 	apimeta "github.com/fluxcd/pkg/apis/meta"
-	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/appscenarios"
-	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/appscenarios/constant"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrlClient "sigs.k8s.io/controller-runtime/pkg/client"
+
+	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/appscenarios"
+	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/appscenarios/constant"
 )
 
 var _ = Describe("prometheus Tests", Ordered, Label("prometheus"), func() {

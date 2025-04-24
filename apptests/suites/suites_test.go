@@ -5,6 +5,10 @@ import (
 	"flag"
 	"testing"
 
+	"github.com/mesosphere/kommander-applications/apptests/docker"
+	"github.com/mesosphere/kommander-applications/apptests/environment"
+	"github.com/mesosphere/kommander-applications/apptests/flux"
+	"github.com/mesosphere/kommander-applications/apptests/kind"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -12,11 +16,6 @@ import (
 	"k8s.io/client-go/rest"
 	genericClient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
-
-	"github.com/mesosphere/kommander-applications/apptests/docker"
-	"github.com/mesosphere/kommander-applications/apptests/environment"
-	"github.com/mesosphere/kommander-applications/apptests/flux"
-	"github.com/mesosphere/kommander-applications/apptests/kind"
 )
 
 var (

@@ -4,9 +4,9 @@ import (
 	"context"
 	"path/filepath"
 
-	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/appscenarios/constant"
-
 	"github.com/mesosphere/kommander-applications/apptests/environment"
+
+	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/appscenarios/constant"
 )
 
 type Prometheus struct{}
