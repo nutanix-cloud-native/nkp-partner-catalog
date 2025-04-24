@@ -4,23 +4,29 @@ import (
 	"context"
 	"path/filepath"
 
+	km_appscenarios "github.com/mesosphere/kommander-applications/apptests/appscenarios"
 	"github.com/mesosphere/kommander-applications/apptests/environment"
 
 	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/appscenarios/constant"
+	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/utils"
 )
 
-type Prometheus struct{}
+type Prometheus struct {
+	appVersionToInstall string
+}
 
-func NewPrometheusScenerio() AppScenario {
-	return &Prometheus{}
+func NewPrometheusScenerio(appVesrionToInstall string) km_appscenarios.AppScenario {
+	return &Prometheus{
+		appVersionToInstall: appVesrionToInstall,
+	}
 }
 
 func (pr *Prometheus) Name() string {
 	return "prometheus"
 }
 
-func (pr *Prometheus) Install(ctx context.Context, env *environment.Env, appVersion string) error {
-	appPath, err := absolutePathTo(pr.Name(), appVersion)
+func (pr *Prometheus) Install(ctx context.Context, env *environment.Env) error {
+	appPath, err := utils.AbsolutePathTo(pr.Name(), pr.appVersionToInstall)
 	if err != nil {
 		return err
 	}
@@ -56,7 +62,7 @@ func (pr *Prometheus) install(ctx context.Context, env *environment.Env, appPath
 }
 
 func (pr *Prometheus) InstallPreviousVersion(ctx context.Context, env *environment.Env) error {
-	appPath, err := getPrevVAppsUpgradePath(pr.Name())
+	appPath, err := utils.GetPrevVAppsUpgradePath(pr.Name())
 	if err != nil {
 		return err
 	}
@@ -70,7 +76,7 @@ func (pr *Prometheus) InstallPreviousVersion(ctx context.Context, env *environme
 }
 
 func (pr *Prometheus) Upgrade(ctx context.Context, env *environment.Env) error {
-	appPath, err := absolutePathTo(pr.Name(), "")
+	appPath, err := utils.AbsolutePathTo(pr.Name(), "")
 	if err != nil {
 		return err
 	}

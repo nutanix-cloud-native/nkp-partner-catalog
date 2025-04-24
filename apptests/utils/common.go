@@ -1,23 +1,13 @@
-package appscenarios
+package utils
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"path/filepath"
-
-	"github.com/mesosphere/kommander-applications/apptests/environment"
 )
 
-type AppScenario interface {
-	Name() string                                                               // scenario name
-	Install(ctx context.Context, env *environment.Env, appVersion string) error // logic implemented by a scenario
-	InstallPreviousVersion(ctx context.Context, env *environment.Env) error
-	Upgrade(ctx context.Context, env *environment.Env) error
-}
-
 // absolutePathTo returns the absolute path to the given application directory.
-func absolutePathTo(application, appVersion string) (string, error) {
+func AbsolutePathTo(application, appVersion string) (string, error) {
 	wd, err := os.Getwd()
 	if err != nil {
 		return "", err
@@ -57,7 +47,7 @@ func absolutePathTo(application, appVersion string) (string, error) {
 			application, dir)
 	}
 
-	return matches[0], nil
+	return matches[len(matches)-1], nil
 }
 
 func checkIfPathIsValid(absPathToApp string) bool {
@@ -68,7 +58,7 @@ func checkIfPathIsValid(absPathToApp string) bool {
 }
 
 // get one version later from the latest version available for a given application.
-func getPrevVAppsUpgradePath(application string) (string, error) {
+func GetPrevVAppsUpgradePath(application string) (string, error) {
 	wd, err := os.Getwd()
 	if err != nil {
 		return "", err

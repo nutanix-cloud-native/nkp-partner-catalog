@@ -43,8 +43,8 @@ var _ = Describe("prometheus Tests", Ordered, Label("prometheus"), func() {
 		)
 
 		It("should install successfully with default config", func() {
-			pr = appscenarios.NewPrometheusScenerio().(*appscenarios.Prometheus)
-			err := pr.Install(ctx, env, *appVersion)
+			pr = appscenarios.NewPrometheusScenerio(*appVersion).(*appscenarios.Prometheus)
+			err := pr.Install(ctx, env)
 			Expect(err).ToNot(HaveOccurred())
 
 			hr = &fluxhelmv2beta2.HelmRelease{
@@ -83,7 +83,7 @@ var _ = Describe("prometheus Tests", Ordered, Label("prometheus"), func() {
 		)
 
 		It("should install the previous version successfully", func() {
-			pr = appscenarios.NewPrometheusScenerio().(*appscenarios.Prometheus)
+			pr = appscenarios.NewPrometheusScenerio("").(*appscenarios.Prometheus)
 			err := pr.InstallPreviousVersion(ctx, env)
 			Expect(err).ToNot(HaveOccurred())
 
