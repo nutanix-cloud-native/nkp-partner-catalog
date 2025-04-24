@@ -84,7 +84,7 @@ formatters:
       sections:
         - Standard
         - Default
-        - Prefix(github.com/mesosphere)
+        - Prefix(github.com/nutanix-cloud-native)
     gofumpt:
       extra-rules: true
     golines:
