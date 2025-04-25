@@ -57,6 +57,9 @@ linters:
     - usetesting
     - whitespace
   settings:
+    gomoddirectives:
+      replace-allow-list:
+        - github.com/abbot/go-http-auth
     depguard:
       rules:
         main:
