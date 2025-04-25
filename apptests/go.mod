@@ -2,6 +2,13 @@ module github.com/nutanix-cloud-native/nkp-partner-catalog/apptests
 
 go 1.24.2
 
+// https://github.com/traefik/traefik/blob/v3.3.6/go.mod#L390-L395
+replace (
+	github.com/abbot/go-http-auth => github.com/containous/go-http-auth v0.4.1-0.20200324110947-a37a7636d23e
+	github.com/gorilla/mux => github.com/containous/mux v0.0.0-20220627093034-b2dd784e613f
+	github.com/mailgun/minheap => github.com/containous/minheap v0.0.0-20190809180810-6e71eb837595
+)
+
 require (
 	github.com/fluxcd/helm-controller/api v1.0.1
 	github.com/fluxcd/pkg/apis/meta v1.10.0
