@@ -3,6 +3,6 @@ package constant
 import "time"
 
 const (
-	KOMMANDER_NAMESPACE = "kommander"
-	POLL_INTERVAL       = 2 * time.Second
+	DEFAULT_NAMESPACE = "default" // TODO: we need to create a namespace dynamically during runtime
+	POLL_INTERVAL     = 2 * time.Second
 )

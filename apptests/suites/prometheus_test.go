@@ -54,7 +54,7 @@ var _ = Describe("prometheus Tests", Ordered, Label("prometheus"), func() {
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      pr.Name(),
-					Namespace: constant.KOMMANDER_NAMESPACE,
+					Namespace: constant.DEFAULT_NAMESPACE,
 				},
 			}
 
@@ -94,7 +94,7 @@ var _ = Describe("prometheus Tests", Ordered, Label("prometheus"), func() {
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      pr.Name(),
-					Namespace: constant.KOMMANDER_NAMESPACE,
+					Namespace: constant.DEFAULT_NAMESPACE,
 				},
 			}
 
@@ -126,7 +126,7 @@ var _ = Describe("prometheus Tests", Ordered, Label("prometheus"), func() {
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      pr.Name(),
-					Namespace: constant.KOMMANDER_NAMESPACE,
+					Namespace: constant.DEFAULT_NAMESPACE,
 				},
 			}
 
