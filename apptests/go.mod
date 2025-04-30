@@ -2,13 +2,10 @@ module github.com/nutanix-cloud-native/nkp-partner-catalog/apptests
 
 go 1.24.2
 
-// https://github.com/traefik/traefik/blob/v3.3.6/go.mod#L390-L395
-replace github.com/abbot/go-http-auth => github.com/containous/go-http-auth v0.4.1-0.20200324110947-a37a7636d23e
-
 require (
 	github.com/fluxcd/helm-controller/api v1.0.1
 	github.com/fluxcd/pkg/apis/meta v1.10.0
-	github.com/mesosphere/kommander-applications/apptests v0.0.0-20250425100533-4eb047e5df6b
+	github.com/mesosphere/kommander-applications/apptests v0.0.0-20250429163826-3f21e9eff2e3
 	github.com/onsi/ginkgo/v2 v2.21.0
 	github.com/onsi/gomega v1.35.1
 	k8s.io/apimachinery v0.32.3
