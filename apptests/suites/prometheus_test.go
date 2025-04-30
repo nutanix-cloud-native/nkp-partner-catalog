@@ -76,7 +76,7 @@ var _ = Describe("prometheus Tests", Ordered, Label("prometheus"), func() {
 		})
 	})
 
-	Describe("Upgrading redis", Ordered, Label("upgrade"), func() {
+	Describe("Upgrading prometheus", Ordered, Label("upgrade"), func() {
 		var (
 			pr *appscenarios.Prometheus
 			hr *fluxhelmv2beta2.HelmRelease
@@ -115,7 +115,7 @@ var _ = Describe("prometheus Tests", Ordered, Label("prometheus"), func() {
 			}).WithPolling(constant.POLL_INTERVAL).WithTimeout(5 * time.Minute).Should(Succeed())
 		})
 
-		It("should upgrade redis successfully", func() {
+		It("should upgrade prometheus successfully", func() {
 			err := pr.Upgrade(ctx, env)
 			Expect(err).ToNot(HaveOccurred())
 
