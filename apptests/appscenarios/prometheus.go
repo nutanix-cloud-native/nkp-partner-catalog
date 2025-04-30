@@ -4,7 +4,7 @@ import (
 	"context"
 	"path/filepath"
 
-	km_appscenarios "github.com/mesosphere/kommander-applications/apptests/appscenarios"
+	// km_appscenarios "github.com/mesosphere/kommander-applications/apptests/appscenarios"
 	"github.com/mesosphere/kommander-applications/apptests/environment"
 
 	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/appscenarios/constant"
@@ -15,7 +15,7 @@ type Prometheus struct {
 	appVersionToInstall string
 }
 
-func NewPrometheusScenerio(appVesrionToInstall string) km_appscenarios.AppScenario {
+func NewPrometheusScenerio(appVesrionToInstall string) AppScenario {
 	return &Prometheus{
 		appVersionToInstall: appVesrionToInstall,
 	}
