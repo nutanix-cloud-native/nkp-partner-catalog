@@ -4,7 +4,6 @@ import (
 	"context"
 	"path/filepath"
 
-	// km_appscenarios "github.com/mesosphere/kommander-applications/apptests/appscenarios"
 	"github.com/mesosphere/kommander-applications/apptests/environment"
 
 	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/appscenarios/constant"

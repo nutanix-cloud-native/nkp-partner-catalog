@@ -6,7 +6,7 @@ import (
 	"github.com/mesosphere/kommander-applications/apptests/environment"
 )
 
-// AppScenario defines the behavior and name of an application test scenario
+// AppScenario defines the behavior and name of an application test scenario.
 type AppScenario interface {
 	Name() string                                    // scenario name
 	Install(context.Context, *environment.Env) error // logic implemented by a scenario
