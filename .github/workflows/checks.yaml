@@ -26,7 +26,7 @@ defaults:
 
 jobs:
   lint-go:
-    runs-on: self-hosted-nutanix-medium
+    runs-on: self-hosted-ncn-docker-medium
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -55,7 +55,7 @@ jobs:
           workdir: 'apptests'
 
   lint-gha:
-    runs-on: self-hosted-nutanix-medium
+    runs-on: self-hosted-ncn-docker-medium
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -69,7 +69,7 @@ jobs:
           reporter: github-pr-review
 
   pre-commit:
-    runs-on: self-hosted-nutanix-medium
+    runs-on: self-hosted-ncn-docker-medium
     steps:
       # TODO(takirala): use a different runner to avoid doing this.
       - name: Install build dependencies
