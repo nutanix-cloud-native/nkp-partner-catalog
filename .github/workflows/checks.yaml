@@ -26,17 +26,22 @@ defaults:
 
 jobs:
   lint-go:
-    runs-on: self-hosted-ncn-dind
+    runs-on: self-hosted-ncn-docker-medium
     steps:
       - name: Check out code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Install devbox
-        uses: jetify-com/devbox-install-action@v0.12.0
+      - name: Install Nix on self-hosted ARC runners
+        uses: cachix/install-nix-action@v31
         with:
-          enable-cache: true
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.13.0
+        with:
+          skip-nix-installation: true
 
       - name: Export golang and golangci-lint versions
         id: versions
@@ -55,7 +60,7 @@ jobs:
           workdir: 'apptests'
 
   lint-gha:
-    runs-on: self-hosted-ncn-dind
+    runs-on: self-hosted-ncn-docker-medium
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -69,21 +74,22 @@ jobs:
           reporter: github-pr-review
 
   pre-commit:
-    runs-on: self-hosted-ncn-docker-large
+    runs-on: self-hosted-ncn-docker-medium
     steps:
-      # TODO(takirala): use a different runner to avoid doing this.
-      - name: Install build dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential
-
       - name: Check out code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
+      - name: Install Nix on self-hosted ARC runners
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Install devbox
         uses: jetify-com/devbox-install-action@v0.12.0
         with:
-          enable-cache: true
+          skip-nix-installation: true
 
       - name: Go cache
         uses: actions/cache@v4
