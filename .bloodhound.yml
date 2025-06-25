@@ -1,0 +1,27 @@
+# Copyright 2025 Nutanix. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+# Kubernetes versions
+# (e.g. 1.23.0 - has to match versions in https://github.com/yannh/kubernetes-json-schema)
+k8s_versions:
+  - 1.31.9
+  - 1.32.3
+  - 1.33.1
+
+# paths to load (in that order)
+paths:
+  - services
+
+# by default metadata should be there at application level
+read_metadata_from_app_version: true
+
+# use strict validation (reject unknown fields in resources)
+strict: true
+
+# set values for substitution variables (e.g. ${releaseNamespace}) in the resources
+substitution_vars:
+  releaseNamespace: kommander
+  workspaceNamespace: workspace
+  certificateIssuerName: issuer
+  certificatesIssuerName: issuer
+  certificateIssuerKind: ClusterIssuer
