@@ -10,7 +10,7 @@ k8s_versions:
 
 # paths to load (in that order)
 paths:
-  - services
+  - applications
 
 # by default metadata should be there at application level
 read_metadata_from_app_version: true
