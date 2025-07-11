@@ -1,13 +1,15 @@
+GOOS := `go env GOOS`
+GOARCH := `go env GOARCH`
+
 REPO_ROOT := justfile_directory()
 LOCAL_DIR := REPO_ROOT+"/.local"
 
-NKP_CATALOG_CLI_VERSION := "0.1.1"
-
+NKP_CATALOG_CLI_VERSION := "0.2.0"
 NKP_CATALOG_CLI_BIN := LOCAL_DIR+"/bin/nkp_catalog_cli_v"+NKP_CATALOG_CLI_VERSION
 TAG := "v"+NKP_CATALOG_CLI_VERSION
 OWNER := "nutanix-cloud-native"
 REPO := "nkp-catalog-cli"
-ASSET := "catalog_v"+NKP_CATALOG_CLI_VERSION+"_linux_amd64.tar.gz"
+ASSET := "catalog_v"+NKP_CATALOG_CLI_VERSION+"_"+GOOS+"_"+GOARCH+".tar.gz"
 
 nkp-catalog-cli-bin:
     @if [ ! -f "{{ NKP_CATALOG_CLI_BIN }}" ]; then \
