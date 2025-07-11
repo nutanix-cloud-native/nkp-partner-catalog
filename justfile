@@ -1,4 +1,5 @@
 import 'just/catalog-plugin.just'
+import 'just/tools.just'
 import 'just/validate.just'
 
 pre-commit:
