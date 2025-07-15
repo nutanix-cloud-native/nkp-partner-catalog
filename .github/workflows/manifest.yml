@@ -8,25 +8,12 @@ on:
       - 'main'
       - 'v*'
 
-env:
-  GOPRIVATE: github.com/nutanix-cloud-native
-
 jobs:
   manifest-validation:
     name: Manifest validation
     runs-on:
       - self-hosted-ncn-docker-medium
     steps:
-      - uses: actions/create-github-app-token@v1
-        id: app-token-ncn
-        with:
-          app-id: ${{ secrets.GHA_CHECKOUT_APP_ID }}
-          private-key: ${{ secrets.GHA_CHECKOUT_APP_PRIVATE_KEY }}
-          owner: nutanix-cloud-native
-
-      - run: git config --global url."https://oauth2:${{ steps.app-token-ncn.outputs.token }}@github.com/nutanix-cloud-native/".insteadOf "https://github.com/nutanix-cloud-native/"
-      - run: echo "GH_TOKEN=${{ steps.app-token-ncn.outputs.token }}" >> "${GITHUB_ENV}"
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -38,8 +25,6 @@ jobs:
         with:
           enable-cache: true
           skip-nix-installation: true
-
-      - run: devbox run -- gh auth setup-git
 
       - name: Run tests
         run: devbox run -- "GOOS=linux GOARCH=amd64 just validate-manifests"
