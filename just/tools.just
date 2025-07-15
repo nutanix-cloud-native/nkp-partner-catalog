@@ -11,7 +11,7 @@ nkp-cli:
     [ -f "{{NKP_CLI}}" ] || ( \
         echo "Building {{NKP_CLI}}..." && \
         mkdir -p "{{LOCAL_DIR}}/bin" && \
-        curl -LO "https://downloads.d2iq.com/dkp/v{{NKP_CLI_VERSION}}/{{NKP_CLI_ASSET}}.tar.gz" && tar -xzf "{{NKP_CLI_ASSET}}.tar.gz" && \
-        mv "{{NKP_CLI_ASSET}}/nkp" "{{NKP_CLI}}" 2>/dev/null || mv ./nkp "{{NKP_CLI}}" && \
+        curl -LO "https://downloads.d2iq.com/dkp/v{{NKP_CLI_VERSION}}/{{NKP_CLI_ASSET}}.tar.gz" && tar -xzf "{{NKP_CLI_ASSET}}.tar.gz" -C . && \
+        mv ./nkp "{{NKP_CLI}}" && \
         echo "Successfully built {{NKP_CLI}}." \
     )
