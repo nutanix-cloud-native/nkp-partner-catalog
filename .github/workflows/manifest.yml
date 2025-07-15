@@ -25,7 +25,7 @@ jobs:
           owner: nutanix-cloud-native
 
       - run: git config --global url."https://oauth2:${{ steps.app-token-ncn.outputs.token }}@github.com/nutanix-cloud-native/".insteadOf "https://github.com/nutanix-cloud-native/"
-      - run: echo "GH_TOKEN=${{ steps.app-token-ncn.outputs.token }}" >> $GITHUB_ENV
+      - run: echo "GH_TOKEN=${{ steps.app-token-ncn.outputs.token }}" >> "${GITHUB_ENV}"
 
       - name: Checkout code
         uses: actions/checkout@v4
