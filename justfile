@@ -1,4 +1,6 @@
 import 'just/catalog-plugin.just'
+import 'just/tools.just'
+import 'just/validate.just'
 
 pre-commit:
     env VIRTUALENV_PIP=24.0 pre-commit install-hooks
