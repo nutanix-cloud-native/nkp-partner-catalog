@@ -3,5 +3,5 @@ data:
   values.yaml: ""
 kind: ConfigMap
 metadata:
-  name: podinfo-6.9.1-config-defaults
+  name: ${releaseName}-6.8.0-defaults
   namespace: ${releaseNamespace}
