@@ -8,9 +8,9 @@ spec:
   wait: true
   interval: 6h
   retryInterval: 1m
-  path: ./applications/podinfo/6.8.0/helmrelease
+  path: ./helmrelease
   sourceRef:
     kind: OCIRepository
-    name: podinfo-6.8.0
+    name: app-${releaseName}
     namespace: kommander-flux
   timeout: 1m
