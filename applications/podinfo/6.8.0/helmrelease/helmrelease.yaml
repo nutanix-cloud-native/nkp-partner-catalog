@@ -6,7 +6,7 @@ metadata:
 spec:
   chartRef:
     kind: OCIRepository
-    name: podinfo-6.8.0
+    name: ${releaseName}-hr-source
     namespace: ${releaseNamespace}
   install:
     crds: CreateReplace
@@ -21,4 +21,4 @@ spec:
       retries: 30
   valuesFrom:
   - kind: ConfigMap
-    name: podinfo-6.8.0-config-defaults
+    name: ${releaseName}-6.8.0-defaults
