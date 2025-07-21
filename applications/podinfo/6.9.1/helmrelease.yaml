@@ -4,16 +4,16 @@ metadata:
   name: ${releaseName}-helmrelease
   namespace: ${releaseNamespace}
 spec:
-  prune: true
-  wait: true
-  interval: 6h
-  retryInterval: 1m
+  interval: 6h0m0s
   path: ./helmrelease
+  prune: true
+  retryInterval: 1m0s
   sourceRef:
     kind: OCIRepository
     name: ${releaseName}-source
     namespace: ${releaseNamespace}
-  timeout: 1m
+  timeout: 1m0s
+  wait: true
   postBuild:
     substitute:
       releaseName: ${releaseName}
