@@ -3,7 +3,7 @@
 k8s_versions:
   - 1.33.0
 
-# paths to load (in that order)
+# TODO(takirala): Remove this after bumping bloodhound to latest. This is unused for catalog v2.
 paths:
   - applications
 
