@@ -22,7 +22,7 @@ jobs:
       - name: Setup go
         uses: actions/setup-go@v5
         with:
-          go-version-file: go.mod
+          go-version-file: apptests/go.mod
 
       - name: Set up Java 11
         uses: actions/setup-java@v4
