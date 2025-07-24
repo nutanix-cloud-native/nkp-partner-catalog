@@ -28,3 +28,9 @@ jobs:
 
       - name: Run tests
         run: devbox run -- "GOOS=linux GOARCH=amd64 just validate-manifests"
+
+  test-publish-oci-artifacts:
+    uses: ./.github/workflows/publish-oci-artifacts.yaml
+    with:
+      COLLECTION_TAG: '2.16'
+      CONSTRAINT: nkpVersion=2.16
