@@ -39,6 +39,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install NIX
+        uses: cachix/install-nix-action@v31
+
       - name: Install devbox
         uses: jetify-com/devbox-install-action@v0.13.0
         with:
