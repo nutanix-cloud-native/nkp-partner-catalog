@@ -35,6 +35,9 @@ jobs:
     name: Publish OCI Artifacts
     runs-on:
       - self-hosted-ncn-docker-medium
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
