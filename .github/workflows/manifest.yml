@@ -33,4 +33,4 @@ jobs:
     uses: ./.github/workflows/publish-oci-artifacts.yaml
     with:
       COLLECTION_TAG: '2.16'
-      CONSTRAINT: nkpVersion=2.16
+      ARTIFACT_CONSTRAINT: nkpVersion=2.16
