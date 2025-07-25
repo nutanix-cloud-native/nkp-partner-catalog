@@ -43,6 +43,7 @@ jobs:
           blackducksca_scan_full: true
           blackducksca_scan_failure_severities: "BLOCKER,CRITICAL"
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          blackducksca_working_directory: apptests
           blackducksca_detect_opts: >
             --detect.project.name=nkp-partner-catalog
             --detect.project.version.name=${{ github.ref_name }}
@@ -62,6 +63,7 @@ jobs:
           blackducksca_prComment_enabled: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
           blackducksca_scan_full: true
+          blackducksca_working_directory: apptests
           blackducksca_detect_opts: >
             --detect.project.name=nkp-partner-catalog
             --detect.project.version.name=${{ github.base_ref }}
