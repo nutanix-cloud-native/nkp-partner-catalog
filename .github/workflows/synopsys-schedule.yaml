@@ -51,7 +51,7 @@ jobs:
         if: ${{ github.event_name == 'push' }}
         uses: blackduck-inc/black-duck-security-scan@v2.3.0
         env:
-          DETECT_SOURCE_PATH: ./apptests
+          DETECT_SOURCE_PATH: .
         with:
           blackducksca_url: ${{ secrets.BLACKDUCK_URL }}
           blackducksca_token: ${{ secrets.BLACKDUCK_API_TOKEN }}
@@ -64,7 +64,7 @@ jobs:
         uses: blackduck-inc/black-duck-security-scan@v2.3.0
         env:
           DETECT_PROJECT_VERSION_NAME: ${{ github.base_ref }}
-          DETECT_SOURCE_PATH: ./apptests
+          DETECT_SOURCE_PATH: .
         with:
           blackducksca_url: ${{ secrets.BLACKDUCK_URL }}
           blackducksca_token: ${{ secrets.BLACKDUCK_API_TOKEN }}
