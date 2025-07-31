@@ -66,6 +66,8 @@ jobs:
         uses: blackduck-inc/black-duck-security-scan@v2.3.0
         env:
           DETECT_PROJECT_VERSION_NAME: ${{ github.base_ref }}
+          DETECT_VERBOSE: true
+
         with:
           blackducksca_url: ${{ secrets.BLACKDUCK_URL }}
           blackducksca_token: ${{ secrets.BLACKDUCK_API_TOKEN }}
@@ -74,5 +76,3 @@ jobs:
           blackducksca_scan_failure_severities: ""
           blackducksca_prComment_enabled: true
           blackducksca_scan_target: apptests
-        env:
-          DETECT_VERBOSE: true
