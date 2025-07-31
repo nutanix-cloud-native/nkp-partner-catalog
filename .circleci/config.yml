@@ -13,6 +13,10 @@ jobs:
 
             CANAVERAL_USE_LEGACY_PIPELINE_MODE: "0"
             CANAVERAL_USE_BLUEPRINT_PROXY: "1"
+            ENABLE_SECURITY_SCAN: 1
+            BLACKDUCK_TARGET_SOURCE_PATH: 1
+            CANAVERAL_BUILD_SYSTEM: golang
+            CANAVERAL_LANGUAGE_VERSION: 1.12
 
         steps:
             - run:
@@ -90,6 +94,14 @@ jobs:
                   command: python -m canaveral_build_tools.core.package
                   environment:
                       PYENV_VERSION: canaveral_build
+            - run:
+                  name: Security Scan
+                  command: |
+                    if [[ $CIRCLE_BRANCH == "master" ]]; then
+                      python -m canaveral_build_tools.tools.blackduck_scan
+                    fi
+                  environment:
+                    PYENV_VERSION: canaveral_build
             - store_test_results:
                   path: test-results
             - store_artifacts:
