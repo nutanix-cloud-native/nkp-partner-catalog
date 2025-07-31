@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Go cache
         uses: actions/cache@v4
         with:
@@ -35,7 +35,7 @@ jobs:
         with:
           java-version: "11"
           distribution: "adopt"
-      
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
