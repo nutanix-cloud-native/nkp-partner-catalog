@@ -57,9 +57,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           blackducksca_scan_full: true
           blackducksca_scan_failure_severities: "BLOCKER,CRITICAL"
-          blackducksca_scan_target: apptests
         env:
           DETECT_VERBOSE: true
+          DETECT_SOURCE_PATH: apptests
 
       - name: Black Duck PR Scan
         if: ${{ github.event_name == 'pull_request' }}
@@ -67,6 +67,7 @@ jobs:
         env:
           DETECT_PROJECT_VERSION_NAME: ${{ github.base_ref }}
           DETECT_VERBOSE: true
+          DETECT_SOURCE_PATH: apptests
 
         with:
           blackducksca_url: ${{ secrets.BLACKDUCK_URL }}
@@ -75,4 +76,4 @@ jobs:
           blackducksca_scan_full: true
           blackducksca_scan_failure_severities: ""
           blackducksca_prComment_enabled: true
-          blackducksca_scan_target: apptests
+
