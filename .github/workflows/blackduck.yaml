@@ -45,6 +45,7 @@ jobs:
         run: |
           cd apptests
           go mod tidy
+          go mod download
           go build ./...
 
       - name: Black Duck Full Scan
@@ -56,6 +57,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           blackducksca_scan_full: true
           blackducksca_scan_failure_severities: "BLOCKER,CRITICAL"
+          blackducksca_scan_target: apptests
+        env:
+          DETECT_VERBOSE: true
 
       - name: Black Duck PR Scan
         if: ${{ github.event_name == 'pull_request' }}
@@ -69,3 +73,6 @@ jobs:
           blackducksca_scan_full: true
           blackducksca_scan_failure_severities: ""
           blackducksca_prComment_enabled: true
+          blackducksca_scan_target: apptests
+        env:
+          DETECT_VERBOSE: true
