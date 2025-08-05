@@ -5,7 +5,8 @@ import (
 	"os"
 	"time"
 
-	fluxhelmv2 "github.com/fluxcd/helm-controller/api/v2"
+	fluxHelmApiV2 "github.com/fluxcd/helm-controller/api/v2"
+	fluxhelmv2beta2 "github.com/fluxcd/helm-controller/api/v2beta2"
 	apimeta "github.com/fluxcd/pkg/apis/meta"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -16,7 +17,7 @@ import (
 	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/appscenarios/constant"
 )
 
-var _ = Describe("podinfo Tests", Ordered, Label("podinfo"), func() {
+var _ = Describe("prometheus Tests", Ordered, Label("prometheus"), func() {
 	// Print values passed from CLI flags
 	BeforeEach(OncePerOrdered, func() {
 		err := SetupKindCluster()
@@ -35,21 +36,21 @@ var _ = Describe("podinfo Tests", Ordered, Label("podinfo"), func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	Describe("Installing podinfo", Ordered, Label("install"), func() {
+	Describe("Installing prometheus", Ordered, Label("install"), func() {
 		var (
-			pr *appscenarios.Podinfo
-			hr *fluxhelmv2.HelmRelease
+			pr *appscenarios.Prometheus
+			hr *fluxhelmv2beta2.HelmRelease
 		)
 
 		It("should install successfully with default config", func() {
-			pr = appscenarios.NewPodinfoScenerio(*appVersion).(*appscenarios.Podinfo)
+			pr = appscenarios.NewPrometheusScenerio(*appVersion).(*appscenarios.Prometheus)
 			err := pr.Install(ctx, env)
 			Expect(err).ToNot(HaveOccurred())
 
-			hr = &fluxhelmv2.HelmRelease{
+			hr = &fluxhelmv2beta2.HelmRelease{
 				TypeMeta: metav1.TypeMeta{
-					Kind:       fluxhelmv2.HelmReleaseKind,
-					APIVersion: fluxhelmv2.GroupVersion.Version,
+					Kind:       fluxhelmv2beta2.HelmReleaseKind,
+					APIVersion: fluxhelmv2beta2.GroupVersion.Version,
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      pr.Name(),
@@ -75,21 +76,21 @@ var _ = Describe("podinfo Tests", Ordered, Label("podinfo"), func() {
 		})
 	})
 
-	Describe("Upgrading podinfo", Ordered, Label("upgrade"), func() {
+	Describe("Upgrading prometheus", Ordered, Label("upgrade"), func() {
 		var (
-			pr *appscenarios.Podinfo
-			hr *fluxhelmv2.HelmRelease
+			pr *appscenarios.Prometheus
+			hr *fluxhelmv2beta2.HelmRelease
 		)
 
 		It("should install the previous version successfully", func() {
-			pr = appscenarios.NewPodinfoScenerio("").(*appscenarios.Podinfo)
+			pr = appscenarios.NewPrometheusScenerio("").(*appscenarios.Prometheus)
 			err := pr.InstallPreviousVersion(ctx, env)
 			Expect(err).ToNot(HaveOccurred())
 
-			hr = &fluxhelmv2.HelmRelease{
+			hr = &fluxhelmv2beta2.HelmRelease{
 				TypeMeta: metav1.TypeMeta{
-					Kind:       fluxhelmv2.HelmReleaseKind,
-					APIVersion: fluxhelmv2.GroupVersion.Version,
+					Kind:       fluxhelmv2beta2.HelmReleaseKind,
+					APIVersion: fluxhelmv2beta2.GroupVersion.Version,
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      pr.Name(),
@@ -114,14 +115,14 @@ var _ = Describe("podinfo Tests", Ordered, Label("podinfo"), func() {
 			}).WithPolling(constant.POLL_INTERVAL).WithTimeout(5 * time.Minute).Should(Succeed())
 		})
 
-		It("should upgrade podinfo successfully", func() {
+		It("should upgrade prometheus successfully", func() {
 			err := pr.Upgrade(ctx, env)
 			Expect(err).ToNot(HaveOccurred())
 
-			hr = &fluxhelmv2.HelmRelease{
+			hr = &fluxhelmv2beta2.HelmRelease{
 				TypeMeta: metav1.TypeMeta{
-					Kind:       fluxhelmv2.HelmReleaseKind,
-					APIVersion: fluxhelmv2.GroupVersion.Version,
+					Kind:       fluxhelmv2beta2.HelmReleaseKind,
+					APIVersion: fluxhelmv2beta2.GroupVersion.Version,
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      pr.Name(),
@@ -139,7 +140,7 @@ var _ = Describe("podinfo Tests", Ordered, Label("podinfo"), func() {
 				for _, cond := range hr.Status.Conditions {
 					if cond.Status == metav1.ConditionTrue &&
 						cond.Type == apimeta.ReadyCondition &&
-						cond.Reason == fluxhelmv2.UpgradeSucceededReason {
+						cond.Reason == fluxHelmApiV2.UpgradeSucceededReason {
 						return nil
 					}
 				}

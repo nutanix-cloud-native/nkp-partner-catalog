@@ -15,14 +15,14 @@ func AbsolutePathTo(application, appVersion string) (string, error) {
 
 	// determining the execution path.
 	var base string
-	_, err = os.Stat(filepath.Join(wd, "applications"))
+	_, err = os.Stat(filepath.Join(wd, "services"))
 	if os.IsNotExist(err) {
 		base = "../.."
 	} else {
 		base = ""
 	}
 
-	dir, err := filepath.Abs(filepath.Join(wd, base, "applications", application))
+	dir, err := filepath.Abs(filepath.Join(wd, base, "services", application))
 	if err != nil {
 		return "", err
 	}
@@ -66,14 +66,14 @@ func GetPrevVAppsUpgradePath(application string) (string, error) {
 
 	// determining the execution path.
 	var base string
-	_, err = os.Stat(filepath.Join(wd, "applications"))
+	_, err = os.Stat(filepath.Join(wd, "services"))
 	if os.IsNotExist(err) {
 		base = "../.."
 	} else {
 		base = ""
 	}
 
-	dir, err := filepath.Abs(filepath.Join(wd, base, "applications", application))
+	dir, err := filepath.Abs(filepath.Join(wd, base, "services", application))
 	if err != nil {
 		return "", err
 	}
