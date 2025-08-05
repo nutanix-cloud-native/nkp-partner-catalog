@@ -21,7 +21,7 @@ If you would like to contribute to nkp partner catalog, you're welcome to open a
 clone this git repo `git clone git@github.com:nutanix-cloud-native/nkp-partner-catalog.git`
 
 ### Prerequisites
-- [just](https://just.systems/man/en/introduction.html) command runner. 
+- [just](https://just.systems/man/en/introduction.html) command runner.
 - Not compulsary, but can use nkp cli tool to get started with creation of new application, validation of application. Get the nkp cli via running `just nkp-cli`, this will download the binary to `.local/bin`.
 
 ### Create new app
@@ -32,7 +32,7 @@ clone this git repo `git clone git@github.com:nutanix-cloud-native/nkp-partner-c
   new-app
   └── 1.0.0
       ├── helmrelease
-      │   ├── cm.yaml                   // k8s config map 
+      │   ├── cm.yaml                   // k8s config map
       │   ├── helmrelease.yaml          // ocirepository and helmrelease
       │   └── kustomization.yaml
       ├── helmrelease.yaml              // fluxcd kustomize entry point
