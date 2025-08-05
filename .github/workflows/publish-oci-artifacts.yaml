@@ -59,7 +59,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create and publish artifacts
-        run: |
-            export GOOS=linux
-            export GOARCH=amd64
-            devbox run -- just create-publish-artifacts ghcr.io/nutanix-cloud-native ${{ inputs.COLLECTION_TAG }} "${{ inputs.ARTIFACT_CONSTRAINT }}" "${{ inputs.ARTIFACT_APPS }}"
+        run: devbox run -- "GOOS=linux GOARCH=amd64 just create-publish-artifacts"
+        env:
+          COLLECTION_TAG: ${{ inputs.COLLECTION_TAG }}
+          ARTIFACT_CONSTRAINT: ${{ inputs.ARTIFACT_CONSTRAINT }}
+          ARTIFACT_APPS: ${{ inputs.ARTIFACT_APPS }}
