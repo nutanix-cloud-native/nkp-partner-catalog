@@ -41,4 +41,4 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create and publish artifacts
-        run: devbox run -- just create-publish-artifacts ghcr.io/nutanix-cloud-native ${{ inputs.COLLECTION_TAG }} "${{ inputs.ARTIFACT_APPS }}"
+        run: devbox run -- just publish-artifacts ghcr.io/nutanix-cloud-native ${{ inputs.COLLECTION_TAG }} "${{ inputs.ARTIFACT_APPS }}"
