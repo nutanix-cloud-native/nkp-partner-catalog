@@ -1,8 +1,8 @@
-import 'just/catalog-plugin.just'
 import 'just/tools.just'
 import 'just/validate.just'
-import 'just/create-publish-artifacts.just'
+import 'just/release.just'
 
+# Runs pre-commit hooks and gitlint
 pre-commit:
     env VIRTUALENV_PIP=24.0 pre-commit install-hooks
     pre-commit run -a --show-diff-on-failure
