@@ -404,54 +404,6 @@
         }
       }
     },
-    "oras@latest": {
-      "last_modified": "2025-03-11T17:52:14Z",
-      "resolved": "github:NixOS/nixpkgs/0d534853a55b5d02a4ababa1d71921ce8f0aee4c#oras",
-      "source": "devbox-search",
-      "version": "1.2.2",
-      "systems": {
-        "aarch64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/44vg1rg870hm8fv6i649rpws1hrv2n45-oras-1.2.2",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/44vg1rg870hm8fv6i649rpws1hrv2n45-oras-1.2.2"
-        },
-        "aarch64-linux": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/vn84an275xya825ji0x4sgz3fqdx9lry-oras-1.2.2",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/vn84an275xya825ji0x4sgz3fqdx9lry-oras-1.2.2"
-        },
-        "x86_64-darwin": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/im39xs9l81f3ws3p5wrh30saldz6fwh3-oras-1.2.2",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/im39xs9l81f3ws3p5wrh30saldz6fwh3-oras-1.2.2"
-        },
-        "x86_64-linux": {
-          "outputs": [
-            {
-              "name": "out",
-              "path": "/nix/store/z8r6cdn8srgvb0w2dmbh5spk9k0krm9v-oras-1.2.2",
-              "default": true
-            }
-          ],
-          "store_path": "/nix/store/z8r6cdn8srgvb0w2dmbh5spk9k0krm9v-oras-1.2.2"
-        }
-      }
-    },
     "pre-commit@latest": {
       "last_modified": "2025-04-12T15:53:49Z",
       "resolved": "github:NixOS/nixpkgs/52d0eded529af34e91df6b2a2bc32eb636637cd2#pre-commit",
