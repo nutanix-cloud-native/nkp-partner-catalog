@@ -6,19 +6,19 @@ This repository is dedicated to storing applications manifests and other metadat
 
 ## Finding your way around
 
-- **`applications/`**  
+- **`applications/`**
   Contains all partner applications. Each application can have multiple versions organized in **semver-named subdirectories**. Each version directory includes the manifest files corresponding that single version.
 
-- **`just/`**  
+- **`just/`**
   Contains [just](https://just.systems/man/en/introduction.html) recipes used to perform various actions on the applications.
 
-- **`apptests/`**  
+- **`apptests/`**
   Contains test suites for each application's installation and upgrade scenarios.
 
 ---
 
 ## Signing commits
 
-All commits to this repository **must be signed**.  
-Learn how to sign your commits here:  
+All commits to this repository **must be signed**.
+Learn how to sign your commits here:
 [Managing commit signature verification](https://docs.github.com/en/authentication/managing-commit-signature-verification)
