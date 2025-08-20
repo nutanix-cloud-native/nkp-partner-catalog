@@ -4,7 +4,6 @@
     "git@latest",
     "gettext@latest",
     "just@latest",
-    "git@latest",
     "actionlint@latest",
     "shfmt@latest",
     "pre-commit@latest",
