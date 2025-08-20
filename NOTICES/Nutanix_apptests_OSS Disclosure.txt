@@ -4,13 +4,13 @@ Nutanix_apptests
 
 This notices file applies to the Nutanix product offering it is distributed with and as may be published in the Nutanix portal.
 
-Nutanix product offerings may include open source software, including without limitation, a Linux distribution base image or utilities, that is copyrighted by the respective authors.  The components and their licenses listed in this Notice are provided for notification as required by the various open source licenses.  Where more than one license is stated for an open source component, Nutanix elects the most permissive license. 
- 
-If required by an open source license, Nutanix will provide a copy of the open source component source code upon request,  within a reasonable period of time, and for a reasonable fee.  You may send a request to: Nutanix, Inc.,1740 Technology Dr Ste 150, San Jose, CA 95110;  Attention: Legal.  All requests for source code must include (i) the applicable Nutanix product offering name and version containing the open source component, (ii) the open source component name and version for which the source code is being requested, (iii) your name, (iv) your organization or company’s name (if applicable), (v) your return mailing and email address (if available). 
+Nutanix product offerings may include open source software, including without limitation, a Linux distribution base image or utilities, that is copyrighted by the respective authors.  The components and their licenses listed in this Notice are provided for notification as required by the various open source licenses.  Where more than one license is stated for an open source component, Nutanix elects the most permissive license.
+
+If required by an open source license, Nutanix will provide a copy of the open source component source code upon request,  within a reasonable period of time, and for a reasonable fee.  You may send a request to: Nutanix, Inc.,1740 Technology Dr Ste 150, San Jose, CA 95110;  Attention: Legal.  All requests for source code must include (i) the applicable Nutanix product offering name and version containing the open source component, (ii) the open source component name and version for which the source code is being requested, (iii) your name, (iv) your organization or company’s name (if applicable), (v) your return mailing and email address (if available).
 
 NOTE: Disclosure files for Nutanix product Patch Releases are generated automatically and may contain errata. For curated disclosure files, please review the files distributed with Major, Minor, and Maintenance Releases in the Nutanix Support Portal.
 
-Components: 
+Components:
 
 alecthomas-kingpin v2.2.6: https://github.com/alecthomas/kingpin : MIT License
 alecthomas-kingpin v2.4.0: https://github.com/alecthomas/kingpin : MIT License
@@ -477,7 +477,7 @@ yaml for Go v3.0.1: https://github.com/go-yaml/yaml : (MIT License AND Apache Li
 yuin/goldmark v1.4.13: https://github.com/yuin/goldmark : MIT License
 yvasiyarov-go-metrics 20161221-snapshot-57bccd1c: https://github.com/yvasiyarov/go-metrics : BSD 2-clause "Simplified" License
 
-Copyright Text: 
+Copyright Text:
 
 alecthomas-kingpin v2.2.6 github:alecthomas/kingpin:v2.2.6: https://github.com/alecthomas/kingpin
 	Copyright (C) 2014 Alec Thomas
@@ -719,7 +719,7 @@ containerd/containerd v1.7.20 github:containerd/containerd:v1.7.20: https://cont
 	Copyright (c) 2015 Microsoft
 	Copyright (c) 2016 Caleb Spare.
 	Copyright (c) 2016 json-iterator
-	Copyright (c) 2017 Intel Corporation Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of 
+	Copyright (c) 2017 Intel Corporation Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of
 	Copyright (c) 2017 Nathan Sweet
 	Copyright (c) 2018 Microsoft Corp. All rights reserved
 	Copyright (c) 2018-2019 Cloudflare
@@ -1012,7 +1012,7 @@ docker v27.1.1 github:docker/docker:v27.1.1: https://github.com/docker/swarm
 	Copyright (c) 2015 Microsoft Corporation
 	Copyright (c) 2015 Pivotal Software, Inc.
 	Copyright (c) 2015 Rackspace. All rights reserved
-	Copyright (c) 2015 The GoGo Authors. rights reserved. http://github.com/gogo/protobuf Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+	Copyright (c) 2015 The GoGo Authors. rights reserved. http://github.com/gogo/protobuf Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
 	Copyright (c) 2015 Vincent Batts, Raleigh, NC, USA All rights reserved
 	Copyright (c) 2015-2020 Tim Heckman All rights reserved
 	Copyright (c) 2015Present CloudFoundry.org Foundation, Inc. All Rights Reserved
@@ -1157,7 +1157,7 @@ docker-cli v27.3.1 github:docker/cli:v27.3.1: https://github.com/docker/cli
 	Copyright (c) 2023 The Gorilla Authors. All rights reserved
 	Copyright (c) OASIS Open 2016. All Rights Reserved
 	Copyright 2008, 2012, 2023 Google Inc. All Rights Reserved
-	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source 
+	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source
 	Copyright 2009-2024 The Go Authors. All rights reserved
 	Copyright 2010 The Go Authors
 	Copyright 2011, 2016 The Snappy-Go Authors. All rights reserved
@@ -1761,28 +1761,28 @@ golang-jwt/jwt v5.2.1 github:golang-jwt/jwt:v5.2.1: https://github.com/golang-jw
 golang-levenshtein v1.0.1 github:texttheater/golang-levenshtein:v1.0.1: https://github.com/texttheater/golang-levenshtein
 	Copyright (c) 2013 Kilian Evang and contributors
 golang.org/x/crypto v0.32.0 long_tail:go.googlesource.com/crypto#v0.32.0: https://godoc.org/golang.org/x/crypto
-	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source 
+	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source
 	Copyright 2009-2024 The Go Authors. All rights reserved
 golang.org/x/mod v0.22.0 long_tail:go.googlesource.com/mod#v0.22.0
-	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source 
+	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source
 	Copyright 2018-2021 The Go Authors. All rights reserved
 golang.org/x/net v0.34.0 long_tail:go.googlesource.com/net#v0.34.0: https://godoc.org/golang.org/x/net
 	Copyright (C) 2009 Apple Inc. All rights reserved
-	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source 
+	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source
 	Copyright 2009-2024 The Go Authors. All rights reserved
 golang.org/x/oauth2 v0.24.0 long_tail:go.googlesource.com/oauth2#v0.24.0: https://pkg.go.dev/golang.org/x/oauth2
-	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source 
+	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source
 	Copyright 2014-2024 The Go Authors. All rights reserved
 	Copyright 2015, 2017-2018 The oauth2 Authors. All rights reserved
 golang.org/x/sys v0.29.0 long_tail:go.googlesource.com/sys#v0.29.0: https://pkg.go.dev/golang.org/x/sync
-	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source 
+	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source
 	Copyright 2009-2024 The Go Authors. All rights reserved
 	Copyright 2017 The Go Authors. All right reserved.
 golang.org/x/term v0.28.0 long_tail:go.googlesource.com/term#v0.28.0: https://go.googlesource.com/term
-	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source 
+	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source
 	Copyright 2011, 2013, 2019, 2021 The Go Authors. All rights reserved
 golang.org/x/time v0.8.0 long_tail:go.googlesource.com/time#v0.8.0: https://pkg.go.dev/golang.org/x/time
-	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source 
+	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source
 	Copyright 2015, 2022 The Go Authors. All rights reserved
 golang.org/x/tools v0.28.0 long_tail:go.googlesource.com/tools#v0.28.0: https://pkg.go.dev/golang.org/x/tools
 	(c) v := "200602-01" a.Format(v) Allowed though variables. m := map[string]string{ "y": "2006-02-01",
@@ -1790,7 +1790,7 @@ golang.org/x/tools v0.28.0 long_tail:go.googlesource.com/tools#v0.28.0: https://
 	Copyright (c) 2013 TOML authors
 	Copyright (c) 2015, 2019 Daniel Mart Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source
 	Copyright (c) 2016 Dominik Honnef
-	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source 
+	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source
 	Copyright 2009-2024 The Go Authors. All rights reserved
 	Copyright 2013 jQuery Foundation and other contributors Licensed MIT
 	Copyright © 1994-1999 Lucent Technologies Inc. All rights reserved
@@ -1815,7 +1815,7 @@ golang/sync v0.10.0 long_tail:go.googlesource.com/sync#v0.10.0: https://pkg.go.d
 golang/telemetry 20240517-snapshot-bda55230 github:golang/telemetry:bda55230c457d8271c577c0da94d4b94e3543dd4
 	No Copyrights found
 golang/text v0.21.0 long_tail:go.googlesource.com/text#v0.21.0: https://github.com/golang/text
-	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source 
+	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source
 	Copyright 2009, 2011-2019, 2021 The Go Authors. All rights reserved
 go-ldap-ldap v3.4.6 github:go-LDAP/LDAP:v3.4.6: https://github.com/go-ldap/ldap
 	Copyright (c) 2011-2015 Michael Mitton (mmitton@gmail.com)
@@ -1954,7 +1954,7 @@ go.uber.org/multierr v1.11.0 github:uber-go/multierr:v1.11.0: https://github.com
 govalidator 20230301-snapshot-a9d515a0 github:asaskevich/govalidator:a9d515a09cc289c60d55064edec5ef189859f172: https://github.com/asaskevich/govalidator
 	No Copyrights found
 go-warnings/warnings v0.1.2 github:go-warnings/warnings:v0.1.2: https://github.com/go-warnings/warnings
-	Copyright (c) 2016 P Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source code must 
+	Copyright (c) 2016 P Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source code must
 go-zap v1.27.0 github:uber-go/zap:v1.27.0: https://godoc.org/go.uber.org/zap
 	Copyright (c) 2016-2023 Uber Technologies, Inc.
 go-zfs v3.0.1 github:mistifyio/go-zfs:v3.0.1: https://github.com/mistifyio/go-zfs
@@ -2146,7 +2146,7 @@ kubernetes-sigs/apiserver-network-proxy konnectivity-client/v0.31.0 github:kuber
 	Copyright (c) 2019 Vladimir Vivien
 	Copyright (c) 2019present Faye Amacker
 	Copyright 2008, 2013-2014, 2016, 2017-2018, 2021, 2023 Google Inc. All Rights Reserved
-	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source 
+	Copyright 2009 The Go Authors. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: Redistributions of source
 	Copyright 2009-2024 The Go Authors. All rights reserved
 	Copyright 2010 The Go Authors
 	Copyright 2010-2011 Google Inc.
@@ -2525,7 +2525,7 @@ ProtonMail/go-crypto v1.0.0 github:ProtonMail/go-crypto:v1.0.0: https://github.c
 	Copyright (C) 2019 ProtonTech AG package algorithm
 	Copyright (C) 2019 ProtonTech AG Package eax provides an implementation of the EAX (encrypt-authenticate-translate) mode of operation, as described in Bellare, Rogaway, and Wagner "THE EAX MODE OF OPE
 	Copyright (C) 2019 ProtonTech AG package integrationtests
-	Copyright (C) 2019 ProtonTech AG Package ocb provides an implementation of the OCB (offset codebook) mode of operation, as described in RFC-7253 of the IRTF and in Rogaway, Bellare, Black and Krovetz 
+	Copyright (C) 2019 ProtonTech AG Package ocb provides an implementation of the OCB (offset codebook) mode of operation, as described in RFC-7253 of the IRTF and in Rogaway, Bellare, Black and Krovetz
 	Copyright (C) 2019 ProtonTech AG This file contains necessary tools for the aex and ocb packages. These functions SHOULD NOT be used elsewhere, since they are optimized for specific input nature in th
 	Copyright 2010-2013, 2017 The Go Authors. All rights reserved
 	Copyright 2011 ThePiachu. All rights reserved
@@ -2699,7 +2699,7 @@ yuin/goldmark v1.4.13 github:yuin/goldmark:v1.4.13: https://github.com/yuin/gold
 yvasiyarov-go-metrics 20161221-snapshot-57bccd1c github:yvasiyarov/go-metrics:57bccd1ccd43f94bb17fdd8bf3007059b802f85e: https://github.com/yvasiyarov/go-metrics
 	Copyright 2012 Richard Crowley. All rights reserved
 
-Licenses: 
+Licenses:
 
 Apache License 2.0
 (aws/aws-sdk-go-v2 config/v1.27.11, aws/aws-sdk-go-v2 credentials/v1.17.11, aws/aws-sdk-go-v2 feature/ec2/imds/v1.16.1, aws/aws-sdk-go-v2 internal/configsources/v1.3.5, aws/aws-sdk-go-v2 internal/endpoints/v2.6.5, aws/aws-sdk-go-v2 internal/ini/v1.8.0, aws/aws-sdk-go-v2 service/ecr/v1.27.4, aws/aws-sdk-go-v2 service/internal/accept-encoding/v1.11.2, aws/aws-sdk-go-v2 service/internal/presigned-url/v1.11.7, aws/aws-sdk-go-v2 service/sso/v1.20.5, aws/aws-sdk-go-v2 service/ssooidc/v1.23.4, aws/aws-sdk-go-v2 service/sts/v1.28.6, aws/aws-sdk-go-v2 v1.26.1, Bazel rules_go v0.34.0, bazelbuild/bazelisk v1.13.2, bgentry-speakeasy 0.1.0, btree v1.1.3, census-instrumentation/opencensus-go v0.24.0, client-go v0.32.3, client_golang v1.20.3, container-orchestrated-devices/container-device-interface v0.7.0, container-orchestrated-devices/container-device-interface v0.7.2, containerd/btrfs v2.0.0, containerd/cgroups v1.1.0, containerd/cgroups v3.0.2, containerd/console 1.0.3, containerd/containerd api/v1.7.19, containerd/containerd v1.7.20, containerd/continuity v0.4.2, containerd/fifo v1.1.0, containerd/go-runc v1.0.0, containerd/imgcrypt v1.1.8, containerd/nri v0.6.1, containerd/stargz-snapshotter estargz/v0.14.3, containerd/typeurl 1.0.2, containerd/typeurl v2.1.1, containernetworking/plugins v1.2.0, containers/ocicrypt v1.1.10, CoreOS v0.3.1, coreos-go-oidc v2.2.1, docker v27.1.1, docker-cli v27.3.1, docker-go-units v0.5.0, docker-org 20190806-snapshot-e31b211e, docker-registry 2.8.3, docker/go-metrics v0.0.1, dvyukov-go-fuzz 20210103-snapshot-6a8e9d1f, envoyproxy/go-control-plane v0.13.0, envoyproxy/protoc-gen-validate 1.1.0, fluxcd-flux2 2.3.0, fluxcd/go-git-providers v0.20.1, fluxcd/image-automation-controller api/v0.38.0, fluxcd/image-reflector-controller api/v0.32.0, fluxcd/kustomize-controller api/v1.3.0, fluxcd/notification-controller api/v1.3.0, fluxcd/pkg apis/acl/v0.6.0, fluxcd/pkg apis/event/v0.10.1, fluxcd/pkg apis/kustomize/v1.5.0, fluxcd/pkg apis/meta/v1.10.0, fluxcd/pkg envsubst/v1.1.0, fluxcd/pkg git/gogit/v0.19.0, fluxcd/pkg git/v0.19.0, fluxcd/pkg kustomize/v1.11.0, fluxcd/pkg oci/v0.37.1, fluxcd/pkg runtime/v0.49.1, fluxcd/pkg sourceignore/v0.7.0, fluxcd/pkg ssa/v0.41.1, fluxcd/pkg ssh/v0.13.0, fluxcd/pkg tar/v0.7.0, fluxcd/pkg version/v0.4.0, fluxcd/source-controller api/v1.5.0, gengo 20240911-snapshot-2b36238f, github.com/AdaLogics/go-fuzz-headers 20230811-snapshot-ced1acdc, github.com/AdamKorcz/go-118-fuzz-build 20230306-snapshot-8075edf8, github.com/aws/smithy-go v1.20.2, github.com/cncf/xds 20240723-snapshot-024c85f9, github.com/containerd/aufs v1.0.0, github.com/containerd/errdefs 0.1.0, github.com/containerd/go-cni v1.1.9, github.com/containerd/log v0.1.0, github.com/containerd/platforms 0.2.1, github.com/containerd/ttrpc v1.2.5, github.com/containerd/zfs v1.1.0, github.com/containernetworking/cni v1.1.2, github.com/distribution/distribution v3.0.0-alpha.1, github.com/distribution/reference v0.6.0, github.com/fluxcd/helm-controller api/v1.0.1, github.com/go-logr/zapr v1.3.0, github.com/godror/knownpb v0.1.1, github.com/gomodule/redigo v1.8.2, github.com/google/cel-spec v0.18.0, github.com/google/go-containerregistry v0.19.1, github.com/google/safetext 20230106-snapshot-7156a760, github.com/moby/docker-image-spec v1.3.1, github.com/moby/locker 1.0.1, github.com/moby/spdystream v0.5.0, github.com/pjbgf/sha1cd v0.3.0, github.com/skeema/knownhosts v1.2.2, go-etcd api/v3.5.16, go-etcd client/pkg/v3.5.16, go-etcd client/v2.305.16, go-etcd client/v3.5.16, go-etcd pkg/v3.5.16, go-etcd raft/v3.5.16, go-etcd server/v3.5.16, go-git/go-billy v5.5.0, go-git/go-git v5.12.0, go-jose v2.6.0, go-jose v3.0.3, go-logr/logr v1.4.2, go-logr/stdr v1.2.2, go-openapi/jsonpointer v0.21.0, go-systemd v22.5.0, go-zfs v3.0.1, go.opentelemetry.io/proto otlp/v1.3.1, godebug v1.1.0, godror/godror v0.40.4, golang-github-docker-go-connections-dev v0.5.0, golang-github-docker-libtrust-dev 20160225-snapshot-fa567046, golang-sql/civil 20190719-snapshot-cb61b32a, golang/appengine v1.6.8, golang/glog v1.2.2, gomodules/jsonpatch v2.4.0, google-cloud-go compute/metadata/v0.5.0, google-gofuzz v1.2.0, google-shlex 20191202-snapshot-e7afc7fb, google/cel-go v0.22.0, google/gnostic-models 20230804-snapshot-c7be7c78, google/pprof 20241029-snapshot-d1b30feb, googleapis/go-genproto 20240123-snapshot-ef431310, googleapis/go-genproto 20241118-snapshot-e639e219, googleapis/go-genproto 20241209-snapshot-e6fa225c, gotest.tools v3.5.1, groupcache 20210331-snapshot-41bb18bf, grpc-ecosystem/go-grpc-middleware v1.3.0, grpc-ecosystem/go-grpc-prometheus v1.2.0, grpc-go v1.67.1, helm/helm v3.15.4, inconshreveable/mousetrap v1.1.0, intel/goresctrl v0.3.0, jmespath-go-jmespath v0.4.0, jonboulle-clockwork v0.4.0, jsonreference v0.21.0, k8s.io/cli-runtime v0.32.3, k8s.io/code-generator v0.32.3, k8s.io/component-helpers v0.31.1, k8s.io/klog 2.130.1, k8s.io/kube-openapi 20241105-snapshot-32ad38e4, k8s.io/utils 20241104-snapshot-3ea5e8ce, kubectl v0.31.1, kubernetes-sigs/apiserver-network-proxy konnectivity-client/v0.31.0, kubernetes-sigs/kind v0.24.0, kubernetes-sigs/structured-merge-diff v4.4.2, kubernetes/api v0.32.3, kubernetes/apiextensions-apiserver v0.32.3, kubernetes/apimachinery v0.32.3, kubernetes/apiserver v0.32.3, kubernetes/component-base v0.32.3, kubernetes/cri-api v0.27.1, kubernetes/kms v0.32.3, kubernetes/metrics v0.31.1, kustomize api/v0.18.0, kustomize kustomize/v5.4.2, kustomize kyaml/v0.18.1, Masterminds/goutils v1.1.1, matttproud-golang_protobuf_extensions v1.0.4, minio/sha256-simd v1.0.0, moby/sys mountinfo/v0.6.2, moby/sys sequential/v0.5.0, moby/sys signal/v0.7.0, moby/sys symlink/v0.2.0, moby/sys user/v0.1.0, moby/term v0.5.0, modern-go/concurrent 20180305-snapshot-bacd9c7e, modern-go/reflect2 v1.0.2, mwitkow/go-conntrack 20190716-snapshot-2f068394, notaryproject/notation-core-go v1.0.2, notaryproject/notation-go v1.1.0, NYTimes-gziphandler v1.1.1, open-telemetry/opentelemetry-go exporters/otlp/otlpmetric/otlpmetricgrpc/v0.44.0, open-telemetry/opentelemetry-go exporters/otlp/otlpmetric/otlpmetrichttp/v0.44.0, open-telemetry/opentelemetry-go exporters/otlp/otlptrace/otlptracegrpc/v1.27.0, open-telemetry/opentelemetry-go exporters/otlp/otlptrace/otlptracehttp/v1.21.0, open-telemetry/opentelemetry-go exporters/otlp/otlptrace/v1.28.0, open-telemetry/opentelemetry-go exporters/prometheus/v0.44.0, open-telemetry/opentelemetry-go exporters/stdout/stdoutmetric/v0.44.0, open-telemetry/opentelemetry-go exporters/stdout/stdouttrace/v1.21.0, open-telemetry/opentelemetry-go metric/v1.29.0, open-telemetry/opentelemetry-go sdk/metric/v1.21.0, open-telemetry/opentelemetry-go sdk/v1.28.0, open-telemetry/opentelemetry-go trace/v1.29.0, open-telemetry/opentelemetry-go v1.29.0, open-telemetry/opentelemetry-go-contrib exporters/autoexport/v0.46.1, open-telemetry/opentelemetry-go-contrib instrumentation/google.golang.org/grpc/otelgrpc/v0.53.0, open-telemetry/opentelemetry-go-contrib instrumentation/net/http/otelhttp/v0.54.0, OpenCensus v0.4.1, opencontainers-runtime-spec v1.1.0, opencontainers/go-digest 1.0.0, opencontainers/image-spec v1.1.0, opencontainers/runtime-tools 20221107-snapshot-2e043c6b, opencontainers/selinux v1.11.0, oras.land/oras-go v1.2.5, pmezard-go-difflib 20190219-snapshot-5d4384ee, pquerna/cachecontrol v0.1.0, prometheus-client_model v0.6.1, prometheus-common 0.55.0, prometheus-procfs v0.15.1, sigs.k8s.io/controller-runtime v0.20.1, sigs.k8s.io/json 20241010-snapshot-9aa6b5e7, sigs.k8s.io/yaml v1.4.0, soheilhy/cmux v0.1.5, spf13-cobra 1.8.1, stefanberger/go-pkcs11uri 20230615-snapshot-78284954, swag v0.23.0, theckman/yacspin v0.13.12, uber-go/mock v0.4.0, vishvananda-netlink v1.2.1-beta.2, vishvananda-netns 20210104-snapshot-2eb08e3e, xanzy-ssh-agent v0.3.3, xanzy/go-gitlab v0.101.0, xeipuuv-gojsonpointer 20190904-snapshot-02993c40, xeipuuv-gojsonreference 20180127-snapshot-bd5ef7bd, xeipuuv/gojsonschema v1.2.0, yaml for Go v2.4.0, yaml for Go v3.0.1)
@@ -3207,7 +3207,7 @@ BSD 3-clause "New" or "Revised" License
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
 
-   
+
 
 Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are
@@ -3378,7 +3378,7 @@ BSD 3-clause "New" or "Revised" License
 Copyright (c) 2014, Evan Phoenix
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without 
+Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
 * Redistributions of source code must retain the above copyright notice, this
@@ -3386,19 +3386,19 @@ modification, are permitted provided that the following conditions are met:
 * Redistributions in binary form must reproduce the above copyright notice,
   this list of conditions and the following disclaimer in the documentation
   and/or other materials provided with the distribution.
-* Neither the name of the Evan Phoenix nor the names of its contributors 
-  may be used to endorse or promote products derived from this software 
+* Neither the name of the Evan Phoenix nor the names of its contributors
+  may be used to endorse or promote products derived from this software
   without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE 
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, 
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 
 ---
@@ -5096,12 +5096,12 @@ Version 2.0
 
   means
 
-    a. 
+    a.
 
       that the initial Contributor has attached the notice described in Exhibit B
       to the Covered Software; or
 
-    b. 
+    b.
 
       that the Covered Software was made available under the terms of version 1.1
       or earlier of the License, but not also under the terms of a Secondary
@@ -5130,12 +5130,12 @@ Version 2.0
 
   means any of the following:
 
-    a. 
+    a.
 
       any file in Source Code Form that results from an addition to, deletion
       from, or modification of the contents of Covered Software; or
 
-    b. 
+    b.
 
       any new file in Source Code Form that contains any Covered Software.
 
@@ -5177,7 +5177,7 @@ Version 2.0
   Each Contributor hereby grants You a world-wide, royalty-free, non-exclusive
   license:
 
-    a. 
+    a.
 
       under intellectual property rights (other than patent or trademark)
       Licensable by such Contributor to use, reproduce, make available, modify,
@@ -5185,7 +5185,7 @@ Version 2.0
       either on an unmodified basis, with Modifications, or as part of a Larger
       Work; and
 
-    b. 
+    b.
 
       under Patent Claims of such Contributor to make, use, sell, offer for sale,
       have made, import, and otherwise transfer either its Contributions or its
@@ -5206,18 +5206,18 @@ Version 2.0
   or licensing of Covered Software under this License. Notwithstanding
   Section 2.1(b) above, no patent license is granted by a Contributor:
 
-    a. 
+    a.
 
       for any code that a Contributor has removed from Covered Software; or
 
-    b. 
+    b.
 
       for infringements caused by: (i) Your and any other third party's
       modifications of Covered Software, or (ii) the combination of its
       Contributions with other software (except as part of its Contributor
       Version); or
 
-    c. 
+    c.
 
       under Patent Claims infringed by Covered Software in the absence of its
       Contributions.
@@ -5272,7 +5272,7 @@ Version 2.0
 
   If You distribute Covered Software in Executable Form then:
 
-    a. 
+    a.
 
       such Covered Software must also be made available in Source Code Form, as
       described in Section 3.1, and You must inform recipients of the Executable
@@ -5280,7 +5280,7 @@ Version 2.0
       means in a timely manner, at a charge no more than the cost of distribution
       to the recipient; and
 
-    b. 
+    b.
 
       You may distribute such Executable Form under the terms of this License, or
       sublicense it under different terms, provided that the license for the
@@ -5575,4 +5575,3 @@ the following restrictions:
       3. This notice may not be removed or altered from any source distribution.
 
 ---
-

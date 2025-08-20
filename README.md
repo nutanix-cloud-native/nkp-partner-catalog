@@ -1,5 +1,6 @@
-# [[github_repo_name]]
-[[github_repo_description]]
+# Nutanix NKP Partner Catalog
+
+All source code and other contents in this repository are covered by the Nutanix License and Services Agreement, which is located at https://www.nutanix.com/legal/eula
 
 # Welcome to your new service
 We've created an empty service structure to show you the setup and workflow with Canaveral.
