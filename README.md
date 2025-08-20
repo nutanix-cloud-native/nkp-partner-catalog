@@ -1,4 +1,6 @@
-# nkp-partner-catalog
+All source code and other contents in this repository are covered by the Nutanix License and Services Agreement, which is located at https://www.nutanix.com/legal/eula
+
+# Nutanix NKP Partner Catalog
 
 This repository is dedicated to storing applications manifests and other metadata required for partner applications. Contributions for new applications should be made here and will be reviewed and merged upon approval by the internal team.
 
