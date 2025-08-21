@@ -6,7 +6,7 @@ LOCAL_DIR := REPO_ROOT + "/.local"
 BIN_DIR := LOCAL_DIR + "/bin"
 
 NKP_CLI_VERSION := "0.0.0-dev.0"  # TODO: Update to latest stable
-NKP_CLI := BIN_DIR + "/nkp_v" + NKP_CLI_VERSION
+NKP_CLI := BIN_DIR + "/nkp"
 
 # Download nkp CLI if it's not already present
 [script]
@@ -21,3 +21,6 @@ nkp-cli:
     curl -L --progress-bar "$url" | tar -xz -C .
     mv nkp "{{NKP_CLI}}"
   fi
+
+clean:
+  rm -rf "{{LOCAL_DIR}}"

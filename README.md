@@ -1,30 +1,26 @@
-# Nutanix NKP Partner Catalog
-
 All source code and other contents in this repository are covered by the Nutanix License and Services Agreement, which is located at https://www.nutanix.com/legal/eula
 
-# Welcome to your new service
-We've created an empty service structure to show you the setup and workflow with Canaveral.
+# Nutanix NKP Partner Catalog
 
-### Directory Structure
-The top level directory of your repository should be set up like this:
-  1. `README.md`: this file contains a textual description of the repository.
-  2. `.circleci/`: this directory contains CircleCI's `config.yml` file.
-  3. `hooks/`: this directory, if present, can contain *ad hoc* scripts that customize your build.
-  4. `package/`:  add your `Dockerfile` under `package/docker/` to build a docker image.  (Note:  You can refer to files and folders directly in your `Dockerfile` because all files and folders under `services/` will be copied into the same folder as the `Dockerfile` during build.)
-  5. `services/`: this directory should have a subdirectory for each `service`, *e.g.* `services/my-service/`.  Each subdirectory (often there is only one) would contain the definition (source and tests) for the service.
-  6. `blueprint.json`: this file, if present, contains instructions for Canaveral to deploy the service.
+This repository is dedicated to storing applications manifests and other metadata required for partner applications. Contributions for new applications should be made here and will be reviewed and merged upon approval by the internal team.
 
-### Build
-Canaveral uses CircleCI for building, packaging, and alerting its Deployment Engine. Your repository should have been registered with CircleCI when it was provisioned.  Here are some additional steps you should follow to ensure proper builds:
+---
 
-##### Ensure `.circleci/config.yml` has the correct variables (docker image only)
-  1. Specify your preferred `CANAVERAL_BUILD_SYSTEM` (default is noop)
-  2. Specify your preferred `CANAVERAL_PACKAGE_TOOLS` (use "docker" if deploying a docker image, use "noop" if no packaging is needed)
-  3. **[OPTIONAL]** Specify the target `DOCKERFILE_NAME` to use  (default is Dockerfile)
+## Finding your way around
 
-You'll be able to monitor the build at [circleci.canaveral-corp.us-west-2.aws](https://circleci.canaveral-corp.us-west-2.aws/)
+- **`applications/`**
+  Contains all partner applications. Each application can have multiple versions organized in **semver-named subdirectories**. Each version directory includes the manifest files corresponding that single version.
 
-### Deployment
-To use Canaveral for deployment, `blueprint.json` should be placed at the top level of the repo.  Spec for the blueprint can be found at [Canaveral Blueprint Spec](https://confluence.eng.nutanix.com:8443/x/5kbdBQ).
+- **`just/`**
+  Contains [just](https://just.systems/man/en/introduction.html) recipes used to perform various actions on the applications.
 
-__Questions, issues or suggestions? Reach us at https://nutanix.slack.com/messages/canaveral-onboarding/.__
+- **`apptests/`**
+  Contains test suites for each application's installation and upgrade scenarios.
+
+---
+
+## Signing commits
+
+All commits to this repository **must be signed**.
+Learn how to sign your commits here:
+[Managing commit signature verification](https://docs.github.com/en/authentication/managing-commit-signature-verification)
