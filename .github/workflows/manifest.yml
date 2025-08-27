@@ -27,4 +27,5 @@ jobs:
           skip-nix-installation: true
 
       - name: Run tests
+        if: ${{ hashFiles('applications/**') != '' }}
         run: devbox run -- "GOOS=linux GOARCH=amd64 just validate-manifests"
