@@ -9,7 +9,7 @@ on:
         type: string
       ARTIFACT_APPS:
         description: "Apps to bundle (name=version). Can be a comma-separated list."
-        required: true
+        required: false
         type: string
 
 jobs:
