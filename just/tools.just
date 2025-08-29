@@ -5,7 +5,7 @@ REPO_ROOT := justfile_directory()
 LOCAL_DIR := REPO_ROOT + "/.local"
 BIN_DIR := LOCAL_DIR + "/bin"
 
-NKP_CLI_VERSION := "2.16.0-rc.5"  # TODO: Update to latest stable
+NKP_CLI_VERSION := "0.0.0-dev.0"  # TODO: Update to latest stable
 NKP_CLI := BIN_DIR + "/nkp"
 
 # Download nkp CLI if it's not already present
