@@ -10,102 +10,102 @@ licensing:
 - Enterprise
 overview: |-
   ## Description
-  
+
   Traefik delivers unified API intelligence and governance across both Nutanix AHV virtual machines and Nutanix Kubernetes Platform (NKP) containers. The Nutanix-Traefik partnership extends Nutanix infrastructure excellence into comprehensive application intelligence, providing identity-aware routing, comprehensive security, policy-driven governance, end-to-end observability, and AI runtime policy management.
-  
+
   Traefik in NKP provides a progressive pathway for organizations to evolve their API strategy—from fundamental application routing to sophisticated API Gateway functionality, AI Gateway services, and comprehensive API lifecycle management. Deploy with one click from the NKP catalog to gain automatic service discovery, GitOps-native management, and policy-as-code governance across both VM and container workloads.
-  
+
   **[Request a trial license](https://info.traefik.io/try-traefik-hub-platform)** to get started.
-  
+
   ## Critical Capabilities
-  
-  **Automatic Service Discovery**  
+
+  **Automatic Service Discovery**
   Traefik integrates directly with Prism Central for automatic VM discovery and category-based grouping. For containers, Traefik provides out-of-the-box service discovery that automatically detects new services as they're deployed, with zero-configuration reducing operational overhead.
-  
-  **GitOps-Native Management**  
+
+  **GitOps-Native Management**
   Full deployment and management automation is achieved through Ansible and Terraform integrations, enabling repeatable deployments across environments with GitOps workflows for version control and rollback capabilities.
-  
-  **Policy-as-Code Governance**  
+
+  **Policy-as-Code Governance**
   The platform leverages OIDC, mTLS, and JWT processing to enforce authentication and authorization policies that span VM and container boundaries. Built-in WAF protection blocks common attacks like SQL injection and cross-site scripting using Traefik's Coraza engine.
-  
-  **Comprehensive Observability**  
+
+  **Comprehensive Observability**
   OpenTelemetry integration provides distributed tracing, metrics, and audit-grade logging. Traces span VM and container boundaries across Nutanix infrastructure, providing end-to-end visibility into request flows.
-  
-  **Advanced Traffic Management**  
+
+  **Advanced Traffic Management**
   The platform provides circuit-breaking, retry logic, and canary deployment capabilities. Distributed rate limiting operates across all Traefik instances. Traffic shaping includes circuit breaking, retries, and timeouts.
-  
-  **Multi-Protocol Support**  
+
+  **Multi-Protocol Support**
   Native handling of HTTP/HTTPS, gRPC, WebSocket, TCP, and UDP traffic.
-  
+
   ## Challenges Addressed
-  
-  **Duplicate Tools and Fragmented Operations**  
+
+  **Duplicate Tools and Fragmented Operations**
   Running separate paths for VMs and Kubernetes multiplies tools, fragments policy, and slows audits. Gateways, WAFs, and load balancers are paid for twice and managed twice, with routing rules and policies rebuilt in two places.
-  
-  **Security Gaps and Inconsistent Policies**  
+
+  **Security Gaps and Inconsistent Policies**
   Auth, rate limits, and WAF rules drift across VM and Kubernetes paths. Logs live in different systems, so audits take longer and miss context, with no single policy source of truth.
-  
-  **Manual API Management**  
+
+  **Manual API Management**
   Service discovery becomes manual and cumbersome, with team resources limited for managing infrastructure complexity. Security requirements demand centralized authentication and authorization across multiple teams.
-  
-  **AI and API Delivery Complexity**  
+
+  **AI and API Delivery Complexity**
   Model safeguards and API controls are inconsistent across environments. Extra network hops and sidecars add latency and break SLOs.
-  
-  **Migration and Modernization Challenges**  
+
+  **Migration and Modernization Challenges**
   Moving from ingress to full gateway features triggers rework. Edge and remote sites evolve on their own and create surprises, with VM admins and platform engineers using different playbooks.
-  
-  **Hybrid Infrastructure Management**  
+
+  **Hybrid Infrastructure Management**
   The hybrid reality persists: virtual machines and containers will coexist for years, and organizations need unified application delivery that spans compute substrates and eliminates tool sprawl.
-  
+
   ## Why Traefik API Management on Nutanix?
-  
-  **Unified Fabric for VMs and Containers**  
+
+  **Unified Fabric for VMs and Containers**
   Traefik connects to Prism Central, discovers services across AHV and NKP, and applies one set of policies for routing, security, and governance everywhere, making VMs and Kubernetes feel like one platform.
-  
-  **Nutanix Ready Validated Integration**  
+
+  **Nutanix Ready Validated Integration**
   This Nutanix Ready validated integration eliminates the complexity of managing separate tools for different compute substrates while providing enterprise-grade Layer 7 services. Customers manage application delivery through familiar Nutanix constructs including Prism Central, Flow networking, and category-based policies.
-  
-  **Infrastructure-as-Code Approach**  
+
+  **Infrastructure-as-Code Approach**
   Organizations can define Traefik configurations, routing policies, and security rules as code using the same tools Nutanix customers use for infrastructure provisioning—Ansible and Terraform.
-  
-  **Zero-Dependency Architecture**  
+
+  **Zero-Dependency Architecture**
   The platform supports both connected and air-gapped deployments through signed policy bundles. Traefik operates entirely within Nutanix infrastructure with all routing logic, security enforcement, and policy decisions executing locally without requiring connectivity to external control planes.
-  
-  **Progressive Capability Evolution**  
+
+  **Progressive Capability Evolution**
   Traefik provides a progressive pathway allowing enterprises to advance at their own pace, adopting capabilities sequentially as needs mature, without disruptive migrations or platform changes. Organizations start with Application Proxy, advance to API Gateway, and evolve to full API Management.
-  
-  **AI Workload Governance**  
+
+  **AI Workload Governance**
   For AI workloads running on Nutanix infrastructure, the integration provides NVIDIA Safety NIMs integration, enabling enterprise-controlled AI deployment without external cloud dependencies. The Traefik AI Gateway capability supports model routing governance.
-  
+
   ## Customer Benefits
-  
-  **Simplified Operations**  
+
+  **Simplified Operations**
   Run one gateway for AHV VMs and NKP clusters with shared rules and routes, keeping the same traffic shaping, retries, splits, and transformations across all apps. VM admins and platform teams gain one workflow and one dashboard.
-  
-  **Reduced Costs and Tool Consolidation**  
+
+  **Reduced Costs and Tool Consolidation**
   Consolidate point tools and reduce total cost by eliminating duplicate gateways, WAFs, and load balancers. Every upgrade, license, and support ticket costs less.
-  
-  **Accelerated Deployment**  
+
+  **Accelerated Deployment**
   Zero-configuration service discovery reduces operational overhead with real-time traffic routing adjustments. Simplified configuration through Kubernetes CRDs and annotations provides a centralized entry point.
-  
-  **Enhanced Security and Compliance**  
+
+  **Enhanced Security and Compliance**
   Centralize auth and authorization so policies match in VM and Kubernetes paths. Enforce WAF and safeguards with unified logs for faster, cleaner audits. Works in sovereign and air-gapped environments under complete customer control.
-  
-  **Faster Problem Resolution**  
+
+  **Faster Problem Resolution**
   OpenTelemetry integration provides distributed tracing and audit-grade logging. Traces span VM and container boundaries, providing end-to-end visibility regardless of where application components execute.
-  
-  **Hybrid Cloud Flexibility**  
+
+  **Hybrid Cloud Flexibility**
   Standardize one policy and observability plane across datacenter, edge, and cloud. Route AI alongside APIs with the same controls and protections. The platform works across edge, Nutanix Cloud Clusters, private cloud, and air-gapped environments with complete operational independence.
-  
-  **Future-Ready Architecture**  
+
+  **Future-Ready Architecture**
   Organizations can evolve their API strategy at their own pace while maintaining a consistent platform and operational model, from microservices to sophisticated API ecosystems with AI components.
-  
+
   ---
-  
+
   **Get Started**: Deploy Traefik API Management from the NKP catalog in minutes to unlock comprehensive API intelligence for applications across Nutanix infrastructure. **[Request a trial license](https://info.traefik.io/try-traefik-hub-platform)** to get started.
-  
+
   **[Documentation](https://doc.traefik.io/traefik-hub/introduction/overview)** is available to help you get started with Traefik Hub on NKP.
-  
+
   Override the default license token in the configuration values:
   ```yaml
   hub:
