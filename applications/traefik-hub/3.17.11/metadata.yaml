@@ -1,7 +1,7 @@
 schema: catalog.nkp.nutanix.com/v1/application-metadata
 allowMultipleInstances: false
 category:
-- Partners
+- api-gateway
 displayName: Traefik API Management
 description: Cloud-Native API Intelligence & Management Platform with GitOps-Native Governance
 licensing:
@@ -116,4 +116,5 @@ icon: PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCEtLSBHZW5lcmF0ZWQgYn
 scope:
 - workspace
 supportLink: "https://doc.traefik.io/traefik-hub/"
+type: preferred-partner
 ---
