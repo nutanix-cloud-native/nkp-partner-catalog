@@ -34,4 +34,4 @@ spec:
       retries: 30
   valuesFrom:
   - kind: ConfigMap
-    name: ${releaseName}-config-defaults
+    name: ${releaseName}-3.18.1-config-defaults

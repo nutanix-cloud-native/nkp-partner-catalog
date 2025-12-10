@@ -25,5 +25,5 @@ data:
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
 kind: ConfigMap
 metadata:
-  name: ${releaseName}-config-defaults
+  name: ${releaseName}-3.18.1-config-defaults
   namespace: ${releaseNamespace}
