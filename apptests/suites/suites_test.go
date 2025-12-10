@@ -5,6 +5,7 @@ import (
 	"flag"
 	"testing"
 
+	fluxhelmv2 "github.com/fluxcd/helm-controller/api/v2"
 	"github.com/mesosphere/kommander-applications/apptests/docker"
 	"github.com/mesosphere/kommander-applications/apptests/environment"
 	"github.com/mesosphere/kommander-applications/apptests/flux"
@@ -16,6 +17,8 @@ import (
 	"k8s.io/client-go/rest"
 	genericClient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
+	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
 
 var (
@@ -26,9 +29,12 @@ var (
 	restClientV1Pods rest.Interface
 )
 
-var appVersion = flag.String("app-version", "", "The version of the application")
+var appVersion = flag.String("app-version", "3.17.8", "The version of the application")
 
 var _ = BeforeSuite(func() {
+	// Initialize controller-runtime logger
+	log.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
+
 	ctx = context.Background()
 	var err error
 	network, err = kind.EnsureDockerNetworkExist(ctx, "", false)
@@ -55,7 +61,11 @@ func SetupKindCluster() error {
 		return err
 	}
 
-	k8sClient, err = genericClient.New(env.K8sClient.Config(), genericClient.Options{Scheme: flux.NewScheme()})
+	scheme := flux.NewScheme()
+	// Add helm v2 to the scheme because not available in flux.NewScheme()
+	_ = fluxhelmv2.AddToScheme(scheme)
+
+	k8sClient, err = genericClient.New(env.K8sClient.Config(), genericClient.Options{Scheme: scheme})
 	if err != nil {
 		return err
 	}
@@ -74,6 +84,7 @@ func SetupKindCluster() error {
 
 	restClientV1Pods, err = apiutil.RESTClientForGVK(
 		gvk,
+		false,
 		false,
 		env.K8sClient.Config(),
 		serializer.NewCodecFactory(flux.NewScheme()),
