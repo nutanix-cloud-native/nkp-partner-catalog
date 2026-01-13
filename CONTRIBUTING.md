@@ -86,3 +86,5 @@ nkp validate catalog-repository --repo-dir=/path/to/nkp-partner-catalog
 1. Label the test cases appropriately:
     - With the app name
     - With the type: `install` or `upgrade`
+
+For detailed instructions on creating application tests, including code examples and step-by-step procedures, see the [Application Testing Guide](apptests/README.md).
