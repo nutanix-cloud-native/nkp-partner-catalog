@@ -16,7 +16,7 @@ import (
 	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/appscenarios/constant"
 )
 
-var _ = Describe("cloudcasa Tests", Ordered, Label("cloudcasa"), func() {
+var _ = Describe("cloudcasa-agent Tests", Ordered, Label("cloudcasa-agent"), func() {
 	BeforeEach(OncePerOrdered, func() {
 		err := SetupKindCluster()
 		Expect(err).ToNot(HaveOccurred())
@@ -34,7 +34,7 @@ var _ = Describe("cloudcasa Tests", Ordered, Label("cloudcasa"), func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	Describe("Installing cloudcasa", Ordered, Label("install"), func() {
+	Describe("Installing cloudcasa-agent", Ordered, Label("install"), func() {
 		var (
 			c  *appscenarios.CloudCasa
 			hr *fluxhelmv2.HelmRelease

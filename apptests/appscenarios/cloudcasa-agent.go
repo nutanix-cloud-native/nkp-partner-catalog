@@ -22,7 +22,7 @@ func NewCloudCasaScenario(appVersionToInstall string) scenarios.AppScenario {
 }
 
 func (c *CloudCasa) Name() string {
-	return "cloudcasa"
+	return "cloudcasa-agent"
 }
 
 func (c *CloudCasa) Install(ctx context.Context, env *environment.Env) error {
