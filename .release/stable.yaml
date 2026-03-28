@@ -2,6 +2,8 @@ schema: catalog.nkp.nutanix.com/v1/catalog-release-spec
 releases:
   - tagName: 2.18
     fileName: stable-nkp-partner-catalog-2.18.tar
+    collectionAnnotations:
+      org.opencontainers.image.source: https://github.com/nutanix-cloud-native/nkp-partner-catalog
     applications:
       - name: traefik-hub
         version: "3.17.11"
@@ -9,6 +11,8 @@ releases:
         version: "3.18.1"
   - tagName: 2.17
     fileName: stable-nkp-partner-catalog-2.17.tar
+    collectionAnnotations:
+      org.opencontainers.image.source: https://github.com/nutanix-cloud-native/nkp-partner-catalog
     applications:
       - name: traefik-hub
         version: "3.17.11"
@@ -16,6 +20,8 @@ releases:
         version: "3.18.1"
   - tagName: 2.16
     fileName: stable-nkp-partner-catalog-2.16.tar
+    collectionAnnotations:
+      org.opencontainers.image.source: https://github.com/nutanix-cloud-native/nkp-partner-catalog
     applications:
       - name: traefik-hub
         version: "3.17.11"
