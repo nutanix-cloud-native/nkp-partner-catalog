@@ -3,3 +3,6 @@
 tmp-kind-hack-scripts/
 
 /.local
+
+# Ignore any build artifacts
+*.tar
