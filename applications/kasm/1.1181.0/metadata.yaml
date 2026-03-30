@@ -1,0 +1,55 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+allowMultipleInstances: false
+category:
+  - virtual-desktop
+  - infrastructure
+displayName: Kasm
+description: Stream your workspace directly to your web browser on any device and from any location.
+licensing:
+  - Pro
+  - Ultimate
+  - Enterprise
+overview: |-
+  ## Overview
+
+  Kasm Workspaces provides secure, containerized, and browser-accessible workspaces for a variety of applications. It delivers isolated and secure environments that can be accessed via web browsers, eliminating the need for local installations and enhancing security by keeping sensitive data within your infrastructure. Kasm is ideal for providing VDI, remote browser access, and secure access to development environments.
+
+  The Kasm Helm chart simplifies the deployment of a Kasm Workspaces instance on Kubernetes, enabling rapid deployment and management of your virtual workspace infrastructure.
+
+  ## Highlights
+
+  - **Browser-Based Access:** Access workspaces from any modern web browser, regardless of the user's operating system.
+  - **Containerized Environments:** Provides isolated and secure workspaces using Docker containers.
+  - **Centralized Management:** Manage and scale your workspace infrastructure from a single control plane.
+  - **Enhanced Security:** Keep sensitive data within your infrastructure and leverage Kasm's security features.
+  - **Simplified Deployment:** Deploy Kasm Workspaces on Kubernetes with a single Helm chart.
+
+  ## Prerequisites
+
+  - A TLS certificate secret in the target namespace
+
+  ## Getting Started
+
+  Set the required values before deploying:
+  ```yaml
+  publicAddr: "kasm.contoso.com"
+  certificate:
+    secretName: "<some-cert-secret>"
+  ingress:
+    enabled: true
+  proxyService:
+    type: ClusterIP
+  ```
+  
+  For more configuration options, checkout [Kasm Helm Github](https://github.com/kasmtech/kasm-helm).
+
+  ## Resources
+
+  - [Kasm Workspaces Documentation](https://docs.kasm.com/)
+  - [Kasm Helm Github](https://github.com/kasmtech/kasm-helm)
+
+icon: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHZpZXdCb3g9Ijk3LjQgODEuNyAyNzQuMiAzMTYuNiI+PHBhdGggZD0iTTE2NS44IDMyOS44djI4LjlsNDMuNiAyNC45IDEwLjYgNi4zIDE0LjMgOC4zIDEwLjEtMTguMSA0LjMtMTkuNC0xNC40LTEyLjYtNjguNS0zOS43eiIgc3R5bGU9ImZpbGw6IzE4NWY4NSIvPjxwYXRoIGQ9Ik0zNzEuNiAzMTkuMlYxNjAuOGwtMjguNy0xLTYgOS4zTDMyOCAxODZ2MTA4bC05My43IDU0LjF2NTAuMmM0NS45LTI2LjUgOTEuNC01Mi45IDEzNy4zLTc5LjEiIHN0eWxlPSJmaWxsOiMwZDg0YmUiLz48cGF0aCBkPSJNMTQwLjcgMjE0Ljl2LTc5LjNsLTQzLjMgMjUuMnYxNTguNGw0My4zIDI0Ljl2LTc5bDkzLjYgNTQuMXYtNTAuNGwtNTAuMS0yOC45IDUwLjEtMjl2LTUwLjF6IiBzdHlsZT0iZmlsbDojMmEyZDMxIi8+PHBhdGggZD0iTTIzNC4zIDgxLjdjNDUuOCAyNi40IDkxLjQgNTIuNiAxMzcuMiA3OS4xbC0yNS4yIDE0LjZMMzI4IDE4NmwtOTMuNy01NC4xLTY4LjUgMzkuNXYtNTAuMXoiIHN0eWxlPSJmaWxsOiMxYTliZDciLz48L3N2Zz4K
+scope:
+  - workspace
+supportLink: "https://docs.kasmweb.com/"
+type: preferred-partner
