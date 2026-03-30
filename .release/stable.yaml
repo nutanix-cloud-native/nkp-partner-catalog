@@ -5,6 +5,8 @@ releases:
     collectionAnnotations:
       org.opencontainers.image.source: https://github.com/nutanix-cloud-native/nkp-partner-catalog
     applications:
+      - name: cloudcasa-agent
+        version: "3.4.6"
       - name: traefik-hub
         version: "3.17.11"
       - name: traefik-hub
@@ -14,6 +16,8 @@ releases:
     collectionAnnotations:
       org.opencontainers.image.source: https://github.com/nutanix-cloud-native/nkp-partner-catalog
     applications:
+      - name: cloudcasa-agent
+        version: "3.4.6"
       - name: traefik-hub
         version: "3.17.11"
       - name: traefik-hub
@@ -23,6 +27,8 @@ releases:
     collectionAnnotations:
       org.opencontainers.image.source: https://github.com/nutanix-cloud-native/nkp-partner-catalog
     applications:
+      - name: cloudcasa-agent
+        version: "3.4.6"
       - name: traefik-hub
         version: "3.17.11"
       - name: traefik-hub
