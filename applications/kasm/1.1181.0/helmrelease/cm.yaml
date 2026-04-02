@@ -32,7 +32,7 @@ data:
         labels: {}
 
     # proxyService -- Configuration for the Kasm proxy Kubernetes Service.
-    # Set to ClusterIP when using an Ingress, as external access 
+    # Set to ClusterIP when using an Ingress, as external access
     # is handled by the ingress controller rather than the service directly.
     proxyService:
       type: ClusterIP

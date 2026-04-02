@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"crypto/x509"
 	"crypto/x509/pkix"
+	"encoding/base64"
 	"encoding/pem"
 	"fmt"
 	"math/big"
@@ -16,15 +17,15 @@ import (
 	apimeta "github.com/fluxcd/pkg/apis/meta"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	ctrlClient "sigs.k8s.io/controller-runtime/pkg/client"
 
 	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/appscenarios"
 	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/appscenarios/constant"
 )
 
-func createSelfSignedTLSSecret(name, namespace string) *corev1.Secret {
+func createSelfSignedTLSSecret(name, namespace string) *unstructured.Unstructured {
 	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	Expect(err).ToNot(HaveOccurred())
 
@@ -43,15 +44,19 @@ func createSelfSignedTLSSecret(name, namespace string) *corev1.Secret {
 	Expect(err).ToNot(HaveOccurred())
 	keyPEM := pem.EncodeToMemory(&pem.Block{Type: "EC PRIVATE KEY", Bytes: keyDER})
 
-	return &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      name,
-			Namespace: namespace,
-		},
-		Type: corev1.SecretTypeTLS,
-		Data: map[string][]byte{
-			"tls.crt": certPEM,
-			"tls.key": keyPEM,
+	return &unstructured.Unstructured{
+		Object: map[string]interface{}{
+			"apiVersion": "v1",
+			"kind":       "Secret",
+			"metadata": map[string]interface{}{
+				"name":      name,
+				"namespace": namespace,
+			},
+			"type": "kubernetes.io/tls",
+			"data": map[string]interface{}{
+				"tls.crt": base64.StdEncoding.EncodeToString(certPEM),
+				"tls.key": base64.StdEncoding.EncodeToString(keyPEM),
+			},
 		},
 	}
 }

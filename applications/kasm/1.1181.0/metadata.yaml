@@ -28,7 +28,7 @@ overview: |-
 
   Set the required values before deploying. **`publicAddr` must be updated to your actual FQDN before enabling:**
   ```yaml
-  publicAddr: "kasm.example.com" 
+  publicAddr: "kasm.example.com"
   certificate:
     secretName: "kasm-tls-secret"
     certManager:
@@ -43,7 +43,7 @@ overview: |-
     enabled: true
   ```
   The `certificate.certManager` values above reflect the NKP defaults — update `issuerName`, `issuerKind`, or `issuerGroup` only if using a custom cert-manager setup.
-  
+
   For more configuration options, checkout [Kasm Helm Github](https://github.com/kasmtech/kasm-helm/tree/release/1.18.1).
 
   ## Post-Deployment
