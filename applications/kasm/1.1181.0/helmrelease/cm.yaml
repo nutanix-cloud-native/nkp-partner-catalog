@@ -5,7 +5,7 @@ data:
     # publicAddr -- The FQDN users will use to access Kasm Workspaces.
     # Must match the Common Name on your TLS certificate.
     # Example: "kasm.mycompany.com"
-    publicAddr: ""
+    publicAddr: "${publicAddr}"
 
     # certificate -- TLS certificate configuration.
     # You can either provide an existing Kubernetes TLS secret
@@ -13,7 +13,7 @@ data:
     certificate:
       # secretName -- Name of the Kubernetes TLS secret that holds the certificate and key.
       # If using cert-manager, this secret will be created automatically.
-      secretName: ""
+      secretName: "${certificateSecretName}"
 
       # certManager -- Automated certificate management via cert-manager.
       # Set enabled to true to use cert-manager to automatically provision the TLS certificate.
