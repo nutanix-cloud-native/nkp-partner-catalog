@@ -2,25 +2,34 @@ All source code and other contents in this repository are covered by the Nutanix
 
 # Nutanix NKP Partner Catalog
 
-This repository is dedicated to storing applications manifests and other metadata required for partner applications. Contributions for new applications should be made here and will be reviewed and merged upon approval by the internal team.
+The **Nutanix Kubernetes Platform (NKP) Partner Catalog** is the source of truth for partner application manifests and metadata used to list, deploy, and upgrade applications in NKP. This repository holds Flux- and Helm-based definitions that partners maintain so that their customers can install and upgrade catalog apps through NKP in a consistent way.
 
----
+New applications and updates are contributed via pull request and are reviewed and merged after approval by the Nutanix team. OCI artifacts for published applications are built and pushed post-merge; see [CONTRIBUTING.md](CONTRIBUTING.md) for registry layout and manifest details.
 
-## Finding your way around
+## Who this repository is for
 
-- **`applications/`**
-  Contains all partner applications. Each application can have multiple versions organized in **semver-named subdirectories**. Each version directory includes the manifest files corresponding that single version.
+| Audience | Use |
+| -------- | --- |
+| **Partners and ISVs** | Publish and maintain application versions, metadata, and tests so apps appear in the catalog and behave correctly on install and upgrade. |
+| **NKP users and operators** | Consume catalog content indirectly through NKP; this repo is the upstream source for what ships in the partner catalog experience. |
 
-- **`just/`**
-  Contains [just](https://just.systems/man/en/introduction.html) recipes used to perform various actions on the applications.
+## Repository layout
 
-- **`apptests/`**
-  Contains test suites for each application's installation and upgrade scenarios.
+| Path | Description |
+| ---- | ----------- |
+| **`applications/`** | Partner applications. Each app can have multiple versions in **semver-named** subdirectories; each version directory contains the manifests for that release. See [`applications/README.md`](applications/README.md). |
+| **`just/`** | [just](https://just.systems/man/en/introduction.html) recipes for common tasks against the applications in this repo. |
+| **`apptests/`** | Automated test suites for installation and upgrade scenarios per application. |
 
----
+## Documentation
 
-## Signing commits
+| Document | Purpose |
+| -------- | ------- |
+| [**Contributing**](CONTRIBUTING.md) | Prerequisites (including devbox), generating app scaffolding with `nkp`, manifest structure, validation, and `apptests` requirements. |
+| [**Applications**](applications/README.md) | Overview of the `applications/` directory and version layout. |
 
-All commits to this repository **must be signed**.
-Learn how to sign your commits here:
-[Managing commit signature verification](https://docs.github.com/en/authentication/managing-commit-signature-verification)
+**Quick start for contributors:** clone the repo, use the workflow in [CONTRIBUTING.md](CONTRIBUTING.md) (`nkp generate`, validate with `nkp validate catalog-repository`, open a PR with signed commits).
+
+## Signed commits
+
+All commits to this repository **must be signed**. See GitHub’s guide: [Managing commit signature verification](https://docs.github.com/en/authentication/managing-commit-signature-verification).
