@@ -1,0 +1,48 @@
+---
+apiVersion: v1
+data:
+  values.yaml: |
+    # publicAddr -- The FQDN users will use to access Kasm Workspaces.
+    # Must match the Common Name on your TLS certificate.
+    # Example: "kasm.mycompany.com"
+    publicAddr: ""
+
+    # certificate -- TLS certificate configuration.
+    # You can either provide an existing Kubernetes TLS secret
+    # or use cert-manager to automatically provision and renew certificates.
+    certificate:
+      # secretName -- Name of the Kubernetes TLS secret that holds the certificate and key.
+      # If using cert-manager, this secret will be created automatically.
+      secretName: ""
+
+      # certManager -- Automated certificate management via cert-manager.
+      # Set enabled to true to use cert-manager to automatically provision the TLS certificate.
+      # If disabled, the secret specified in secretName must be created manually.
+      certManager:
+        enabled: false
+        # addWildCard -- Adds a wildcard SAN (e.g., *.kasm.example.com).
+        addWildCard: true
+        issuerName: ""
+        issuerKind: ""
+        issuerGroup: ""
+        annotations: {}
+        labels: {}
+
+    # proxyService -- Configuration for the Kasm proxy Kubernetes Service.
+    # Set to ClusterIP when using an Ingress, as external access
+    # is handled by the ingress controller rather than the service directly.
+    proxyService:
+      type: ClusterIP
+
+    # ingress -- Configure Ingress to expose Kasm through your cluster ingress controller.
+    # When enabled, an Ingress resource is created to route external traffic to Kasm.
+    # Ensure your cluster has an ingress controller (e.g., Traefik, NGINX) installed.
+    ingress:
+      enabled: true
+      ingressClassName: ""
+      annotations: {}
+      labels: {}
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-1.1181.0-config-defaults
+  namespace: ${releaseNamespace}
