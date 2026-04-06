@@ -1,12 +1,12 @@
-# Partner catalog applications
+# NKP Partner Catalog applications
 
-This directory contains **partner applications** for the Nutanix Kubernetes Platform (NKP) partner catalog. Each subdirectory is one application; under it, **semver-named** version directories (for example `1.2.0`) hold the manifests and metadata for that release.
+This directory contains **partner applications** for the **Nutanix Kubernetes Platform (NKP) Partner Catalog**. Each subdirectory is one application; under it, **semver-named** version directories (for example `1.2.0`) hold the manifests and metadata for that release.
 
 ## Directory layout
 
 | Level | Description |
 | ----- | ----------- |
-| **`<application-name>/`** | One folder per catalog application. |
+| **`<application-name>/`** | One folder per **NKP Partner Catalog** application. |
 | **`<application-name>/<semver>/`** | One folder per released version. It includes Flux and Helm wiring (for example HelmRelease and Kustomization files) and **`metadata.yaml`**, which the NKP UI uses to display application details. |
 
 Generated layouts and field-level guidance are described in [CONTRIBUTING.md](../CONTRIBUTING.md).

@@ -1,6 +1,6 @@
-# Contributing to nkp-partner-catalog
+# Contributing to the NKP Partner Catalog
 
-Follow these guidelines to add or update partner applications.
+Follow these guidelines to add or update partner applications in the **Nutanix Kubernetes Platform (NKP) Partner Catalog** repository.
 
 ## How to contribute
 
