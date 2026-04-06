@@ -30,6 +30,12 @@ New applications and updates are contributed via pull request and are reviewed a
 
 **Quick start for contributors:** clone the repo, use the workflow in [CONTRIBUTING.md](CONTRIBUTING.md) (`nkp generate`, validate with `nkp validate catalog-repository`, open a PR with signed commits).
 
+## Partner Catalog in NKP (Nutanix documentation)
+
+End-user and operator documentation for the **NKP Partner Catalog** in a cluster (for example UI workflows and platform behavior) lives in the [Nutanix Support & Insights](https://portal.nutanix.com) portal, under the **Nutanix Kubernetes Platform** documentation **for your NKP release**. Topic titles and deep links include the product version, so always use the doc set that matches the NKP version you run. From the portal, open your release’s NKP guide and go to the **Partner Catalog** section, or search for `Partner Catalog`.
+
+**Example deep link (NKP 2.17):** [Partner Catalog in NKP](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform-v2_17:top-partner-catalog-in-nkp-c.html)
+
 ## Signed commits
 
 All commits to this repository **must be signed**. See GitHub’s guide: [Managing commit signature verification](https://docs.github.com/en/authentication/managing-commit-signature-verification).
