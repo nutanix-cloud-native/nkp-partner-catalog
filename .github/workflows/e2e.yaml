@@ -1,0 +1,124 @@
+name: E2E Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "applications/**"
+      - "apptests/**"
+    types:
+      - opened
+      - synchronize
+      - labeled
+  push:
+    branches:
+      - main
+    paths:
+      - "applications/**"
+      - "apptests/**"
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect-apps:
+    name: Detect Applications
+    if: github.event.action != 'labeled' || github.event.label.name == 'run-e2e-all'
+    runs-on: self-hosted-nutanix-xsmall
+    outputs:
+      matrix: ${{ steps.build-matrix.outputs.matrix }}
+      has_entries: ${{ steps.build-matrix.outputs.has_entries }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install NIX
+        uses: cachix/install-nix-action@v31
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.15.0
+        with:
+          enable-cache: true
+          skip-nix-installation: true
+
+      - name: Build test matrix
+        id: build-matrix
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          RUN_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'run-e2e-all') }}
+        run: |
+          devbox run -- bash << 'SCRIPT'
+          set -euo pipefail
+
+          all_apps() { find applications -mindepth 2 -maxdepth 2 -type d | sed 's|^applications/||'; }
+
+          if [[ "$EVENT_NAME" == "pull_request" && "$RUN_ALL" != "true" ]]; then
+            pairs=$(git diff --name-only "${PR_BASE_SHA}" "${PR_HEAD_SHA}" -- 'applications/' \
+              | sed -n 's|^applications/\([^/]*\)/\([^/]*\)/.*|\1/\2|p' \
+              | sort -u)
+          else
+            pairs=$(all_apps)
+          fi
+
+          entries=$(echo "$pairs" \
+            | awk -F/ 'NF==2 {printf "{\"app\":\"%s\",\"version\":\"%s\"}\n", $1, $2}' \
+            | jq -sc '.')
+
+          has_entries=$([[ "$entries" != "[]" ]] && echo true || echo false)
+
+          echo "matrix={\"include\":${entries}}" >> "$GITHUB_OUTPUT"
+          echo "has_entries=${has_entries}" >> "$GITHUB_OUTPUT"
+
+          echo "::group::Test matrix"
+          echo "$entries" | jq .
+          echo "::endgroup::"
+          SCRIPT
+
+  e2e:
+    name: "${{ matrix.app }} @ ${{ matrix.version }}"
+    needs: detect-apps
+    if: needs.detect-apps.outputs.has_entries == 'true'
+    runs-on:
+      - self-hosted-ncn-docker-large
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.detect-apps.outputs.matrix) }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install NIX
+        uses: cachix/install-nix-action@v31
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.15.0
+        with:
+          enable-cache: true
+          skip-nix-installation: true
+
+      - name: Run E2E tests
+        env:
+          SKIP_CLUSTER_TEARDOWN: "true"
+        run: devbox run -- just e2e-test "${{ matrix.app }}" "${{ matrix.version }}"
+
+      - name: Collect diagnostic bundle
+        if: failure()
+        run: |
+          devbox run -- kind export kubeconfig --name kommanderapptest --kubeconfig "$RUNNER_TEMP/kind-kubeconfig"
+          export KUBECONFIG="$RUNNER_TEMP/kind-kubeconfig"
+          devbox run -- nkp diagnose --bundle-name-prefix=e2e- || true
+
+      - name: Upload diagnostic bundle
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-${{ matrix.app }}-${{ matrix.version }}
+          path: e2e-*.tar.gz

@@ -7,3 +7,4 @@ self-hosted-runner:
     - self-hosted-ncn-dind
     - self-hosted-ncn-docker-medium
     - self-hosted-ncn-docker-large
+    - self-hosted-nutanix-xsmall

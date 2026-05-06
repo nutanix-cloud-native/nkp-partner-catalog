@@ -22,8 +22,7 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	ctrlClient "sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/appscenarios"
-	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/appscenarios/constant"
+	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/catalog"
 )
 
 // setKasmValues patches the Kasm default ConfigMap with the values required for
@@ -84,42 +83,43 @@ func createSelfSignedTLSSecret(name, namespace string) *unstructured.Unstructure
 	}
 }
 
-var _ = Describe("kasm Tests", Ordered, Label("kasm"), func() {
-	BeforeEach(OncePerOrdered, func() {
-		err := SetupKindCluster()
-		Expect(err).ToNot(HaveOccurred())
-
-		err = env.InstallLatestFlux(ctx)
-		Expect(err).ToNot(HaveOccurred())
-	})
-
-	AfterEach(OncePerOrdered, func() {
-		if os.Getenv("SKIP_CLUSTER_TEARDOWN") != "" {
-			return
-		}
-
-		err := env.Destroy(ctx)
-		Expect(err).ToNot(HaveOccurred())
-	})
-
+var _ = Describe("kasm Tests", Label("kasm"), func() {
 	Describe("Installing kasm", Ordered, Label("install"), func() {
 		var (
-			k  *appscenarios.Kasm
+			k  *catalog.App
 			hr *fluxhelmv2.HelmRelease
 		)
 
+		BeforeAll(func() {
+			err := SetupKindCluster()
+			Expect(err).ToNot(HaveOccurred())
+
+			err = env.InstallLatestFlux(ctx)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		AfterAll(func() {
+			if useExistingCluster || os.Getenv("SKIP_CLUSTER_TEARDOWN") != "" {
+				return
+			}
+
+			err := env.Destroy(ctx)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
 		It("should install successfully with default config", func() {
-			// Create the TLS secret required by Kasm
-			tlsSecret := createSelfSignedTLSSecret("kasm-tls-secret", constant.DEFAULT_NAMESPACE)
+			tlsSecret := createSelfSignedTLSSecret("kasm-tls-secret", catalog.DefaultNamespace)
 			err := k8sClient.Create(ctx, tlsSecret)
 			Expect(err).ToNot(HaveOccurred())
 
-			k = appscenarios.NewKasmScenario(*appVersion).(*appscenarios.Kasm)
+			k = catalog.NewAppScenario("kasm", *appVersion).(*catalog.App)
+			GinkgoWriter.Printf("Installing %s @ %s\n", k.Name(), *appVersion)
 			err = k.Install(ctx, env)
 			Expect(err).ToNot(HaveOccurred())
 
-			err = setKasmValues(ctx, k.Name(), *appVersion, constant.DEFAULT_NAMESPACE)
+			err = setKasmValues(ctx, k.Name(), *appVersion, catalog.DefaultNamespace)
 			Expect(err).ToNot(HaveOccurred())
+			GinkgoWriter.Printf("Install applied, waiting for HelmRelease to become Ready\n")
 
 			hr = &fluxhelmv2.HelmRelease{
 				TypeMeta: metav1.TypeMeta{
@@ -128,56 +128,77 @@ var _ = Describe("kasm Tests", Ordered, Label("kasm"), func() {
 				},
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      k.Name(),
-					Namespace: constant.DEFAULT_NAMESPACE,
+					Namespace: catalog.DefaultNamespace,
 				},
 			}
 
-			// Check the status of the HelmReleases
 			Eventually(func() error {
 				err = k8sClient.Get(ctx, ctrlClient.ObjectKeyFromObject(hr), hr)
-				fmt.Printf("HelmRelease Status: %v %v", hr.Status, err)
 				if err != nil {
+					GinkgoWriter.Printf("HelmRelease Get error: %v\n", err)
 					return err
 				}
+
+				GinkgoWriter.Printf("HelmRelease %s/%s conditions: %v\n",
+					hr.Namespace, hr.Name, hr.Status.Conditions)
 
 				for _, cond := range hr.Status.Conditions {
 					if cond.Status == metav1.ConditionTrue &&
 						cond.Type == apimeta.ReadyCondition {
+						GinkgoWriter.Printf("HelmRelease is Ready!\n")
 						return nil
 					}
 				}
 				return fmt.Errorf("helm release not ready yet")
-			}).WithPolling(constant.POLL_INTERVAL).WithTimeout(10 * time.Minute).Should(Succeed())
+			}).WithPolling(catalog.PollInterval).WithTimeout(10 * time.Minute).Should(Succeed())
 		})
 	})
 
 	Describe("Upgrading kasm", Ordered, Label("upgrade"), func() {
 		var (
-			k  *appscenarios.Kasm
+			k  *catalog.App
 			hr *fluxhelmv2.HelmRelease
 		)
 
-		It("should install the previous version successfully", func() {
-			// Create the TLS secret required by Kasm
-			tlsSecret := createSelfSignedTLSSecret("kasm-tls-secret", constant.DEFAULT_NAMESPACE)
-			err := k8sClient.Create(ctx, tlsSecret)
+		BeforeAll(func() {
+			k = catalog.NewAppScenario("kasm", *appVersion).(*catalog.App)
+			if !k.HasPreviousVersion() {
+				Skip("skipping upgrade test: no previous version available")
+			}
+
+			err := SetupKindCluster()
 			Expect(err).ToNot(HaveOccurred())
 
-			k = appscenarios.NewKasmScenario("").(*appscenarios.Kasm)
+			err = env.InstallLatestFlux(ctx)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		AfterAll(func() {
+			if useExistingCluster || os.Getenv("SKIP_CLUSTER_TEARDOWN") != "" {
+				return
+			}
+
+			err := env.Destroy(ctx)
+			Expect(err).ToNot(HaveOccurred())
+		})
+
+		It("should install the previous version successfully", func() {
+			tlsSecret := createSelfSignedTLSSecret("kasm-tls-secret", catalog.DefaultNamespace)
+			err := k8sClient.Create(ctx, tlsSecret)
+			Expect(err).ToNot(HaveOccurred())
 			err = k.InstallPreviousVersion(ctx, env)
 			Expect(err).ToNot(HaveOccurred())
 
-			err = setKasmValues(ctx, k.Name(), *appVersion, constant.DEFAULT_NAMESPACE)
+			err = setKasmValues(ctx, k.Name(), *appVersion, catalog.DefaultNamespace)
 			Expect(err).ToNot(HaveOccurred())
 
 			hr = &fluxhelmv2.HelmRelease{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      k.Name(),
-					Namespace: constant.DEFAULT_NAMESPACE,
+					Namespace: catalog.DefaultNamespace,
 				},
 			}
 
-			// Check the status of the HelmReleases
 			Eventually(func() error {
 				err = k8sClient.Get(ctx, ctrlClient.ObjectKeyFromObject(hr), hr)
 				if err != nil {
@@ -191,7 +212,7 @@ var _ = Describe("kasm Tests", Ordered, Label("kasm"), func() {
 					}
 				}
 				return fmt.Errorf("helm release not ready yet")
-			}).WithPolling(constant.POLL_INTERVAL).WithTimeout(10 * time.Minute).Should(Succeed())
+			}).WithPolling(catalog.PollInterval).WithTimeout(10 * time.Minute).Should(Succeed())
 		})
 
 		It("should upgrade kasm successfully", func() {
@@ -201,11 +222,10 @@ var _ = Describe("kasm Tests", Ordered, Label("kasm"), func() {
 			hr = &fluxhelmv2.HelmRelease{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      k.Name(),
-					Namespace: constant.DEFAULT_NAMESPACE,
+					Namespace: catalog.DefaultNamespace,
 				},
 			}
 
-			// Check the status of the HelmReleases
 			Eventually(func() error {
 				err = k8sClient.Get(ctx, ctrlClient.ObjectKeyFromObject(hr), hr)
 				if err != nil {
@@ -220,7 +240,7 @@ var _ = Describe("kasm Tests", Ordered, Label("kasm"), func() {
 					}
 				}
 				return fmt.Errorf("helm release not ready yet")
-			}).WithPolling(constant.POLL_INTERVAL).WithTimeout(10 * time.Minute).Should(Succeed())
+			}).WithPolling(catalog.PollInterval).WithTimeout(10 * time.Minute).Should(Succeed())
 		})
 	})
 })
