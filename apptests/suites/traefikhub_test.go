@@ -18,8 +18,10 @@ import (
 	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/catalog"
 )
 
-const hubTokenSecretName = "traefik-hub-token" //nolint:gosec // not a credential, just a resource name
-const hubTokenEnvVar = "TRAEFIK_HUB_TOKEN"     //nolint:gosec // not a credential, just an env var name
+const (
+	hubTokenSecretName = "traefik-hub-token" //nolint:gosec // not a credential, just a resource name
+	hubTokenEnvVar     = "TRAEFIK_HUB_TOKEN" //nolint:gosec // not a credential, just an env var name
+)
 
 func createHubTokenSecret(name, namespace string) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
