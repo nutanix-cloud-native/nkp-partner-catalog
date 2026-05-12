@@ -8,8 +8,6 @@ This directory contains docs source and docs tooling.
   - `source/cli/` (generated CLI reference source files)
   - `source/schemas/v1/` (generated schema JSON files used by API docs pages)
 - `site/` — Docusaurus app and config
-- `docs.just` — docs recipes used by the repo `justfile`
-- `devbox.json` — docs-local devbox commands
 
 ## Local commands
 
