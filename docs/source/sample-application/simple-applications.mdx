@@ -1,0 +1,42 @@
+---
+title: Simple applications
+sidebar_position: 1
+---
+
+# Simple applications
+
+## Overview
+
+A simple catalog application is a single Helm chart with no mandatory dependencies. In the NKP UI you enable it from the Applications list for a workspace or project; the platform deploys it via HelmRelease.
+
+Use this pattern when the app does not require other platform or catalog apps to be installed first.
+
+## When to use
+
+- The application is self-contained (one chart, one namespace)
+- No CRDs or cluster-scoped resources that would conflict with other instances
+- No required dependencies on Istio, GPU operators, or other catalog apps
+
+## File structure
+
+```
+applications/<app-name>/<version>/
+  metadata.yaml
+  kustomization.yaml
+  helmrelease.yaml
+  helmrelease/
+    kustomization.yaml
+    helmrelease.yaml      # OCIRepository + HelmRelease
+    cm.yaml               # Default Helm values ConfigMap
+```
+
+## Key points
+
+- Set `allowMultipleInstances: true` in `metadata.yaml` if the app does not install CRDs or cluster-scoped resources.
+- Use `targetNamespace: <app-namespace>` and `install.createNamespace: true` so the app deploys into its own namespace.
+- Keep the default values ConfigMap (`cm.yaml`) minimal — users can override via AppDeployment config overrides.
+- The `dependencies` and `requiredDependencies` lists in `metadata.yaml` should both be empty (`[]`).
+
+## Example
+
+Refer to the [AI Applications Catalog repository](https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog) for examples of simple applications such as inference engines and vector databases.

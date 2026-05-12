@@ -1,0 +1,770 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "catalog.nkp.nutanix.com/v1/application-user-inputs",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "description": "Identifies the schema used."
+    },
+    "groups": {
+      "items": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name is the identifier."
+          },
+          "label": {
+            "type": "string",
+            "description": "Label is the display name."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description is the human friendly description."
+          },
+          "collapse": {
+            "type": "boolean",
+            "description": "Collapse is whether this group should be collapsed by default."
+          },
+          "fields": {
+            "items": {
+              "if": {
+                "properties": {
+                  "type": {
+                    "not": {
+                      "const": "select"
+                    }
+                  }
+                },
+                "title": "Check if field type is not 'select'"
+              },
+              "then": {
+                "not": {
+                  "required": [
+                    "options"
+                  ]
+                },
+                "title": "Options not allowed for non-select types",
+                "description": "The 'options' field is only valid for fields with type='select'. Other types must not include 'options'."
+              },
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name is the identifier."
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Label is the display name."
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Description is the human friendly description."
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "select",
+                    "password",
+                    "certificate"
+                  ],
+                  "description": "Type indicates the data type of the field.\nSupported values: \"string\", \"number\", \"boolean\", \"select\", \"password\", \"certificate\"."
+                },
+                "options": {
+                  "items": {
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                        "description": "Label is the display text for the enum option in the UI."
+                      },
+                      "value": {
+                        "description": "Value is the actual value submitted when this option is selected.\nCan be a string, number."
+                      },
+                      "disableWhen": {
+                        "items": {
+                          "oneOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "field"
+                                },
+                                "operator": {
+                                  "enum": [
+                                    "equals",
+                                    "notEquals",
+                                    "contains",
+                                    "notContains"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "type",
+                                "name",
+                                "operator",
+                                "value"
+                              ],
+                              "title": "Field-based visibility condition",
+                              "description": "Check a field's value using equals, notEquals, contains, or notContains. Requires type='field', name (field name), operator, and value."
+                            },
+                            {
+                              "not": {
+                                "required": [
+                                  "value"
+                                ]
+                              },
+                              "properties": {
+                                "type": {
+                                  "const": "application"
+                                },
+                                "operator": {
+                                  "enum": [
+                                    "installed",
+                                    "notInstalled"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "type",
+                                "name",
+                                "operator"
+                              ],
+                              "title": "Application-based visibility condition",
+                              "description": "Check if an application is installed using installed or notInstalled. Requires type='application', name (application name), and operator. Value must not be present."
+                            }
+                          ],
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "field",
+                                "application"
+                              ],
+                              "description": "Type discriminates between \"field\" and \"application\" conditions."
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "Name is the field name (for type=\"field\") or application name (for type=\"application\")."
+                            },
+                            "operator": {
+                              "type": "string",
+                              "enum": [
+                                "equals",
+                                "notEquals",
+                                "contains",
+                                "notContains",
+                                "installed",
+                                "notInstalled"
+                              ],
+                              "description": "Operator defines the comparison operation.\nFor type=field: \"equals\" | \"notEquals\" | \"contains\" | \"notContains\"\nFor type=application: \"installed\" | \"notInstalled\""
+                            },
+                            "value": {
+                              "description": "Value is the value to compare against (only for type=\"field\").\nRequired when type=\"field\", must NOT be present when type=\"application\"."
+                            },
+                            "message": {
+                              "type": "string",
+                              "description": "Message is an optional message to display (e.g., tooltip, warning)."
+                            }
+                          },
+                          "type": "object",
+                          "description": "Constraints to control the display of components dynamically."
+                        },
+                        "type": "array",
+                        "description": "DisableWhen defines when this field should be disabled based on conditions."
+                      }
+                    },
+                    "type": "object",
+                    "description": "SelectOption defines a single choice within an \"enum\" type Parameter."
+                  },
+                  "type": "array",
+                  "description": "Options defines the set of permissible values for enum types."
+                },
+                "required": {
+                  "type": "boolean",
+                  "description": "Required indicates if the field must be filled by the user."
+                },
+                "readOnly": {
+                  "type": "boolean",
+                  "description": "This is a static hardcoded value."
+                },
+                "default": {
+                  "description": "Default is the pre-filled value for the field."
+                },
+                "validations": {
+                  "items": {
+                    "oneOf": [
+                      {
+                        "not": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "min"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "max"
+                              ]
+                            }
+                          ]
+                        },
+                        "properties": {
+                          "type": {
+                            "const": "pattern"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "regex"
+                        ],
+                        "title": "Pattern validation",
+                        "description": "When type is 'pattern', regex is required, message is optional, and min/max must not be present"
+                      },
+                      {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "min"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "max"
+                            ]
+                          }
+                        ],
+                        "not": {
+                          "required": [
+                            "regex"
+                          ]
+                        },
+                        "properties": {
+                          "type": {
+                            "const": "number"
+                          }
+                        },
+                        "required": [
+                          "type"
+                        ],
+                        "title": "Numeric or length validation",
+                        "description": "When type is 'number', at least one of min or max is required, message is optional, and regex must not be present"
+                      }
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "pattern",
+                          "number"
+                        ],
+                        "description": "Type is the type of validation to perform."
+                      },
+                      "message": {
+                        "type": "string",
+                        "description": "Message is the error message to display when the validation fails."
+                      },
+                      "regex": {
+                        "type": "string",
+                        "description": "Regex is the regular expression to match against the field value."
+                      },
+                      "min": {
+                        "type": "integer",
+                        "description": "Min is the minimum value. For string types: minimum character length. For integer types: minimum numeric value."
+                      },
+                      "max": {
+                        "type": "integer",
+                        "description": "Max is the maximum value. For string types: maximum character length. For integer types: maximum numeric value."
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "description": "Validations define validation rules for the field."
+                },
+                "showWhen": {
+                  "items": {
+                    "oneOf": [
+                      {
+                        "properties": {
+                          "type": {
+                            "const": "field"
+                          },
+                          "operator": {
+                            "enum": [
+                              "equals",
+                              "notEquals",
+                              "contains",
+                              "notContains"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "name",
+                          "operator",
+                          "value"
+                        ],
+                        "title": "Field-based visibility condition",
+                        "description": "Check a field's value using equals, notEquals, contains, or notContains. Requires type='field', name (field name), operator, and value."
+                      },
+                      {
+                        "not": {
+                          "required": [
+                            "value"
+                          ]
+                        },
+                        "properties": {
+                          "type": {
+                            "const": "application"
+                          },
+                          "operator": {
+                            "enum": [
+                              "installed",
+                              "notInstalled"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "name",
+                          "operator"
+                        ],
+                        "title": "Application-based visibility condition",
+                        "description": "Check if an application is installed using installed or notInstalled. Requires type='application', name (application name), and operator. Value must not be present."
+                      }
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "field",
+                          "application"
+                        ],
+                        "description": "Type discriminates between \"field\" and \"application\" conditions."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Name is the field name (for type=\"field\") or application name (for type=\"application\")."
+                      },
+                      "operator": {
+                        "type": "string",
+                        "enum": [
+                          "equals",
+                          "notEquals",
+                          "contains",
+                          "notContains",
+                          "installed",
+                          "notInstalled"
+                        ],
+                        "description": "Operator defines the comparison operation.\nFor type=field: \"equals\" | \"notEquals\" | \"contains\" | \"notContains\"\nFor type=application: \"installed\" | \"notInstalled\""
+                      },
+                      "value": {
+                        "description": "Value is the value to compare against (only for type=\"field\").\nRequired when type=\"field\", must NOT be present when type=\"application\"."
+                      },
+                      "message": {
+                        "type": "string",
+                        "description": "Message is an optional message to display (e.g., tooltip, warning)."
+                      }
+                    },
+                    "type": "object",
+                    "description": "Constraints to control the display of components dynamically."
+                  },
+                  "type": "array",
+                  "description": "ShowWhen defines when this field should be visible based on conditions."
+                },
+                "children": {
+                  "items": {
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "pattern": "^[a-z][a-zA-Z0-9]*$",
+                        "description": "Name is the identifier. Must be camelCase (start with lowercase letter) and contain only alphanumeric characters (a-zA-Z0-9)."
+                      },
+                      "label": {
+                        "type": "string",
+                        "description": "Label is the display name."
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "Description is the human friendly description."
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "select",
+                          "password",
+                          "certificate"
+                        ],
+                        "description": "Type indicates the data type of the field.\nSupported values: \"string\", \"number\", \"boolean\", \"select\", \"password\", \"certificate\"."
+                      },
+                      "options": {
+                        "items": {
+                          "properties": {
+                            "label": {
+                              "type": "string",
+                              "description": "Label is the display text for the enum option in the UI."
+                            },
+                            "value": {
+                              "description": "Value is the actual value submitted when this option is selected.\nCan be a string, number."
+                            },
+                            "disableWhen": {
+                              "items": {
+                                "oneOf": [
+                                  {
+                                    "properties": {
+                                      "type": {
+                                        "const": "field"
+                                      },
+                                      "operator": {
+                                        "enum": [
+                                          "equals",
+                                          "notEquals",
+                                          "contains",
+                                          "notContains"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "type",
+                                      "name",
+                                      "operator",
+                                      "value"
+                                    ],
+                                    "title": "Field-based visibility condition",
+                                    "description": "Check a field's value using equals, notEquals, contains, or notContains. Requires type='field', name (field name), operator, and value."
+                                  },
+                                  {
+                                    "not": {
+                                      "required": [
+                                        "value"
+                                      ]
+                                    },
+                                    "properties": {
+                                      "type": {
+                                        "const": "application"
+                                      },
+                                      "operator": {
+                                        "enum": [
+                                          "installed",
+                                          "notInstalled"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "type",
+                                      "name",
+                                      "operator"
+                                    ],
+                                    "title": "Application-based visibility condition",
+                                    "description": "Check if an application is installed using installed or notInstalled. Requires type='application', name (application name), and operator. Value must not be present."
+                                  }
+                                ],
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "enum": [
+                                      "field",
+                                      "application"
+                                    ],
+                                    "description": "Type discriminates between \"field\" and \"application\" conditions."
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "description": "Name is the field name (for type=\"field\") or application name (for type=\"application\")."
+                                  },
+                                  "operator": {
+                                    "type": "string",
+                                    "enum": [
+                                      "equals",
+                                      "notEquals",
+                                      "contains",
+                                      "notContains",
+                                      "installed",
+                                      "notInstalled"
+                                    ],
+                                    "description": "Operator defines the comparison operation.\nFor type=field: \"equals\" | \"notEquals\" | \"contains\" | \"notContains\"\nFor type=application: \"installed\" | \"notInstalled\""
+                                  },
+                                  "value": {
+                                    "description": "Value is the value to compare against (only for type=\"field\").\nRequired when type=\"field\", must NOT be present when type=\"application\"."
+                                  },
+                                  "message": {
+                                    "type": "string",
+                                    "description": "Message is an optional message to display (e.g., tooltip, warning)."
+                                  }
+                                },
+                                "type": "object",
+                                "description": "Constraints to control the display of components dynamically."
+                              },
+                              "type": "array",
+                              "description": "DisableWhen defines when this field should be disabled based on conditions."
+                            }
+                          },
+                          "type": "object",
+                          "description": "SelectOption defines a single choice within an \"enum\" type Parameter."
+                        },
+                        "type": "array",
+                        "description": "Options defines the set of permissible values for enum types."
+                      },
+                      "required": {
+                        "type": "boolean",
+                        "description": "Required indicates if the field must be filled by the user."
+                      },
+                      "readOnly": {
+                        "type": "boolean",
+                        "description": "This is a static hardcoded value."
+                      },
+                      "default": {
+                        "description": "Default is the pre-filled value for the field."
+                      },
+                      "validations": {
+                        "items": {
+                          "oneOf": [
+                            {
+                              "not": {
+                                "anyOf": [
+                                  {
+                                    "required": [
+                                      "min"
+                                    ]
+                                  },
+                                  {
+                                    "required": [
+                                      "max"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "properties": {
+                                "type": {
+                                  "const": "pattern"
+                                }
+                              },
+                              "required": [
+                                "type",
+                                "regex"
+                              ],
+                              "title": "Pattern validation",
+                              "description": "When type is 'pattern', regex is required, message is optional, and min/max must not be present"
+                            },
+                            {
+                              "anyOf": [
+                                {
+                                  "required": [
+                                    "min"
+                                  ]
+                                },
+                                {
+                                  "required": [
+                                    "max"
+                                  ]
+                                }
+                              ],
+                              "not": {
+                                "required": [
+                                  "regex"
+                                ]
+                              },
+                              "properties": {
+                                "type": {
+                                  "const": "number"
+                                }
+                              },
+                              "required": [
+                                "type"
+                              ],
+                              "title": "Numeric or length validation",
+                              "description": "When type is 'number', at least one of min or max is required, message is optional, and regex must not be present"
+                            }
+                          ],
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "pattern",
+                                "number"
+                              ],
+                              "description": "Type is the type of validation to perform."
+                            },
+                            "message": {
+                              "type": "string",
+                              "description": "Message is the error message to display when the validation fails."
+                            },
+                            "regex": {
+                              "type": "string",
+                              "description": "Regex is the regular expression to match against the field value."
+                            },
+                            "min": {
+                              "type": "integer",
+                              "description": "Min is the minimum value. For string types: minimum character length. For integer types: minimum numeric value."
+                            },
+                            "max": {
+                              "type": "integer",
+                              "description": "Max is the maximum value. For string types: maximum character length. For integer types: maximum numeric value."
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "type": "array",
+                        "description": "Validations define validation rules for the field."
+                      },
+                      "showWhen": {
+                        "items": {
+                          "oneOf": [
+                            {
+                              "properties": {
+                                "type": {
+                                  "const": "field"
+                                },
+                                "operator": {
+                                  "enum": [
+                                    "equals",
+                                    "notEquals",
+                                    "contains",
+                                    "notContains"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "type",
+                                "name",
+                                "operator",
+                                "value"
+                              ],
+                              "title": "Field-based visibility condition",
+                              "description": "Check a field's value using equals, notEquals, contains, or notContains. Requires type='field', name (field name), operator, and value."
+                            },
+                            {
+                              "not": {
+                                "required": [
+                                  "value"
+                                ]
+                              },
+                              "properties": {
+                                "type": {
+                                  "const": "application"
+                                },
+                                "operator": {
+                                  "enum": [
+                                    "installed",
+                                    "notInstalled"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "type",
+                                "name",
+                                "operator"
+                              ],
+                              "title": "Application-based visibility condition",
+                              "description": "Check if an application is installed using installed or notInstalled. Requires type='application', name (application name), and operator. Value must not be present."
+                            }
+                          ],
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "field",
+                                "application"
+                              ],
+                              "description": "Type discriminates between \"field\" and \"application\" conditions."
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "Name is the field name (for type=\"field\") or application name (for type=\"application\")."
+                            },
+                            "operator": {
+                              "type": "string",
+                              "enum": [
+                                "equals",
+                                "notEquals",
+                                "contains",
+                                "notContains",
+                                "installed",
+                                "notInstalled"
+                              ],
+                              "description": "Operator defines the comparison operation.\nFor type=field: \"equals\" | \"notEquals\" | \"contains\" | \"notContains\"\nFor type=application: \"installed\" | \"notInstalled\""
+                            },
+                            "value": {
+                              "description": "Value is the value to compare against (only for type=\"field\").\nRequired when type=\"field\", must NOT be present when type=\"application\"."
+                            },
+                            "message": {
+                              "type": "string",
+                              "description": "Message is an optional message to display (e.g., tooltip, warning)."
+                            }
+                          },
+                          "type": "object",
+                          "description": "Constraints to control the display of components dynamically."
+                        },
+                        "type": "array",
+                        "description": "ShowWhen defines when this field should be visible based on conditions."
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "description": "Children are fields that appear based on this field's value."
+                }
+              },
+              "type": "object",
+              "description": "Field defines an input field to be rendered in the UI form."
+            },
+            "type": "array",
+            "minItems": 1,
+            "description": "Fields must contain at least one field definition."
+          }
+        },
+        "type": "object",
+        "description": "Group is a grouping of various fields."
+      },
+      "type": "array",
+      "description": "Group is a grouping of various fields."
+    },
+    "resources": {
+      "items": {
+        "properties": {
+          "template": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "(?m)^\\s*kind\\s*:\\s*(ConfigMap|FederatedSecret)\\s*(?:$|#)",
+                "title": "String template (multi-line YAML)",
+                "description": "Template as a multi-line string containing Kubernetes resource manifest YAML. Must contain 'kind: ConfigMap' or 'kind: FederatedSecret'."
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "ConfigMap",
+                      "FederatedSecret"
+                    ],
+                    "description": "Kind must be either 'ConfigMap' or 'FederatedSecret' for the resource template."
+                  }
+                },
+                "additionalProperties": true,
+                "type": "object",
+                "required": [
+                  "kind"
+                ],
+                "title": "Object template (Kubernetes unstructured)",
+                "description": "Template as a map[string]interface{} representing a Kubernetes unstructured object. Must have 'kind' field set to 'ConfigMap' or 'FederatedSecret'."
+              }
+            ],
+            "description": "Template is the Kubernetes resource manifest template. Must be either a multi-line string (YAML) or an object (map[string]interface{}). Must contain 'kind: ConfigMap' or 'kind: FederatedSecret'. ConfigMap and FederatedSecret are the supported resource types."
+          }
+        },
+        "type": "object",
+        "description": "Resource defines how collected parameters are transformed into a Kubernetes resource manifest."
+      },
+      "type": "array",
+      "description": "Resources lists the kinds of resources that are automatically created."
+    }
+  },
+  "type": "object",
+  "required": [
+    "schema"
+  ],
+  "description": "Declarative input form for Application Configuration."
+}

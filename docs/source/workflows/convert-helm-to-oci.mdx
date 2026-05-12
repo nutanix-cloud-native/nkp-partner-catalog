@@ -1,0 +1,62 @@
+---
+title: Convert Helm charts to OCI
+sidebar_position: 3
+---
+
+# Convert Helm charts to OCI
+
+## Overview
+
+When an application's Helm chart is hosted in a traditional Helm repository (not OCI-native), you need to pull it locally and push it to an OCI registry so NKP and Flux can consume it.
+
+## Steps
+
+1. **Add the Helm repository:**
+   ```bash
+   helm repo add <repo-name> <repo-url>
+   helm repo update
+   ```
+
+2. **Search for available versions:**
+   ```bash
+   helm search repo <repo-name>/<chart> --versions
+   ```
+
+3. **Pull the chart locally:**
+   ```bash
+   helm pull <repo-name>/<chart> --version <version>
+   ```
+   This downloads a `.tgz` file to the current directory.
+
+4. **Push to your OCI registry:**
+   ```bash
+   helm push <chart>-<version>.tgz oci://<your-oci-registry>/<chart>
+   ```
+
+5. **Reference the OCI URL** in your application's `helmrelease/helmrelease.yaml`:
+   ```yaml
+   apiVersion: source.toolkit.fluxcd.io/v1beta2
+   kind: OCIRepository
+   metadata:
+     name: ${releaseName}-source
+     namespace: ${releaseNamespace}
+   spec:
+     interval: 6h0m0s
+     url: oci://<your-oci-registry>/<chart>
+     ref:
+       tag: <version>
+   ```
+
+## Authentication
+
+If your OCI registry requires authentication, configure credentials before pushing:
+
+```bash
+helm registry login <registry> --username <user> --password <token>
+```
+
+For GHCR (GitHub Container Registry):
+
+```bash
+echo $GITHUB_TOKEN | helm registry login ghcr.io --username <github-user> --password-stdin
+```

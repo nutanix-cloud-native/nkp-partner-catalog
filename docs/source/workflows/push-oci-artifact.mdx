@@ -1,0 +1,51 @@
+---
+title: Push artifacts
+sidebar_position: 6
+---
+
+# Push artifacts
+
+## Overview
+
+After building a catalog bundle, push it to an OCI registry so NKP clusters can pull and deploy the catalog collection.
+
+## Push command
+
+```bash
+nkp push bundle --bundle <path-to-bundle.tar> --to-registry <registry-url>
+```
+
+### Example
+
+```bash
+nkp push bundle \
+  --bundle ./nkp-ai-app-catalog.tar \
+  --to-registry ghcr.io/nutanix-cloud-native/nkp-ai-applications-catalog
+```
+
+## Authentication
+
+Ensure you are authenticated to the target OCI registry before pushing:
+
+```bash
+echo $GITHUB_TOKEN | docker login ghcr.io --username <user> --password-stdin
+```
+
+Or for other registries:
+
+```bash
+docker login <registry> --username <user> --password <token>
+```
+
+## Deploying the pushed catalog on a cluster
+
+Once the bundle is pushed, deploy it on an NKP cluster:
+
+```bash
+nkp create catalog-collection \
+  --url oci://<registry>/<catalog-name>/<catalog-name>/collection \
+  --tag <version> \
+  --workspace <workspace-name>
+```
+
+Run `nkp push bundle --help` for additional configuration flags.

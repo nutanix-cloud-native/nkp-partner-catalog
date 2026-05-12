@@ -1,0 +1,45 @@
+---
+title: Create an NKP cluster
+sidebar_position: 1
+---
+
+import siteConfig from '@generated/docusaurus.config';
+
+# Create an NKP cluster
+
+To use the NKP Catalog, you need a running NKP management cluster. Refer to the official Nutanix documentation for complete instructions on creating and configuring NKP clusters.
+
+<a href={`${siteConfig.customFields.nkpDocsBaseUrl}:top-get-started-nkp-t.html`}>
+  Getting Started with NKP v{siteConfig.customFields.nkpVersion}
+</a>
+
+## Quick overview
+
+NKP uses Cluster API (CAPI) to provision and manage Kubernetes clusters. The typical workflow is:
+
+1. **Create a management cluster** — A self-managed cluster that hosts NKP components (Kommander, Flux, platform applications). For Nutanix infrastructure, use:
+   ```bash
+   nkp create cluster nutanix --self-managed
+   ```
+
+2. **Create or attach workload clusters** — From the management cluster, create managed clusters (Nutanix, AWS, vSphere, Azure, GCP) or attach existing Kubernetes clusters using the NKP UI or CLI.
+
+3. **Install Kommander** — The management cluster runs Kommander which provides the NKP UI, catalog, workspace/project management, and GitOps (Flux) capabilities.
+
+## Supported infrastructure providers
+
+| Provider | CLI flag |
+|----------|----------|
+| Nutanix (AHV) | `nkp create cluster nutanix` |
+| AWS | `nkp create cluster aws` |
+| vSphere | `nkp create cluster vsphere` |
+| Azure | `nkp create cluster azure` |
+| GCP | `nkp create cluster gcp` |
+| Pre-provisioned | `nkp create cluster preprovisioned` |
+| EKS (attach) | `nkp create cluster eks` |
+| AKS (attach) | `nkp create cluster aks` |
+
+## Next steps
+
+- <a href={`${siteConfig.customFields.nkpDocsBaseUrl}:top-nkp-licenses-t.html`}>Apply an NKP license</a>
+- [Browse catalogs](/docs/getting-started/browsing-nutanix-product-catalog) after your cluster is ready

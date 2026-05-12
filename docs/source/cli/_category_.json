@@ -1,0 +1,11 @@
+{
+  "label": "CLI Reference",
+  "position": 7,
+  "className": "sidebar-cli-ref",
+  "link": {
+    "type": "generated-index",
+    "title": "CLI commands",
+    "description": "Auto-generated reference for nkp CLI commands (includes experimental). Regenerate with: nkp experimental catalog docgen",
+    "slug": "cli"
+  }
+}

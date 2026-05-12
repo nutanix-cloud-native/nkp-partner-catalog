@@ -1,0 +1,51 @@
+---
+title: Build catalog application
+sidebar_position: 5
+---
+
+# Build catalog application
+
+## Overview
+
+The build step packages one or more applications from a catalog repository into a bundle (tar archive) that can be pushed to an OCI registry for deployment on NKP clusters.
+
+## Build command
+
+```bash
+nkp create catalog-bundle [flags]
+```
+
+### Common usage
+
+Build a bundle for all applications matching an NKP version constraint:
+
+```bash
+nkp create catalog-bundle --constraint nkpVersion=<nkp-version> --collection-tag v<nkp-version>.0
+```
+
+Build a bundle for specific applications:
+
+```bash
+nkp create catalog-bundle --apps=<app1>=<version1> --apps=<app2>=<version2> --collection-tag v1.0.0
+```
+
+### Airgapped bundles
+
+Include container images for disconnected environments:
+
+```bash
+nkp create catalog-bundle --airgapped --collection-tag v1.0.0
+```
+
+### Output
+
+By default the bundle is written to the current directory. Use `--output-file` to specify a custom path:
+
+```bash
+nkp create catalog-bundle --collection-tag v1.0.0 -o ./dist/my-catalog.tar
+```
+
+## Prerequisites
+
+- The catalog repository must pass validation (`nkp validate catalog-repository --repo-dir=.`)
+- Helm charts referenced by applications must be accessible (either in OCI registries or local)

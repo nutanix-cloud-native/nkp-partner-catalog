@@ -1,0 +1,60 @@
+# Copyright 2025 Nutanix. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Build docs from main (docs/source + docs/site) and deploy via GitHub Pages artifacts.
+
+name: deploy-docs
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: deploy-docs
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on:
+      - self-hosted-ncn-docker-medium
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+
+      - name: Install NIX
+        uses: cachix/install-nix-action@v31
+
+      - name: Install devbox
+        uses: jetify-com/devbox-install-action@v0.15.0
+        with:
+          enable-cache: true
+          skip-nix-installation: true
+
+      - name: Build docs
+        run: devbox run -- just docs-build
+
+      - name: Upload static files as Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/site/build
+
+  deploy:
+    needs: build
+    runs-on:
+      - self-hosted-ncn-docker-medium
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

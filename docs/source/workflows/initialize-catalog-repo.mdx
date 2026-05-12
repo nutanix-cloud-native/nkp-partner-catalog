@@ -1,0 +1,49 @@
+---
+title: Initialize a catalog repository
+sidebar_position: 1
+---
+
+# Initialize a catalog repository
+
+## Overview
+
+A catalog repository holds the definitions and metadata for applications that appear in the NKP catalog (workspace or project). Setting it up is the first step before adding applications and building artifacts.
+
+## Repository layout
+
+A catalog repository follows this structure:
+
+```
+<repo-root>/
+  .bloodhound.yml          # Global validation config
+  .release.yaml            # Release specification (maps NKP versions to app sets)
+  applications/
+    <app-name>/
+      <version>/
+        metadata.yaml      # Application metadata (display name, description, etc.)
+        kustomization.yaml # Top-level Kustomize config
+        helmrelease.yaml   # Flux Kustomization resource
+        helmrelease/
+          kustomization.yaml
+          helmrelease.yaml  # OCIRepository + HelmRelease
+          cm.yaml           # Default Helm values ConfigMap
+```
+
+## Steps
+
+1. **Create the repository** — Initialize a new Git repository or use an existing one.
+
+2. **Generate the scaffold** — Use the CLI to generate the directory structure:
+   ```bash
+   nkp generate catalog-repository --apps=<app-name>=<version>
+   ```
+   This creates the `applications/<app-name>/<version>/` directory with template files.
+
+3. **Configure validation** — Add a `.bloodhound.yml` at the repository root to configure schema validation settings (e.g. Kubernetes version, strict mode).
+
+4. **Add the release spec** — Create `.release.yaml` at the repository root to define how releases are tagged and which applications are included. See [Continuous Delivery](/docs/workflows/release) for details.
+
+5. **Validate** — Run validation to ensure the repository is well-formed:
+   ```bash
+   nkp validate catalog-repository --repo-dir=.
+   ```

@@ -1,0 +1,42 @@
+---
+title: Complex applications
+sidebar_position: 2
+---
+
+# Complex applications
+
+## Overview
+
+Complex catalog applications have dependencies on other platform or catalog applications. For example, an application may require Istio for service mesh, Gateway API CRDs for ingress, or a specific operator to be installed first.
+
+## When to use
+
+- The application depends on CRDs provided by another catalog or platform app
+- The application requires a service mesh, ingress controller, or GPU operator
+- The application installs cluster-scoped resources (set `allowMultipleInstances: false`)
+
+## Declaring dependencies
+
+In `metadata.yaml`, use:
+
+- **`requiredDependencies`** — Hard dependencies. NKP ensures these are installed first. Use platform app names from [kommander-applications](https://github.com/mesosphere/kommander-applications/tree/main/applications) (e.g. `istio`, `gateway-api-crds`).
+- **`dependencies`** — Soft dependencies. Recommended but not enforced.
+
+```yaml
+requiredDependencies:
+  - istio
+  - gateway-api-crds
+dependencies:
+  - prometheus
+```
+
+## Key points
+
+- Never disable application features (e.g. `USE_ISTIO=false`) to avoid dependency crashes — declare the dependency instead.
+- Deploy dependencies first; if a dependency fails, the dependent application will not deploy successfully.
+- For applications that install CRDs, set `allowMultipleInstances: false` to prevent conflicts.
+- Some complex applications use a Job-based installer (`<app>-install.yaml`) instead of a plain HelmRelease for multi-step setup.
+
+## Example
+
+Applications that follow this pattern include ML pipelines (which depend on training operators) and central dashboards (which depend on authentication and Istio). Browse the [AI Applications Catalog](https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog) for examples.

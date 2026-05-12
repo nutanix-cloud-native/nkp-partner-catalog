@@ -1,0 +1,41 @@
+---
+title: Apply an NKP license
+sidebar_position: 2
+---
+
+# Apply an NKP license
+
+## Overview
+
+The license type you use determines which NKP features are available. You must replace the default license key with one obtained from the Nutanix Support Portal (or from your fulfillment source). Only administrators can add or remove licenses.
+
+## Add a license through the UI
+
+1. Log into the NKP UI dashboard.
+2. In the workspace header drop-down list, select **Global**.
+3. In the navigation menu, select **Settings** > **Licensing**.
+4. Choose based on your current and procured license:
+   - **Default license:** Select **Activate License**, enter a valid license key, then **Activate**.
+   - **Non-default Nutanix license:** Select **Update License**, enter the key from the Nutanix Support Portal, then **Update**.
+   - **Non-default D2IQ license:** Select **Update License**, enter a valid D2IQ or Nutanix key, then **Update**.
+
+The license card will show **Valid** when activation succeeds.
+
+## Add a license through kubectl
+
+1. Create a secret with your Nutanix-provided token:
+   ```bash
+   kubectl create secret generic my-license-secret --from-literal=jwt=MY_LICENSE -n kommander
+   kubectl label secret my-license-secret kommanderType=license -n kommander
+   ```
+2. Create the License object pointing at that secret (apply the YAML for `kind: License`, `spec.licenseRef.name: my-license-secret` in namespace `kommander`).
+3. Check the license page in the NKP UI to confirm it shows as valid.
+
+## License types (from the guide)
+
+- **NKP Starter** — Basic cluster and NKP UI; Nutanix infrastructure only.
+- **NKP Pro** — Single-cluster or single Management cluster; platform applications, GitOps (FluxCD), NKP UI.
+- **NKP Ultimate** — Multi-cluster (Management plus Attached or Managed clusters); catalog applications (e.g. Kafka, Zookeeper), custom applications, project and workspace management.
+- **NKP Full Stack** — For Prism Central clusters (e.g. CAPX, CAPV); separate enablement steps in the guide.
+
+You cannot downgrade after registering a higher-tier license.

@@ -1,0 +1,491 @@
+/**
+ * NKP Catalog docs theme
+ * Color palette from Nutanix Support & Insights Portal CSS (portal.nutanix.com).
+ * Primitives: --color-primitives-blue-600/700/800, --color-primitives-grey-900/300/00, etc.
+ */
+
+/* Light mode: exact portal primitives */
+:root {
+  /* Primary = portal blue-600 (links, buttons); blue-700 hover, blue-800 active */
+  --ifm-color-primary: #22a5f7;
+  --ifm-color-primary-dark: #1f88de;
+  --ifm-color-primary-darker: #1b6dc6;
+  --ifm-color-primary-darkest: #1856ad;
+  --ifm-color-primary-light: #59bcf9;
+  --ifm-color-primary-lighter: #91d2fb;
+  --ifm-color-primary-lightest: #bde4fd;
+  --ifm-code-font-size: 90%;
+  --docusaurus-highlighted-code-line-bg: rgba(34, 165, 247, 0.1);
+
+  /* Navbar/footer: portal grey-900 (Color-Background-Nav-Base), text grey-00 / grey-300 */
+  --ifm-navbar-background-color: #22272e;
+  --ifm-navbar-link-color: #fff;
+  --ifm-navbar-link-hover-color: #22a5f7;
+  --ifm-footer-background-color: #22272e;
+  --ifm-footer-link-color: #b8bfca;
+  --ifm-footer-link-hover-color: #22a5f7;
+  --ifm-footer-title-color: #fff;
+}
+
+/* Dark mode: portal dark theme (nav stays grey-900; primary blue-600) */
+[data-theme='dark'] {
+  --ifm-color-primary: #22a5f7;
+  --ifm-color-primary-dark: #1f88de;
+  --ifm-color-primary-darker: #1b6dc6;
+  --ifm-color-primary-darkest: #1856ad;
+  --ifm-color-primary-light: #59bcf9;
+  --ifm-color-primary-lighter: #91d2fb;
+  --ifm-color-primary-lightest: #bde4fd;
+  --docusaurus-highlighted-code-line-bg: rgba(34, 165, 247, 0.15);
+}
+
+/* Hero banner: portal nav (grey-900) */
+.hero--primary {
+  --ifm-hero-background-color: #22272e;
+  --ifm-hero-text-color: #fff;
+}
+
+.hero--primary .hero__title,
+.hero--primary .hero__subtitle {
+  color: var(--ifm-hero-text-color);
+}
+
+.hero--primary .button--secondary {
+  --ifm-button-background-color: #22a5f7;
+  --ifm-button-border-color: #22a5f7;
+  color: #fff;
+}
+
+.hero--primary .button--secondary:hover {
+  --ifm-button-background-color: #1f88de;
+  --ifm-button-border-color: #1f88de;
+  color: #fff;
+}
+
+/* Navbar: ensure title and dropdown match dark theme */
+.navbar {
+  color: var(--ifm-navbar-link-color);
+}
+
+.navbar__title {
+  color: inherit;
+}
+
+/* Footer text: portal nav secondary (grey-300) */
+.footer {
+  color: #b8bfca;
+}
+
+.footer__link-item:hover {
+  color: var(--ifm-footer-link-hover-color);
+}
+
+/* Code: Menlo per Nutanix DS typography */
+code,
+pre {
+  font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* ---------------------------------------------------------------------------
+   Sidebar and TOC: larger font sizes for readability (GH Pages)
+   --------------------------------------------------------------------------- */
+
+/* CLI Reference category: icon on the category link only (href is /docs/cli), not on child doc links */
+.sidebar-cli-ref a.menu__link[href$="/cli"]::before,
+.sidebar-cli-ref a.menu__link[href$="/cli/"]::before {
+  content: '';
+  display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+  background: url(/img/cli-icon.svg) no-repeat center;
+  background-size: contain;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+[data-theme='dark'] .sidebar-cli-ref a.menu__link[href$="/cli"]::before,
+[data-theme='dark'] .sidebar-cli-ref a.menu__link[href$="/cli/"]::before {
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+/* Left sidebar: doc tree / hierarchy (categories + doc links) */
+.theme-doc-sidebar-container .menu__link,
+.theme-doc-sidebar-container .menu__list-item-collapsible .menu__link {
+  font-size: 0.9375rem; /* 15px */
+}
+.theme-doc-sidebar-container .menu__list-item .menu__link {
+  font-size: 0.9375rem;
+}
+
+/* Right sidebar: table of contents */
+.theme-doc-toc-desktop .table-of-contents__link,
+[class*="tableOfContents"] .table-of-contents__link {
+  font-size: 0.9375rem; /* 15px */
+}
+.theme-doc-toc-desktop .table-of-contents__link--active {
+  font-weight: 600;
+}
+/* TOC heading "On this page" */
+.theme-doc-toc-desktop .table-of-contents__title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+/* Center top: breadcrumbs and doc title */
+.theme-doc-breadcrumbs,
+.theme-doc-breadcrumbs a {
+  font-size: 0.9375rem;
+}
+.theme-doc-markdown header h1:first-child {
+  font-size: 2rem; /* main doc title */
+}
+
+/* ---------------------------------------------------------------------------
+   Schema validator: editor look (GH Pages)
+   --------------------------------------------------------------------------- */
+
+/* Explicit neutral backgrounds so the editor never inherits primary blue */
+.schema-validator__editor-wrap {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 4px 12px rgba(0, 0, 0, 0.04);
+  background: #fff;
+}
+
+[data-theme='dark'] .schema-validator__editor-wrap {
+  border-color: var(--ifm-color-emphasis-200);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  background: #1e1e1e;
+}
+
+.schema-validator__editor-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: #f6f8fa;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  font-size: 0.8125rem;
+}
+
+[data-theme='dark'] .schema-validator__editor-bar {
+  background: #252526;
+  border-bottom-color: var(--ifm-color-emphasis-300);
+}
+
+.schema-validator__editor-tab {
+  font-weight: 600;
+  color: var(--ifm-font-color-base);
+  font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.schema-validator__editor-hint {
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.75rem;
+}
+
+/* Isolate editor from theme: reset primary so nothing inside turns blue */
+.schema-validator__editor-body {
+  --ifm-color-primary: #22272e;
+  --ifm-background-color: #fff;
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+  background: #fff !important;
+  color: #22272e;
+}
+
+[data-theme='dark'] .schema-validator__editor-body {
+  --ifm-color-primary: #d4d4d4;
+  --ifm-background-color: #1e1e1e;
+  background: #1e1e1e !important;
+  color: #d4d4d4;
+}
+
+/* Every container inside editor: force neutral background so nothing is blue */
+.schema-validator__editor-body div {
+  background-color: transparent !important;
+}
+
+.schema-validator__editor-body .monaco-editor,
+.schema-validator__editor-body .monaco-editor .monaco-editor-background,
+.schema-validator__editor-body .monaco-editor .margin,
+.schema-validator__editor-body .monaco-editor .monaco-scrollable-element {
+  background: #fff !important;
+}
+
+[data-theme='dark'] .schema-validator__editor-body .monaco-editor,
+[data-theme='dark'] .schema-validator__editor-body .monaco-editor .monaco-editor-background,
+[data-theme='dark'] .schema-validator__editor-body .monaco-editor .margin,
+[data-theme='dark'] .schema-validator__editor-body .monaco-editor .monaco-scrollable-element {
+  background: #1e1e1e !important;
+}
+
+.schema-validator__editor-body .monaco-editor {
+  border-radius: 0 0 10px 10px;
+}
+
+/* ---------------------------------------------------------------------------
+   CLI reference: generated command docs (developer-friendly)
+   --------------------------------------------------------------------------- */
+
+/* Pages that contain .cli-doc-ref (auto-generated CLI docs) */
+article:has(.cli-doc-ref) .markdown > h2:first-of-type {
+  font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+  margin-top: 0.5rem;
+}
+
+article:has(.cli-doc-ref) .markdown > h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--ifm-font-color-base);
+}
+
+/* Code blocks: usage and options */
+article:has(.cli-doc-ref) .markdown pre {
+  border-radius: 8px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  padding: 1rem 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+[data-theme='dark'] article:has(.cli-doc-ref) .markdown pre {
+  border-color: var(--ifm-color-emphasis-300);
+}
+
+/* SEE ALSO: make related commands stand out */
+article:has(.cli-doc-ref) .markdown h3 + ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0.5rem;
+}
+
+article:has(.cli-doc-ref) .markdown h3 + ul li {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  background: var(--ifm-color-emphasis-100);
+  border-left: 3px solid var(--ifm-color-primary);
+}
+
+[data-theme='dark'] article:has(.cli-doc-ref) .markdown h3 + ul li {
+  background: var(--ifm-color-emphasis-200);
+}
+
+article:has(.cli-doc-ref) .markdown h3 + ul li a {
+  font-weight: 500;
+}
+
+/* Intro paragraph on CLI root */
+article:has(.cli-doc-ref) .markdown > p:first-of-type {
+  font-size: 1rem;
+  color: var(--ifm-color-emphasis-700);
+  margin-bottom: 1.25rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Search (docusaurus-plugin-search-local): align with Nutanix theme
+   --------------------------------------------------------------------------- */
+
+/* Use site primary for focus and highlights (portal blue via :root) */
+:root {
+  --search-local-modal-background: #f5f6f7;
+  --search-local-highlight-color: var(--ifm-color-primary);
+  --search-local-hit-active-color: #fff;
+}
+
+[data-theme='dark'] {
+  --search-local-modal-background: var(--ifm-background-color);
+  --search-local-highlight-color: var(--ifm-color-primary);
+}
+
+/* Keyboard shortcut badge: match dark navbar instead of default blue-gray */
+.DocSearch-Button-Key {
+  background: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.2) !important;
+  color: var(--ifm-navbar-link-color) !important;
+}
+
+html[data-theme='dark'] .DocSearch-Button-Key {
+  background: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: inset 0 -1px 0 0 rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Search modal overlay: match portal nav (grey-900) */
+[class*='searchModal'] {
+  background: rgba(34, 39, 46, 0.88) !important;
+}
+
+/* Search modal box */
+[class*='searchModalContainer'] {
+  background: var(--ifm-background-surface-color) !important;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='dark'] [class*='searchModalContainer'] {
+  border-color: var(--ifm-color-emphasis-300);
+}
+
+/* Selected result row: Nutanix primary (plugin uses .cursor for selected) */
+[class*='cursor'] {
+  background-color: var(--ifm-color-primary) !important;
+}
+
+[class*='cursor'] [class*='hitWrapper'] mark {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Highlight matched text in results */
+[class*='hitWrapper'] mark {
+  color: var(--ifm-color-primary);
+}
+
+/* ---------------------------------------------------------------------------
+   Landing page: card grid
+   --------------------------------------------------------------------------- */
+
+.landing-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.landing-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 1.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-background-surface-color);
+  text-decoration: none !important;
+  color: inherit !important;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.landing-card:hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 4px 16px rgba(34, 165, 247, 0.12);
+  transform: translateY(-2px);
+}
+
+[data-theme='dark'] .landing-card:hover {
+  box-shadow: 0 4px 16px rgba(34, 165, 247, 0.2);
+}
+
+.landing-card__icon {
+  font-size: 1.75rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.landing-card__body h3 {
+  margin: 0 0 0.375rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.landing-card__body p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-700);
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------------------
+   Admonitions: Nutanix-aligned accent colors
+   --------------------------------------------------------------------------- */
+
+:root {
+  --ifm-color-info: #22a5f7;          /* portal blue-600 */
+  --ifm-color-info-dark: #1f88de;
+  --ifm-color-info-darker: #1b6dc6;
+  --ifm-color-success: #26b973;       /* portal green */
+  --ifm-color-success-dark: #21a566;
+  --ifm-color-success-darker: #1c9159;
+  --ifm-color-warning: #f5a623;       /* portal amber */
+  --ifm-color-warning-dark: #e09516;
+  --ifm-color-warning-darker: #c78412;
+  --ifm-color-danger: #e7515a;        /* portal red */
+  --ifm-color-danger-dark: #d63e48;
+  --ifm-color-danger-darker: #c02f39;
+}
+
+.alert {
+  border-radius: 8px;
+  border-width: 1px;
+  border-left-width: 4px;
+}
+
+/* ---------------------------------------------------------------------------
+   "Edit this page" link: subtle GitHub styling
+   --------------------------------------------------------------------------- */
+
+.theme-edit-this-page a::before {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-right: 0.4rem;
+  vertical-align: -0.125em;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+  -webkit-mask-size: contain;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+  mask-size: contain;
+}
+
+.theme-edit-this-page a {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8125rem;
+  color: var(--ifm-color-emphasis-600);
+  transition: color 0.15s;
+}
+
+.theme-edit-this-page a:hover {
+  color: var(--ifm-color-primary);
+}
+
+/* ---------------------------------------------------------------------------
+   Back-to-top button: Nutanix themed
+   --------------------------------------------------------------------------- */
+
+[class*='backToTopButton'] {
+  background-color: var(--ifm-color-primary) !important;
+  border-radius: 50% !important;
+  width: 3rem !important;
+  height: 3rem !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+[class*='backToTopButton']:hover {
+  background-color: var(--ifm-color-primary-dark) !important;
+}
+
+/* Mermaid diagrams: pan/zoom viewport (svg-pan-zoom), fit page height */
+.docusaurus-mermaid-container {
+  height: calc(100vh - 140px);
+  min-height: 400px;
+  overflow: auto;
+  touch-action: none; /* allow pan without page scroll on touch */
+}
+.docusaurus-mermaid-container > svg {
+  display: block;
+  max-width: 100%;
+}

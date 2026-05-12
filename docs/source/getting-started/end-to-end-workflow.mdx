@@ -1,0 +1,112 @@
+---
+title: End-to-end workflow
+sidebar_position: 0
+internal: true
+---
+
+<div data-internal="true">
+
+# End-to-end user workflow
+
+:::info Internal page
+This page is only visible when `?internal=true` is appended to the URL.
+:::
+
+This diagram shows the user-facing journey from discovery to deployment.
+
+```mermaid
+sequenceDiagram
+    actor Alice as Alice (Partner Developer)
+    actor John as John (Repo Admin)
+    participant GitHub as GitHub Repository
+    participant CI as CI Pipeline
+    participant CD as CD Pipeline
+    participant Catalog as Catalog Portal (gh-pages)
+    participant NKP as Nutanix Kubernetes Platform
+    actor Bob as Bob (End User)
+
+    Note over GitHub: Drafting an App
+    Alice->>GitHub: Submit application (PR)
+    activate GitHub
+    GitHub->>CI: Trigger validation workflow
+    deactivate GitHub
+    activate CI
+
+    CI->>CI: Run security scans
+    CI->>CI: Validate manifest format
+    CI->>CI: Test deployment
+
+    alt Validation Failed
+        CI-->>GitHub: Post validation results
+        activate GitHub
+        GitHub-->>Alice: Request changes
+        deactivate GitHub
+    else Validation Passed
+        CI->>GitHub: Approve submission
+        deactivate CI
+        activate GitHub
+
+        GitHub->>John: Notification of pending PR
+        activate John
+        John->>GitHub: Review and merge PR
+        deactivate John
+
+        GitHub->>CD: Trigger deployment workflow
+        deactivate GitHub
+        activate CD
+
+        Note over CD: Artifact Processing
+        CD->>CD: Perform Validation
+        CD->>CD: Index new application
+        CD->>CD: Generate metadata
+        CD->>CD: Publish non airgapped artifacts
+        CD->>CD: Publish airgapped artifacts (if applicable)
+
+        CD->>Catalog: Deploy to catalog portal
+        deactivate CD
+        activate Catalog
+    end
+
+    Note over NKP: User Discovers an App
+    Bob->>NKP: Browse catalog
+    activate NKP
+    NKP->>Catalog: Request available applications
+    Catalog-->>NKP: Return application listing
+    deactivate Catalog
+
+    Bob->>NKP: Select application to install
+
+    alt Airgapped environments
+      activate Bob
+      Bob->>Catalog: Download a .nkp file from portal
+      activate Catalog
+      Catalog-->>Bob: Return .nkp file
+      deactivate Catalog
+      Bob->>Bob: Generate a .nkp file locally if its not hosted
+      Bob->>NKP: Upload a .nkp file to cluster
+      deactivate Bob
+    else Networked environments
+      activate Catalog
+      Catalog->>NKP: Notify of a new version
+      deactivate Catalog
+      Bob->>NKP: User deploys new version of application
+    end
+
+    Note over NKP: Validation Checks
+    NKP->>NKP: Check release channel
+    NKP->>NKP: Check .minDKPVersion
+    NKP->>NKP: Check dependencies
+    NKP->>NKP: Check Licensing
+    NKP->>NKP: Check upgradesFrom (for upgrades)
+
+    Note over Catalog: Telemetry
+    activate Catalog
+    NKP-->>Bob: Display deployment status
+    NKP-->>Catalog: Send usage statistics (Pulse ?)
+    Catalog-->>NKP: Send CVE information and upgrade prompts
+    Catalog-->>Catalog: Analyze usage metrics (Pulse ?) for public visiblity
+    deactivate Catalog
+    deactivate NKP
+```
+
+</div>

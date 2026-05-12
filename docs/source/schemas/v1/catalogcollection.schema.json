@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "catalog.nkp.nutanix.com/v1/catalog-collection",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the catalog collection source repository (e.g.: nkp-partner-catalog)."
+    },
+    "tag": {
+      "type": "string",
+      "description": "Tag of the catalog collection source repository (e.g.: 2.16)."
+    },
+    "applications": {
+      "items": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the application."
+          },
+          "version": {
+            "type": "string",
+            "description": "Version of the application."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object"
+      },
+      "type": "array",
+      "description": "List of applications in the catalog collection."
+    },
+    "annotations": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "type": "object",
+      "description": "Annotations maintains a map of keys and values that will be populated on the resulting\nOCIRepository object's .status.artifact.metadata\nValues must adhere to https://github.com/opencontainers/image-spec/blob/v1.1.1/annotations.md specification"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object",
+  "description": "CatalogCollection stores metadata of a collection of catalog applications."
+}

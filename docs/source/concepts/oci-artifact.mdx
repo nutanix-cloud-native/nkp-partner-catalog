@@ -1,0 +1,46 @@
+---
+title: OCI artifacts
+sidebar_position: 1
+---
+
+# OCI artifacts
+
+## Overview
+
+OCI (Open Container Initiative) artifacts are the packaging and distribution format used by NKP Catalog for delivering application manifests, Helm charts, and catalog bundles. By leveraging OCI registries, catalogs can be pushed, pulled, and versioned using the same infrastructure used for container images.
+
+## How NKP Catalog uses OCI artifacts
+
+NKP Catalog uses OCI artifacts at two levels:
+
+1. **Helm charts stored in OCI registries** — Each application's Helm chart is pushed to an OCI registry (e.g. `ghcr.io`). The `OCIRepository` resource in each application's `helmrelease.yaml` references the chart by OCI URL and tag.
+
+2. **Catalog bundles** — The `nkp create catalog-bundle` command packages one or more applications (manifests, metadata, and optionally container images) into a tar archive. This bundle can then be pushed to an OCI registry as a collection artifact using `nkp push bundle`.
+
+## OCI registry URLs
+
+A typical OCI URL for a catalog collection follows this pattern:
+
+```
+oci://<registry>/<org>/<catalog-name>/collection
+```
+
+For Applications within a Catalog:
+
+```
+oci://<registry>/<org>/<catalog-name>/<app-name>
+```
+
+## Airgapped deployments
+
+For airgapped (disconnected) environments, catalog bundles can include container images alongside manifests. Build an airgapped bundle with:
+
+```bash
+nkp create catalog-bundle --airgapped --collection-tag <tag>
+```
+
+The resulting tar file can be transferred to the airgapped environment and pushed to a local registry.
+
+## Relationship to Flux
+
+Flux's `OCIRepository` source controller pulls OCI artifacts from the registry at the interval specified in the application's manifests. When Flux detects a new artifact revision, it reconciles the application's `HelmRelease` or `Kustomization` to the updated state.

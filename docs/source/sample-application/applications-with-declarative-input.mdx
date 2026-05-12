@@ -1,0 +1,49 @@
+---
+title: Applications with declarative input
+sidebar_position: 3
+---
+
+# Applications with declarative input
+
+## Overview
+
+Catalog applications can accept user-provided configuration at deploy time through declarative inputs. This lets users customize values (e.g. model names, replica counts, storage settings) without modifying the default Helm chart.
+
+## How it works
+
+1. The application defines an **application user inputs** schema (see [Application User Inputs](/docs/api/application-user-inputs)) that describes the configurable fields, their types, defaults, and validation rules.
+2. At deploy time, the NKP UI renders a form from this schema, or the user provides a ConfigMap via the CLI.
+3. Kommander merges the user-provided values with the chart defaults and deploys the application.
+
+## Providing overrides via the UI
+
+1. Navigate to **Applications** in your workspace.
+2. Click **Enable** on the application.
+3. Fill in the configuration form (generated from the user inputs schema).
+4. Click **Deploy**.
+
+## Providing overrides via the CLI
+
+Create a ConfigMap with your custom values:
+
+```bash
+kubectl create configmap my-app-config \
+  --from-file=values.yaml=./my-values.yaml \
+  -n <workspace-namespace>
+```
+
+Then reference it when deploying:
+
+```bash
+nkp create appdeployment <app-name> \
+  --workspace <workspace-name> \
+  --config-overrides my-app-config
+```
+
+Kommander waits for the ConfigMap to exist before deploying the application.
+
+## Key points
+
+- The user inputs schema is optional — applications work without it, but it provides a better UI experience.
+- Overrides are merged with the default values ConfigMap (`cm.yaml`); user values take precedence.
+- See [Configuration overrides](/docs/concepts/config-overrides-flux-hr) for how overrides interact with Flux HelmReleases.

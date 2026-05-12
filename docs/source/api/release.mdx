@@ -1,0 +1,20 @@
+---
+title: Catalog Release Specification
+sidebar_position: 4
+---
+
+# CatalogReleaseSpec schema
+
+JSON Schema for **CatalogReleaseSpec**: the catalog release specification that maps NKP versions to supported applications. Each release defines a catalog collection (e.g. tag, file name, airgapped flag) and either **constraints** (filter by NKP version) or an explicit **applications** list.
+
+**Schema file:** [catalogreleasespec.schema.json](/schemas/v1/catalogreleasespec.schema.json)
+
+Use the reference and validator below to explore the schema and validate your YAML or JSON in the browser.
+
+import SchemaValidator from '@site/src/components/SchemaValidator';
+
+<SchemaValidator
+  schemaOptions={[{ label: 'CatalogReleaseSpec', path: 'schemas/v1/catalogreleasespec.schema.json' }]}
+  showSchemaList={true}
+  schemaListOptions={[{ label: 'CatalogReleaseSpec', path: 'schemas/v1/catalogreleasespec.schema.json' }]}
+/>

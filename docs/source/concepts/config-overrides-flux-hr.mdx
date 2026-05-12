@@ -1,0 +1,10 @@
+---
+title: Configuration overrides in Flux HelmRelease
+sidebar_position: 6
+---
+
+# Configuration overrides in Flux HelmRelease
+
+## Overview
+
+You can override default Helm chart values for applications by providing a ConfigMap. When creating an AppDeployment (e.g. via the NKP CLI), use a `--config-overrides` flag with the name of a ConfigMap that contains your custom values (e.g. in a `values.yaml` key). Kommander waits for the ConfigMap to exist before deploying the application. In the UI, use **Configure Application** or upload a YAML file with overrides when enabling an application.

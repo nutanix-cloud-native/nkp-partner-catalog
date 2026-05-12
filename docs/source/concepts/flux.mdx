@@ -1,0 +1,28 @@
+---
+title: Flux
+sidebar_position: 2
+---
+
+import siteConfig from '@generated/docusaurus.config';
+
+# Flux
+
+## Overview
+
+NKP uses [Flux (FluxCD)](https://fluxcd.io/flux/) for GitOps: continuous deployment and reconciliation of configurations from Git. Flux is available with NKP Pro and NKP Ultimate. It lets you manage applications and platform configurations declaratively; changes in the Git repository are reconciled to the clusters. Project deployments in the platform guide use GitOps to deploy resources across clusters in a project.
+
+## HelmRelease
+
+A [HelmRelease](https://fluxcd.io/flux/components/helm/helmreleases/) is a Flux custom resource that installs or upgrades a Helm chart. NKP uses HelmReleases when deploying applications (e.g. platform or catalog apps) to workspaces or projects. You can verify deployments by checking HelmReleases in the target namespace (e.g. `kubectl get helmreleases -n <namespace>`). Configuration overrides can be applied via a ConfigMap referenced by the HelmRelease or AppDeployment.
+
+## Kustomization
+
+A [Kustomization](https://fluxcd.io/flux/components/kustomize/kustomizations/) is a Flux resource that applies Kubernetes manifests from a Git repository or other source, optionally using Kustomize. In NKP, Kustomizations support GitOps workflows for deploying and managing resources across clusters in a project or workspace.
+
+## Resources
+
+- [Flux documentation](https://fluxcd.io/flux/)
+- [Flux concepts](https://fluxcd.io/flux/concepts/)
+- [HelmRelease API reference](https://fluxcd.io/flux/components/helm/helmreleases/)
+- [Kustomization API reference](https://fluxcd.io/flux/components/kustomize/kustomizations/)
+- <a href={`https://github.com/mesosphere/kommander-applications/tree/release-${siteConfig.customFields.nkpVersion}/applications/kommander-flux/`}>Flux configuration shipped with NKP {siteConfig.customFields.nkpVersion}</a>

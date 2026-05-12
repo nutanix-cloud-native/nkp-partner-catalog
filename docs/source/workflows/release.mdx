@@ -1,0 +1,75 @@
+---
+title: Continuous Delivery
+sidebar_position: 8
+---
+
+# Continuous Delivery
+
+This page describes how to set up a release pipeline for a given catalog repository.
+
+## Overview
+
+The **catalog release specification** maps NKP (Nutanix Kubernetes Platform) versions to the set of applications supported in each release. You define this in a release spec file that drives how catalog artifacts are built and tagged. See the [Specification](/docs/api/release) for the JSON schema and validator.
+
+**Release spec file:** By default, the release spec file is named `.release.yaml` and lives at the root of your catalog repository. Use this file (or the path your pipeline expects) when running the release command.
+
+## Catalog release spec
+
+The top-level structure is [CatalogReleaseSpec](/docs/api/release). It contains:
+
+- **Schema** — Identifies the schema version (e.g. `catalog.nkp.nutanix.com/v1/catalog-release`).
+- **Releases** — A list of **Release** entries, one per catalog version (typically aligned to an NKP version).
+
+## Release
+
+Each **Release** describes a single catalog collection release:
+
+| Field | Description |
+|-------|-------------|
+| **collectionName** | Name of the catalog collection artifact (e.g. `nkp-partner-catalog`). Defaults to the repository name. |
+| **tagName** | OCI tag for this release (e.g. `2.19`). Must be a valid OCI tag (alphanumeric, `_`, `.`, `-`, up to 128 chars). |
+| **fileName** | Name of the built artifact (e.g. `nkp-partner-catalog-2.19.tar`). |
+| **airgapped** | If `true`, artifacts are built for airgapped use. Defaults to `false`. |
+| **constraints** | Optional. Filters applications by NKP version (see below). |
+| **applications** | Optional. Explicit list of applications (name + version) included in this release. |
+
+You must define **either** `constraints` **or** `applications` (or both); at least one is required. Validation fails if both are empty.
+
+### Application
+
+Each application in a release is defined by:
+
+- **name** — Application name.
+- **version** — Application version.
+
+Use **applications** when you want to pin exactly which apps (and versions) are in the release:
+
+- Each entry has **name** (application name) and **version** (application version).
+
+This gives full control over the set of applications and their versions for that release.
+
+### Constraints (filter by NKP version)
+
+Use **constraints** when you want the release to include all applications that match an NKP version:
+
+- **nkpVersion** — NKP version in `MAJOR.MINOR` or `MAJOR.MINOR.PATCH` format (e.g. `2.19` or `2.19.0`). Optional leading `v` is allowed.
+
+The build process uses this to filter which applications are included in the catalog for that release.
+
+## Validation
+
+- Every **Release** must have at least one of: **constraints** or **applications** (non-empty).
+- **tagName** must match the standard OCI tag pattern.
+- **nkpVersion** (when used) must match the semver-style pattern. E.g.: `2.19`.
+
+These rules are enforced when the release spec is processed by the CLI.
+
+## Creating release artifacts
+
+Once `.release.yaml` (or your release spec file) is in place, generate the release artifacts with:
+
+```bash
+nkp experimental catalog release
+```
+
+This command produces the catalog tar files from the spec. It does **not** push them to a registry. After the build, push the artifacts to your OCI registry using your usual workflow (for example, the steps in [Push Artifacts](/docs/workflows/push-oci-artifact)).

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "catalog.nkp.nutanix.com/v1/application-bundle",
+  "properties": {
+    "artifacts": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "description": "List of OCI artifacts required to create the application."
+    }
+  },
+  "additionalProperties": false,
+  "type": "object",
+  "description": "ApplicationBundle stores all the artifacts required to create a catalog application in an airgapped cluster."
+}

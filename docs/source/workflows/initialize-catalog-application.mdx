@@ -1,0 +1,50 @@
+---
+title: Initialize a catalog application
+sidebar_position: 2
+---
+
+# Initialize a catalog application
+
+## Overview
+
+Adding a new application to a catalog repository involves generating the required files (metadata, Kustomize config, HelmRelease manifests) and customizing them for the application.
+
+## Steps
+
+1. **Generate the application scaffold:**
+   ```bash
+   nkp generate catalog-repository --apps=<app-name>=<version>
+   ```
+   This creates `applications/<app-name>/<version>/` with template files.
+
+2. **Edit [`metadata.yaml`](/docs/api/application-metadata)** — Fill in the required fields:
+   - `displayName`, `description`, `category`, `licensing`, `scope`
+   - `overview` (Markdown), `supportLink`, `icon`
+   - `dependencies` and `requiredDependencies`
+   - `allowMultipleInstances`, `type`
+
+3. **Configure the [HelmRelease](/docs/concepts/flux#helmrelease)** — In `helmrelease/helmrelease.yaml`:
+   - Set the `OCIRepository` URL to point to your chart's OCI registry location
+   - Set `targetNamespace` to the application's dedicated namespace
+   - Configure `install.createNamespace: true`
+
+4. **Set default values** — Edit `helmrelease/cm.yaml` to provide default Helm values for the application.
+
+5. **Add optional files** as needed:
+   - Per-app `.bloodhound.yaml` for validation overrides
+   - Additional ConfigMaps for UI dashboard integration
+
+6. **Validate the repository:**
+   ```bash
+   nkp validate catalog-repository --repo-dir=.
+   ```
+
+7. **Build:**
+   ```bash
+   nkp create catalog-bundle --collection-tag <tag>
+   ```
+
+## Key conventions
+
+- Use Flux substitution variables (`${releaseName}`, `${releaseNamespace}`) instead of hardcoded values.
+- Every YAML document must end with `---` on its own line.

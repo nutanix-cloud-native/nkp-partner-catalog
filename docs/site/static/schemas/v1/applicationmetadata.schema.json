@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "catalog.nkp.nutanix.com/v1/application-metadata",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "description": "Identifies the schema used."
+    },
+    "displayName": {
+      "type": "string",
+      "description": "Display name of the application for the UI.\nFalls back to App ID if not given."
+    },
+    "allowMultipleInstances": {
+      "type": "boolean",
+      "description": "Whether multiple instances of the application can be installed. Defaults to true.",
+      "default": true
+    },
+    "category": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "description": "1 or more categories for this application. Categories are used to group applications in the UI.\nDefaults to [general].",
+      "default": [
+        "general"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description, should be a sentence or two, displayed in the UI on the application card."
+    },
+    "dependencies": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "description": "List of applications that should be installed in order for the application to function properly.\nThe UI will not block the installation of the application if the dependencies are not installed."
+    },
+    "requiredDependencies": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "description": "List of applications that are required to be installed in order for the application to be enabled in the UI."
+    },
+    "k8sVersionSupport": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)(\\.(0|[1-9]\\d*)){0,2}$|^((>=?|<=?)\\s*(v)?(0|[1-9]\\d*)(\\.(0|[1-9]\\d*)){0,2})(\\s*(>=?|<=?)\\s*(v)?(0|[1-9]\\d*))?(\\.(0|[1-9]\\d*)){0,2}?$",
+      "description": "A string indicating the compatible Kubernetes version or range."
+    },
+    "icon": {
+      "type": "string",
+      "description": "Base64 encoded icon SVG file used for application logos in the UI."
+    },
+    "nkpVersionSupport": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)(\\.(0|[1-9]\\d*)){0,2}$|^((>=?|<=?)\\s*(v)?(0|[1-9]\\d*)(\\.(0|[1-9]\\d*)){0,2})(\\s*(>=?|<=?)\\s*(v)?(0|[1-9]\\d*))?(\\.(0|[1-9]\\d*)){0,2}?$",
+      "description": "A string indicating the compatible NKP version or range."
+    },
+    "overview": {
+      "type": "string",
+      "description": "Markdown overview used on the application detail page in the UI."
+    },
+    "supportLink": {
+      "type": "string",
+      "pattern": "^https?:\\/\\/([a-zA-Z0-9\\.-]+)\\.([a-zA-Z]{2,6})(:[0-9]{1,5})?(\\/[^\\s]*)?$",
+      "description": "A link to the support page."
+    },
+    "scope": {
+      "items": {
+        "type": "string",
+        "enum": [
+          "project",
+          "workspace"
+        ]
+      },
+      "type": "array",
+      "description": "List of scopes, can be set only to project and/or workspace. Defaults to project.",
+      "default": [
+        "project"
+      ]
+    },
+    "upgradesFrom": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)(\\.(0|[1-9]\\d*)){0,2}$|^((>=?|<=?)\\s*(v)?(0|[1-9]\\d*)(\\.(0|[1-9]\\d*)){0,2})(\\s*(>=?|<=?)\\s*(v)?(0|[1-9]\\d*))?(\\.(0|[1-9]\\d*)){0,2}?$",
+      "description": "A string indicating the version or range of versions that the application can be upgraded from."
+    },
+    "licensing": {
+      "items": {
+        "type": "string",
+        "enum": [
+          "Starter",
+          "Pro",
+          "Ultimate"
+        ]
+      },
+      "type": "array",
+      "description": "Cluster must have one of these licenses applied in order for the application to be installable.\nDefaults to [Pro, Ultimate].",
+      "default": [
+        "Pro",
+        "Ultimate"
+      ]
+    },
+    "certifications": {
+      "items": {
+        "type": "string",
+        "enum": [
+          "airgapped",
+          "qualified",
+          "nutanix-supported"
+        ]
+      },
+      "type": "array",
+      "description": "List of certifications that the application has."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "internal",
+        "nkp-core-platform",
+        "nkp-catalog",
+        "preferred-partner",
+        "custom"
+      ],
+      "description": "Type of application.",
+      "default": "custom"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object",
+  "required": [
+    "schema"
+  ],
+  "description": "Metadata for an application."
+}

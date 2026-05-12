@@ -1,0 +1,54 @@
+{
+  "name": "nkp-catalog-cli",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus build && gh-pages -d build",
+    "serve": "BASE_URL=/ npm run build && docusaurus serve",
+    "start:with-search": "npm run serve",
+    "clear": "docusaurus clear"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.5.0",
+    "@docusaurus/preset-classic": "^3.5.0",
+    "@docusaurus/theme-mermaid": "^3.5.0",
+    "@mdx-js/react": "^3.0.0",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1",
+    "clsx": "^2.1.1",
+    "docusaurus-json-schema-plugin": "^1.15.0",
+    "js-yaml": "^4.1.0",
+    "prism-react-renderer": "^2.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "svg-pan-zoom": "^3.6.2",
+    "docusaurus-plugin-search-local": "^2.1.2"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "^3.5.0",
+    "@docusaurus/types": "^3.5.0",
+    "gh-pages": "^6.1.1"
+  },
+  "overrides": {
+    "lodash-es": ">=4.17.23"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=20.0"
+  }
+}

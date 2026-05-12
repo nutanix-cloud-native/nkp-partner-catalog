@@ -6,3 +6,21 @@ tmp-kind-hack-scripts/
 
 # Ignore any build artifacts
 *.tar
+
+# macOS
+.DS_Store
+
+# Local tooling/runtime artifacts
+/.devbox/
+/docs/.devbox/
+/.docs-deploy/
+/.local/
+
+# Node.js and Docusaurus build/cache outputs
+node_modules/
+/docs/site/node_modules/
+/docs/site/.docusaurus/
+/docs/site/build/
+
+# Misc logs
+npm-debug.log*

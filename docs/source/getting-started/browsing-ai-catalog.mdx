@@ -1,0 +1,50 @@
+---
+title: Browse the AI catalog
+sidebar_position: 5
+---
+
+# Browse the AI catalog
+
+## Overview
+
+The **NKP AI Applications Catalog** provides a curated set of open-source and community AI/ML applications packaged for one-click deployment on NKP. Applications span inference engines, model registries, ML pipelines, vector databases, notebooks, agent frameworks, and more.
+
+**Repository:** [nutanix-cloud-native/nkp-ai-applications-catalog](https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog)
+
+Browse the repository's `applications/` directory for the current list of available applications and their versions.
+
+## Characteristics
+
+- Require **NKP Pro** or **NKP Ultimate** license
+- Deploy at **workspace** or **project** scope depending on the application
+- Applications are packaged as Flux HelmReleases with OCI-based chart sources
+- Each application deploys to its own dedicated namespace
+- GPU support is available for inference and training workloads (configure via Helm values)
+
+## Categories
+
+Applications in this catalog cover areas such as:
+
+- **Inference** — LLM serving engines with OpenAI-compatible APIs
+- **Agent frameworks** — Kubernetes-native AI agent orchestration
+- **ML pipelines** — End-to-end machine learning workflow management
+- **Notebooks** — Interactive development environments for data science
+- **Vector databases** — Similarity search for RAG and embedding workloads
+- **Model registries** — Versioned model artifact management
+- **GPU management** — Device plugins, metrics exporters, and operator support
+
+## Deploying from the catalog
+
+1. Log into the NKP UI and navigate to your workspace.
+2. Go to **Applications** in the sidebar.
+3. Browse applications under the AI catalog section.
+4. Click **Enable** and configure required values (e.g. model names, GPU settings, storage).
+
+## Dependencies
+
+Some AI applications declare soft or hard dependencies on other catalog applications (e.g. an agent framework depending on an inference engine). Check each application's `metadata.yaml` for the `dependencies` and `requiredDependencies` fields.
+
+## Resources
+
+- [NKP AI Applications Catalog repository](https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog)
+- [Catalog CLI documentation](/docs)

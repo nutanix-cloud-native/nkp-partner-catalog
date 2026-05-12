@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "catalog.nkp.nutanix.com/v1/catalog-release-spec",
+  "properties": {
+    "schema": {
+      "type": "string",
+      "description": "Identifies the schema used."
+    },
+    "releases": {
+      "items": {
+        "anyOf": [
+          {
+            "properties": {
+              "constraints": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "constraints"
+            ],
+            "title": "Has constraints",
+            "description": "Release defines constraints to filter applications."
+          },
+          {
+            "properties": {
+              "applications": {
+                "type": "array",
+                "minItems": 1
+              }
+            },
+            "required": [
+              "applications"
+            ],
+            "title": "Has applications",
+            "description": "Release defines an explicit list of applications."
+          }
+        ],
+        "properties": {
+          "collectionName": {
+            "type": "string",
+            "description": "CollectionName is the name of the catalog collection artifact (e.g., \"nkp-partner-catalog\").\nDefaults to the repository name."
+          },
+          "tagName": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_.-]{1",
+            "description": "TagName is the tag for the catalog collection artifact (e.g., \"2.17\", must be a valid OCI tag)."
+          },
+          "fileName": {
+            "type": "string",
+            "description": "FileName is the name of the catalog collection artifact (e.g., \"nkp-partner-catalog-2.17.tar\")."
+          },
+          "collectionAnnotations": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "description": "CollectionAnnotations holds extra annotations to populate on the collection artifact (if any).\nSee https://github.com/opencontainers/image-spec/blob/v1.1.1/annotations.md"
+          },
+          "includeApplicationImages": {
+            "type": "boolean",
+            "description": "IncludeApplicationImages indicates if the output should include application container images\nDefaults to false."
+          },
+          "baseRegistry": {
+            "type": "string",
+            "description": "BaseRegistry specifies the registry path to use for fetching pre-built catalog artifacts.\nRequired when IncludeApplicationImages is true."
+          },
+          "constraints": {
+            "properties": {
+              "nkpVersion": {
+                "type": "string",
+                "pattern": "^v?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(\\.(0|[1-9]\\d*))?$"
+              }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "description": "Constraints defines the constraints used to filter applications for this release."
+          },
+          "applications": {
+            "items": {
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Name of the application."
+                },
+                "version": {
+                  "type": "string",
+                  "description": "Version of the application."
+                }
+              },
+              "additionalProperties": false,
+              "type": "object"
+            },
+            "type": "array",
+            "description": "Applications is the list of applications (with versions) included in this catalog collection."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "description": "Release defines a single catalog collection release with its supported applications."
+      },
+      "type": "array",
+      "description": "Releases is a list of catalog versions (most likely pointing to a specific NKP Version)\nand their supported applications."
+    }
+  },
+  "additionalProperties": false,
+  "type": "object",
+  "required": [
+    "schema"
+  ],
+  "description": "CatalogReleaseSpec defines the catalog release specification that maps NKP versions to supported applications."
+}
