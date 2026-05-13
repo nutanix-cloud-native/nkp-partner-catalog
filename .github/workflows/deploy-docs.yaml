@@ -3,7 +3,7 @@
 #
 # Build docs from main (docs/source + docs/site) and deploy via GitHub Pages artifacts.
 
-name: deploy-docs
+name: Deploy Docs
 
 on:
   push:
@@ -36,11 +36,12 @@ jobs:
       - name: Install devbox
         uses: jetify-com/devbox-install-action@v0.15.0
         with:
+          project-path: docs
           enable-cache: true
           skip-nix-installation: true
 
       - name: Build docs
-        run: devbox run -- just docs-build
+        run: cd docs && devbox run -- just docs-build
 
       - name: Upload static files as Pages artifact
         uses: actions/upload-pages-artifact@v3
