@@ -49,3 +49,13 @@ nkp create catalog-collection \
 ```
 
 Run `nkp push bundle --help` for additional configuration flags.
+
+## Partner catalog publishing flow
+
+For partner repository (`nkp-partner-catalog`), contributor flow is:
+
+1. Add/update app definitions and metadata.
+2. Open a PR to `main`.
+3. After merge, the repository release pipeline publishes catalog artifacts using the repo release spec files (for example, [`stable.yaml`](https://github.com/nutanix-cloud-native/nkp-partner-catalog/blob/main/.release/stable.yaml)).
+
+In other words, for partner-catalog submissions you typically do **not** run manual `nkp push bundle` to a personal target registry as the final publication step. You can however publish to your own registry for testing before submission.

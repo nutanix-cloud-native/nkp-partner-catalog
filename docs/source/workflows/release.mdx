@@ -73,3 +73,8 @@ nkp experimental catalog release
 ```
 
 This command produces the catalog tar files from the spec. It does **not** push them to a registry. After the build, push the artifacts to your OCI registry using your usual workflow (for example, the steps in [Push Artifacts](/docs/workflows/push-oci-artifact)).
+
+## Partner catalog note
+
+For [`nkp-partner-catalog`](https://github.com/nutanix-cloud-native/nkp-partner-catalog), publication is handled by repository release automation after changes are merged.
+The release mapping (NKP versions and included apps/versions) is defined by the release spec files, including [`stable.yaml`](https://github.com/nutanix-cloud-native/nkp-partner-catalog/blob/main/.release/stable.yaml).

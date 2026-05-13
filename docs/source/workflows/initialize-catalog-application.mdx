@@ -22,6 +22,8 @@ Adding a new application to a catalog repository involves generating the require
    - `overview` (Markdown), `supportLink`, `icon`
    - `dependencies` and `requiredDependencies`
    - `allowMultipleInstances`, `type`
+   - Set `scope` to `workspace` unless a project-only requirement is explicitly defined.
+   - Provide an application `icon` (required for submission review).
 
 3. **Configure the [HelmRelease](/docs/concepts/flux#helmrelease)** — In `helmrelease/helmrelease.yaml`:
    - Set the `OCIRepository` URL to point to your chart's OCI registry location
