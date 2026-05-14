@@ -1,0 +1,20 @@
+apiVersion: v1
+data:
+  values.yaml: |
+    stack:
+      densify:
+        username: "example-user"
+        encrypted_password: "example-password"
+    container-optimization-data-forwarder:
+      config:
+        clusters:
+          - name: "example-cluster"
+        forwarder:
+          densify:
+            url:
+              host: "example.kubex.ai"
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-config-defaults
+  namespace: ${releaseNamespace}
+---
