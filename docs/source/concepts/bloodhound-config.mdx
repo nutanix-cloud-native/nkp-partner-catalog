@@ -1,0 +1,69 @@
+---
+title: Linter config
+sidebar_position: 3
+---
+
+# Linter config (`.bloodhound.yml`)
+
+This page documents the Bloodhound config structure used for catalog application validation. Note that this file is purely used for CI/CD tooling and is not used for application deployments.
+
+## File location
+
+Use either `.bloodhound.yaml` or `.bloodhound.yml` (both are supported). You can place the file in one of these locations:
+- **Repository-level config** (repository root): defines defaults shared by all applications and versions.
+- **Application-level config** (`applications/<app>/<version>/`): overrides repository defaults for a specific application version when validation needs differ.
+
+If both files are present, the application-level file takes precedence.
+
+## Required field
+
+- `k8s_versions` (array of strings, required)
+  - Each entry must be a valid semver-style Kubernetes version.
+  - Bloodhound validates each version against the upstream Kubernetes JSON schema index.
+
+Example:
+
+```yaml
+k8s_versions:
+  - 1.33.0
+```
+
+## Optional fields
+
+- `paths` (array of strings)
+  - Paths to load/parse, in order.
+
+- `strict` (boolean)
+  - Enable strict schema validation.
+  - Default in generated config is `true`.
+
+- `skip_types` (array of strings)
+  - API groups/types to skip (for example `group/version` or `group/version/Kind`).
+
+- `additional_crds` (array of strings)
+  - Additional CRD YAML URLs to load.
+
+- `substitution_vars` (map of string to string)
+  - Variable values used for substitutions such as `${releaseNamespace}`.
+
+## Default config structure
+
+The default config emitted by Bloodhound contains:
+
+```yaml
+k8s_versions:
+  - 1.33.0
+
+strict: true
+skip_types: []
+additional_crds: []
+substitution_vars:
+  releaseNamespace: kommander
+  workspaceNamespace: workspace
+```
+
+## Validation behavior
+
+- Unknown fields are rejected (`KnownFields(true)` in YAML decoder).
+- `k8s_versions` must be present.
+- Invalid or unknown Kubernetes versions fail validation.

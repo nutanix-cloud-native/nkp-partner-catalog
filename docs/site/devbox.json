@@ -4,7 +4,7 @@
   "shell": {
     "init_hook": ["echo 'Welcome to devbox!' > /dev/null"],
     "scripts": {
-      "install": ["npm install"],
+      "install": ["npm install --ignore-scripts"],
       "start": ["npm run start"],
       "build": ["npm run build"],
       "serve": ["npm run serve"]

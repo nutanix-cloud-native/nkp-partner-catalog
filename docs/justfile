@@ -8,7 +8,7 @@ docs-build base_url='/nkp-partner-catalog/':
     mkdir -p "$ROOT/site/static/schemas/v1"
     rsync -a --delete "$ROOT/source/schemas/v1/" "$ROOT/site/static/schemas/v1/"
     cd "$ROOT/site"
-    npm ci --prefer-offline
+    npm ci --prefer-offline --ignore-scripts
     BASE_URL="{{ base_url }}" npm run build
 
 [script]
@@ -17,7 +17,7 @@ docs-local host='0.0.0.0' port='3000' base_url='/':
     mkdir -p "$ROOT/site/static/schemas/v1"
     rsync -a --delete "$ROOT/source/schemas/v1/" "$ROOT/site/static/schemas/v1/"
     cd "$ROOT/site"
-    npm ci --prefer-offline
+    npm ci --prefer-offline --ignore-scripts
     BASE_URL="{{ base_url }}" npm run build
     BASE_URL="{{ base_url }}" npm run docusaurus -- serve --dir build --host "{{ host }}" --port "{{ port }}"
 
