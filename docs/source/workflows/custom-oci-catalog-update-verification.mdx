@@ -1,0 +1,217 @@
+---
+title: Custom OCI Catalog Update and Verification
+sidebar_position: 9
+---
+
+# NKP Custom OCI Catalog: Update and Verification Guide
+
+This guide outlines the end-to-end workflow for updating a custom application
+(like the Slurm Operator) in a private OCI registry and verifying its
+successful deployment across NKP Management and Workload clusters.
+
+## 1. GitOps resource hierarchy and order of operations
+
+NKP uses a declarative GitOps pipeline powered by FluxCD. Each step in the
+"get" sequence represents a specific state of the application lifecycle.
+
+### Layer 1: Source (OCIRepository)
+
+**What it is:** The link to your external registry (GHCR).
+**What is inside:** The URL to your OCI artifact and the specific tag/digest.
+It validates that NKP can successfully "reach" and "download" the package.
+
+**Sample output:**
+
+```text
+NAME                    URL                                          READY   STATUS
+slurm-operator-1.1.1    oci://ghcr.io/navidpadid/slurm-operator      True    stored artifact for digest 'v0.1.0@sha256:4b41...'
+```
+
+**Troubleshooting:** If `READY` is `False`, check your `secretRef`
+(credentials).
+
+### Layer 2: Bridge (Kustomization)
+
+**What it is:** The logic that tells Kubernetes how to apply the manifests.
+**What is inside:** It points to the `OCIRepository` as its source and defines
+which namespace to target and which post-build variables (like cluster-specific
+labels) to inject.
+
+**Sample output:**
+
+```text
+NAME              READY   STATUS                                     AGE
+slurm-operator    True    Applied revision: v0.1.0@sha256:4b41...    5m
+```
+
+**Troubleshooting:** If it hangs, the YAML manifests inside your OCI bundle may
+have syntax errors.
+
+### Layer 3: Deployment (HelmRelease)
+
+**What it is:** The installer that manages the Helm chart lifecycle.
+**What is inside:** It contains the `values.yaml` overrides and the specific
+version of the chart to be installed. It tracks whether the `helm install` or
+`helm upgrade` command succeeded.
+
+**Sample output:**
+
+```text
+NAME              READY   STATUS                               AGE
+slurm-operator    True    Release reconciliation succeeded     3m
+```
+
+**Troubleshooting:** If `READY` is `False`, check the status message for Helm
+hooks failing or OOM issues during install.
+
+### Layer 4: Result (Pods)
+
+**What it is:** The actual running code.
+**What is inside:** The Linux containers executing your application logic.
+
+**Sample output:**
+
+```text
+NAME                              READY   STATUS    RESTARTS   AGE
+slurm-operator-8b4cff689-tqj6v    1/1     Running   0          2m
+```
+
+**Order of refresh:** When you repush, you must see the digest change in Layer
+1, which then triggers Layer 2 to re-apply, Layer 3 to upgrade, and finally
+Layer 4 to restart the pods.
+
+## 2. Workflow: Updating a custom app (same tag)
+
+When you repush an image to the same tag (for example, `v0.1.0`), NKP may not
+automatically detect the change due to caching. Follow these steps to force a
+refresh.
+
+### Step 1: Purge stale metadata (management cluster)
+
+Remove the old registry pointers to ensure a clean re-scan.
+
+```shell
+# Delete the collection source
+kubectl delete ocirepository nkp-ai-applications-catalog-collection \
+  -n workload-cluster-01-jtnmw \
+  --kubeconfig="mgmt.conf"
+
+# Clear cached app list metadata
+kubectl delete apps -n workload-cluster-01-jtnmw --all --kubeconfig="mgmt.conf"
+```
+
+### Step 2: Re-register the collection (management cluster)
+
+```shell
+nkp create catalog-collection \
+  --url oci://ghcr.io/navidpadid/nkp-ai-applications-catalog/collection \
+  --tag v0.1.0 \
+  --workspace "workload-cluster-01-ghfvk" \
+  --kubeconfig="mgmt.conf"
+```
+
+### Step 3: Enable and patch (workload cluster)
+
+1. Enable in UI: refresh the Kommander UI and click **Enable** for your app
+   (for example, Slurm) in the App Catalog.
+
+   If you repush to the same tag (for example, `v0.1.0`), NKP might use a
+   cached version and the app may not be visible in some cases.
+   Use the `reconcileAt` annotation to bypass the cache and force an immediate
+   pull from GitHub.
+
+```shell
+kubectl annotate ocirepository nkp-ai-applications-catalog-collection \
+  fluxcd.io/reconcileAt=$(date +%s) \
+  -n workload-cluster-01-jtnmw \
+  --kubeconfig="mgmt.conf" --overwrite
+```
+
+Now enable the app using the UI. Confirm app list by using this command:
+
+```shell
+kubectl get apps -n workload-cluster-01-jtnmw --kubeconfig="nkp.cluster.navid.vlan173.final.conf"
+
+NAME                                APP ID                        APP VERSION   SOURCE                              AGE
+agentgateway-2.2.0                  agentgateway                  2.2.0         agentgateway-2.2.0                  30s
+amd-device-metrics-exporter-1.4.2   amd-device-metrics-exporter   1.4.2         amd-device-metrics-exporter-1.4.2   30s
+coder-2.30.2                        coder                         2.30.2        coder-2.30.2                        30s
+```
+
+2. Patch for private registry: tell the workload cluster to use your
+   credentials.
+
+Problem:
+
+```shell
+kubectl get ocirepository -n workload-cluster-01-jtnmw --kubeconfig=workload-cluster-01.conf
+
+slurm-operator-source  oci://ghcr.io/navidpadid/nkp-ai-applications-catalog/slurm-operator   False   failed to determine artifact digest: GET https://ghcr.io/token?scope=repository%3Anavidpadid%2Fnkp-ai-applications-catalog%2Fslurm-operator%3Apull&service=ghcr.io: UNAUTHORIZED: authentication required   2m21s
+```
+
+Solution:
+
+```shell
+kubectl patch ocirepository slurm-operator-source \
+  -n workload-cluster-01-jtnmw \
+  --kubeconfig=workload-cluster-01.conf \
+  --type=merge -p '{"spec":{"secretRef":{"name":"host-cluster-oci-creds"}}}'
+
+ocirepository.source.toolkit.fluxcd.io/slurm-operator-source patched
+```
+
+## 3. Step-by-step verification commands
+
+Use these commands to confirm the update has propagated through all layers.
+
+### Phase A: Source verification
+
+Verify the SHA256 digest has updated and the source is ready.
+
+```shell
+kubectl get ocirepository -n workload-cluster-01-jtnmw --kubeconfig=workload-cluster-01.conf
+```
+
+**Sample output:**
+
+```text
+NAME                 URL                               READY   STATUS                                            AGE
+slurm-operator-1.1.1 oci://ghcr.io/navidpadid/slurm   True    stored artifact for digest 'v0.1.0@sha256:4b417b...'   45s
+```
+
+### Phase B: Config and deployment verification
+
+Check that the Kustomization and HelmRelease have reconciled.
+
+```shell
+# Check Kustomization
+kubectl get kustomization -n workload-cluster-01-jtnmw --kubeconfig=workload-cluster-01.conf
+
+# Check HelmRelease
+kubectl get helmrelease -n workload-cluster-01-jtnmw --kubeconfig=workload-cluster-01.conf
+```
+
+**Sample output:**
+
+```text
+NAME            READY   STATUS                               AGE
+slurm-operator  True    Release reconciliation succeeded     2m
+```
+
+### Phase C: Workload verification
+
+The final confirmation that the containers are healthy.
+
+```shell
+kubectl get pods -n slurm-operator --kubeconfig=workload-cluster-01.conf
+```
+
+**Sample output:**
+
+```text
+NAME                                      READY   STATUS    RESTARTS   AGE
+slurm-operator-8b4cff689-tqj6v            1/1     Running   0          90s
+slurm-operator-webhook-5658954b8d-drfnl   1/1     Running   0          90s
+```
+
+Tip: If `AGE` is very low, it confirms the update just rolled out.
