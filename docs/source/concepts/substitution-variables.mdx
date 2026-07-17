@@ -1,0 +1,31 @@
+---
+title: Substitution variables
+sidebar_position: 4
+---
+
+# Substitution variables
+
+## Overview
+
+When NKP deploys a catalog application, it fills in a set of variables on the
+Flux Kustomization's `spec.postBuild.substitute`. Reference them in your
+manifests as `${variable}` instead of hardcoding values, and Flux replaces them
+at deploy time.
+
+## Available variables
+
+- `appName` — the catalog application's ID, derived from its `applications/<app-name>` directory (e.g. `jupyterhub`). Always present.
+- `appVersion` — the catalog application's version, derived from its `applications/<app-name>/<version>` directory (e.g. `4.3.2`). Always present.
+- `releaseName` — the deployment's release name: the AppDeployment's release-name annotation if set, otherwise its `metadata.name`. Always present.
+- `releaseNamespace` — the namespace the application is deployed into: the workspace namespace for workspace deployments, or the project namespace for project deployments. Always present.
+- `workspaceNamespace` — the workspace's namespace. Always present.
+- `workspaceName` — the name of the Workspace the deployment belongs to (for a project deployment, its parent workspace). Present when the target namespace resolves to a workspace or project.
+- `projectNamespace` — the project's namespace. Present only for project deployments.
+- `projectName` — the name of the project the deployment belongs to. Present only for project deployments.
+- `clusterName` — the name of the target cluster (the KommanderCluster's name). Always present.
+- `clusterUUID` — the target cluster's ID, taken from the KommanderCluster's `kommander.mesosphere.io/cluster-id` label. Present when that label is set.
+- `clusterType` — the target cluster's type, resolved in precedence order:
+  1. CAPI-managed clusters: the referenced CAPI Cluster's `spec.infrastructureRef.kind` (for example `NutanixCluster`, `AWSCluster`, `AzureCluster`, `DockerCluster`).
+  2. Non-CAPI clusters: the `kommander.mesosphere.io/cluster-type` label — one of `EKS`, `GKE`, `AKS`, `Unknown`.
+
+  Present when a value is available.
