@@ -5,7 +5,6 @@ category:
 appScreens:
 - ai
 - general
-nkpVersionSupport: 2.19.0
 displayName: Traefik API Management
 description: Cloud-Native API Intelligence & Management Platform with GitOps-Native Governance
 licensing:
