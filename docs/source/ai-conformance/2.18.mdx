@@ -2,14 +2,21 @@
 title: CNCF AI Conformance
 sidebar_label: NKP 2.18
 slug: /ai-conformance/2.18
-unlisted: true
+toc_max_heading_level: 2
 ---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # CNCF AI Conformance
 
 The [CNCF Kubernetes AI Conformance](https://github.com/kubernetes-sigs/wg-device-management/blob/main/conformance/README.md) defines a set of additional capabilities, APIs, and configurations that a Kubernetes cluster MUST offer, on top of standard CNCF Kubernetes Conformance, to reliably and efficiently run AI/ML workloads.
 
 This page shows how NKP 2.18 meets these requirements using Kubernetes v1.35.2 and the NVIDIA GPU Operator v26.3.0, deployed via Flux CD as platform HelmReleases.
+
+:::note
+NKP already holds **CNCF Certified Kubernetes** conformance, which the AI Conformance requirements build on — it was certified under the name **Konvoy** (NKP's former product name); see the [v1.35 Konvoy conformance submission](https://github.com/cncf/k8s-conformance/tree/master/v1.35/konvoy). For product installation, configuration, and operational guidance, see the official [NKP 2.18 documentation](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform-v2_18).
+:::
 
 ## Requirements Overview
 
@@ -68,13 +75,33 @@ Several checks use operators from the NKP AI Applications catalog. Add the catal
 ```bash
 nkp create catalog-collection \
   --url oci://ghcr.io/nutanix-cloud-native/nkp-ai-applications-catalog/collection \
-  --tag 2.19-dev \
+  --tag 2.18 \
   --workspace kommander-workspace
 ```
 
-Once the collection is available, its AI applications can be deployed from the NKP catalog.
+Once the collection is available, its applications are listed as `App` resources in the workspace namespace and can be deployed from the NKP catalog:
+
+```bash
+kubectl get apps -n kommander
+```
+
+<details>
+<summary>Expected output — catalog applications (<code>App</code> resources) in the workspace</summary>
+
+```
+NAME                    APP ID            APP VERSION   SOURCE                  AGE
+kagent-0.7.13           kagent            0.7.13        kagent-0.7.13           6m19s
+kai-scheduler-0.15.2    kai-scheduler     0.15.2        kai-scheduler-0.15.2    6m19s
+kueue-0.18.0            kueue             0.18.0        kueue-0.18.0            6m17s
+milvus-operator-1.3.6   milvus-operator   1.3.6         milvus-operator-1.3.6   6m17s
+slurm-operator-1.1.1    slurm-operator    1.1.1         slurm-operator-1.1.1    6m16s
+```
+
+</details>
 
 ## Support Dynamic Resource Allocation (DRA)
+
+This requirement is a **MUST**: *the platform must support the Dynamic Resource Allocation (DRA) APIs to enable more flexible, fine-grained resource requests beyond simple counts.*
 
 Dynamic Resource Allocation (DRA) is a Kubernetes API for flexible, fine-grained resource requests beyond simple counts. The DRA v1 API group (`resource.k8s.io/v1`) has been **generally available since Kubernetes v1.34** and is enabled by default on NKP 2.18 (Kubernetes v1.35.2) — no additional configuration or driver is required for the APIs to be served.
 
@@ -94,9 +121,13 @@ resourceclaimtemplates                resource.k8s.io/v1   true         Resource
 resourceslices                        resource.k8s.io/v1   false        ResourceSlice
 ```
 
-This satisfies the requirement: NKP serves the DRA APIs (`resource.k8s.io/v1`) out of the box, enabling structured, fine-grained resource requests beyond simple counts. On the shipped NKP configuration, GPUs are allocated through the NVIDIA device plugin, and the DRA APIs are available for DRA-aware drivers that consume them.
+:::tip[Conformance: satisfied]
+NKP serves the DRA APIs (`resource.k8s.io/v1`) out of the box, enabling structured, fine-grained resource requests beyond simple counts. On the shipped NKP configuration, GPUs are allocated through the NVIDIA device plugin, and the DRA APIs are available for DRA-aware drivers that consume them.
+:::
 
 ## Driver Runtime Management
+
+This requirement is a **SHOULD**: *the platform should provide a verifiable mechanism ensuring that compatible accelerator drivers and the corresponding container-runtime configuration are correctly installed and maintained on accelerator nodes.*
 
 NKP ships the NVIDIA GPU Operator as a platform component to manage accelerator drivers, container toolkit, device plugin, and runtime configuration on GPU nodes. Node Feature Discovery (NFD) and GPU Feature Discovery (GFD) provide node metadata attestation.
 
@@ -168,6 +199,10 @@ Expected output:
 ```
 nvidia-gpu-operator   2d   True   Helm install succeeded for release kommander/nvidia-gpu-operator.v1 with chart gpu-operator@v26.3.0
 ```
+
+:::tip[Conformance: satisfied]
+The NVIDIA GPU Operator automates the installation, configuration, and lifecycle of accelerator drivers, container toolkit, device plugin, and runtime on GPU nodes, with Node Feature Discovery and GPU Feature Discovery publishing node metadata for attestation.
+:::
 
 ## GPU Sharing
 
@@ -295,13 +330,13 @@ kubectl describe node <gpu-node> | grep -A2 'Allocated resources' | grep nvidia.
 
 Each pod runs `nvidia-smi -L`. All four report the **identical physical GPU UUID** — the single A40 on the host — proving true oversubscription rather than four separate devices:
 
-```bash
+```bash title="nvidia-smi -L in each of the 4 sharing pods"
 for p in $(kubectl -n gpu-sharing-demo get pods -o jsonpath='{.items[*].metadata.name}'); do
   echo "--- $p ---"; kubectl -n gpu-sharing-demo logs $p | grep -i UUID
 done
 ```
 
-```
+```text {2,4,6,8}
 --- time-slicing-verify-6f76775cb9-8pvgb ---
 GPU 0: NVIDIA A40 (UUID: GPU-ff400afb-03b6-3cd9-2fa9-5b8d002ad839)
 --- time-slicing-verify-6f76775cb9-gfg8h ---
@@ -322,7 +357,9 @@ kubectl exec -n kommander <nvidia-dcgm-pod> -- nvidia-smi -L
 GPU 0: NVIDIA A40 (UUID: GPU-ff400afb-03b6-3cd9-2fa9-5b8d002ad839)
 ```
 
-This satisfies the requirement: four independent pods, each granted a full `nvidia.com/gpu`, are all scheduled onto — and share — the same physical A40, the software-based sharing / oversubscription mechanism the requirement calls for.
+:::tip[Conformance: satisfied]
+Four independent pods, each granted a full `nvidia.com/gpu`, are all scheduled onto — and share — the same physical A40, the software-based sharing / oversubscription mechanism the requirement calls for.
+:::
 
 ## Virtualized Accelerator (vGPU)
 
@@ -367,13 +404,17 @@ Dynamic Resource Allocation (DRA) is the emerging Kubernetes mechanism for struc
 
 **Resources**
 
-- [NKP 2.16 — vGPU-enabled node pools](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform-v2_16:top-nkp-release-notes-c.html)
+- [NKP 2.18 — Configure GPU node pools for Nutanix clusters](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform-v2_18:top-configure-gpu-node-pools-for-nutanix-clusters-ui-t.html)
 - [vGPU on Nutanix (TN-2046)](https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2046-vGPU-on-Nutanix:TN-2046-vGPU-on-Nutanix)
 - [NVIDIA GPU Operator — Using NVIDIA vGPU](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/install-gpu-operator-vgpu.html)
 
-This satisfies the requirement: NKP provides a well-defined, first-class mechanism (vGPU-enabled node pools on AHV/vSphere with the NVIDIA GPU Operator) that exposes and manages virtualized accelerators consistently with physical GPUs — the same `nvidia.com/gpu` device-plugin resource, scheduling, metrics, and node-pool autoscaling — with a clear forward path to DRA-based vGPU allocation.
+:::tip[Conformance: satisfied]
+NKP provides a well-defined, first-class mechanism (vGPU-enabled node pools on AHV/vSphere with the NVIDIA GPU Operator) that exposes and manages virtualized accelerators consistently with physical GPUs — the same `nvidia.com/gpu` device-plugin resource, scheduling, metrics, and node-pool autoscaling — with a clear forward path to DRA-based vGPU allocation.
+:::
 
 ## Support the Gateway API
+
+This requirement is a **MUST**: *the platform must support the Kubernetes Gateway API with an implementation that provides advanced traffic management for inference services — weighted traffic splitting, header-based routing (e.g. OpenAI protocol headers), and optional service-mesh integration.*
 
 NKP ships the Kubernetes **Gateway API** CRDs (`gateway.networking.k8s.io/v1`) out of the box, and provides [Envoy Gateway](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/nutanix/envoy-gateway) — a CNCF Gateway API implementation — in the Nutanix Products catalog for advanced traffic management of inference services. Envoy Gateway delivers exactly the capabilities the requirement calls for: **weighted traffic splitting** (canary/blue-green model rollouts), **header-based routing** (e.g. routing on OpenAI-style protocol headers), and optional **service-mesh integration**.
 
@@ -543,32 +584,36 @@ Accepted=True ResolvedRefs=True
 
 **Weighted split** — 50 requests through the gateway with no special header land ~80% on `model-v1` and ~20% on `model-v2`, matching the configured weights:
 
-```bash
+```bash title="Weighted split — 50 requests, no routing header"
 for i in $(seq 1 50); do
   curl -s -H 'Host: models.example.com' http://<gateway-address>/ ;
 done | sort | uniq -c
 ```
 
-```
+```text {1,2}
   40 model-v1
   10 model-v2
 ```
 
 **Header-based routing** — every request carrying the `x-model-version: canary` header is routed to `model-v2`, regardless of the split:
 
-```bash
+```bash title="Header-based routing — x-model-version: canary"
 for i in $(seq 1 5); do
   curl -s -H 'Host: models.example.com' -H 'x-model-version: canary' http://<gateway-address>/ ;
 done | sort | uniq -c
 ```
 
-```
+```text {1}
    5 model-v2
 ```
 
-This satisfies the requirement: NKP supports the Kubernetes Gateway API and ships a conformant implementation (Envoy Gateway) that provides advanced traffic management for inference services — demonstrated with **weighted traffic splitting** (80/20 across model versions) and **header-based routing** (OpenAI-style protocol header). Envoy Gateway also supports gRPC routing (`GRPCRoute`), TLS, and integration with service meshes such as Istio for the optional mesh-integration capability.
+:::tip[Conformance: satisfied]
+NKP supports the Kubernetes Gateway API and ships a conformant implementation (Envoy Gateway) that provides advanced traffic management for inference services — demonstrated with **weighted traffic splitting** (80/20 across model versions) and **header-based routing** (OpenAI-style protocol header). Envoy Gateway also supports gRPC routing (`GRPCRoute`), TLS, and integration with service meshes such as Istio for the optional mesh-integration capability.
+:::
 
 ## Gang Scheduling
+
+This requirement is a **MUST**: *the platform must allow the installation and successful operation of at least one gang-scheduling solution that provides all-or-nothing scheduling for distributed AI workloads (e.g. Kueue, Volcano).*
 
 NKP ships [Kueue](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/ai/kueue) in the AI Applications catalog. Kueue is a CNCF gang scheduler that admits a distributed workload **atomically**: it reserves quota for the *entire* job (all of its pods) at once and unsuspends the job only when the whole gang fits. If the gang does not fit, **nothing** is scheduled — no pod of that job is placed, avoiding the partial-placement deadlock where some workers of a distributed job occupy accelerators while waiting forever for the rest.
 
@@ -628,11 +673,12 @@ spec:
   clusterQueue: gang-cq
 ```
 
-### Positive Case — A Gang That Fits Is Admitted Atomically
+<Tabs>
+<TabItem value="fits" label="Gang that fits → admitted atomically" default>
 
 Submit a 3-pod job (each pod requests 1 CPU, total 3 ≤ 4 quota). Kueue reserves quota for the whole job and unsuspends it, so **all three pods start together**:
 
-```yaml
+```yaml title="gang-ok — 3-pod job, fits the quota (3 ≤ 4 CPU)"
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -677,11 +723,12 @@ gang-ok-kdr4v   1/1     Running   0          12s
 suspend=false active=3
 ```
 
-### Negative Case — An Oversized Gang Is Refused in Full
+</TabItem>
+<TabItem value="oversized" label="Oversized gang → refused in full">
 
 Submit a 4-pod job where each pod requests 2 CPU (total 8 > 4 quota). Even though two of these pods (2 × 2 = 4 CPU) would individually fit in the remaining quota, Kueue refuses the **entire gang** rather than placing part of it:
 
-```yaml
+```yaml title="gang-toobig — 4-pod job, exceeds the quota (8 > 4 CPU)"
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -755,15 +802,22 @@ kubectl get clusterqueue gang-cq \
   -o jsonpath='admitted={.status.admittedWorkloads} pending={.status.pendingWorkloads} cpuUsed={.status.flavorsUsage[0].resources[?(@.name=="cpu")].total}{"\n"}'
 ```
 
-```
+```text {1}
 admitted=1 pending=1 cpuUsed=3
 ```
 
 The pending gang is admitted automatically — as a whole — as soon as enough quota is freed (for example, when `gang-ok` finishes or the quota is raised).
 
-This satisfies the requirement: NKP installs and successfully runs a gang scheduler (Kueue) that provides **all-or-nothing** scheduling for distributed AI workloads — a fitting gang is admitted atomically, and an oversized gang is refused in full with no partial placement. The same quota-based admission governs GPU (`nvidia.com/gpu`) resources for multi-GPU distributed training and inference jobs.
+</TabItem>
+</Tabs>
+
+:::tip[Conformance: satisfied]
+NKP installs and successfully runs a gang scheduler (Kueue) that provides **all-or-nothing** scheduling for distributed AI workloads — a fitting gang is admitted atomically, and an oversized gang is refused in full with no partial placement. The same quota-based admission governs GPU (`nvidia.com/gpu`) resources for multi-GPU distributed training and inference jobs.
+:::
 
 ## Cluster Autoscaling
+
+This requirement is a **MUST**: *if the platform provides a cluster autoscaler (or equivalent), it must scale node groups containing specific accelerator types up and down based on pending pods requesting those accelerators.*
 
 NKP is built on **Cluster API (CAPI)** and deploys the upstream Kubernetes **Cluster Autoscaler** (with the `clusterapi` cloud provider) for its managed clusters. Because it scales through Cluster API rather than one cloud's proprietary API, the same mechanism works across every environment NKP targets — public clouds (AWS, Azure, GCP), Nutanix (AHV/Prism Central), vSphere, and pre-provisioned/bare-metal — including hybrid and multi-cloud deployments.
 
@@ -809,7 +863,24 @@ dlipovetsky-gpu-jz4tk    1          1     1
 dlipovetsky-md-0-95rrn   4          4     4
 ```
 
-Setting a GPU pool's `max` higher than its `min` (via the node pool's autoscaler annotations) enables the autoscaler to add GPU nodes on demand.
+Setting a GPU pool's `max` higher than its `min` enables the autoscaler to add GPU nodes on demand.
+
+:::note
+Where you set the autoscaler `min`/`max` bounds depends on the infrastructure. On **Nutanix (AHV/Prism Central)** — the infrastructure used for this verification — clusters are managed by a Cluster API **ClusterClass**, so the topology controller owns the generated `MachineDeployment` and its annotations. Set the bounds on the **`Cluster` topology**; editing the annotations directly on the `MachineDeployment` is reverted on the next reconcile. Update the matching entry under `spec.topology.workers.machineDeployments[...]` and the bounds propagate to the pool:
+
+```bash
+kubectl patch cluster dlipovetsky -n kommander --type merge -p '{
+  "spec": {"topology": {"workers": {"machineDeployments": [
+    {"name": "dlipovetsky-gpu", "metadata": {"annotations": {
+      "cluster.x-k8s.io/cluster-api-autoscaler-node-group-min-size": "1",
+      "cluster.x-k8s.io/cluster-api-autoscaler-node-group-max-size": "3"
+    }}}
+  ]}}}
+}'
+```
+
+On non-ClusterClass infrastructure (for example **AWS**), the `MachineDeployment` is not owned by a topology controller, so set the same `cluster.x-k8s.io/cluster-api-autoscaler-node-group-min-size` / `-max-size` annotations directly on the `MachineDeployment`.
+:::
 
 ### The GPU Node Pool Is a Managed, Accelerator-Specific Node Group
 
@@ -832,11 +903,15 @@ kubectl get node dlipovetsky-gpu-jz4tk-t2dqf-f4mp2 -o jsonpath='{.status.allocat
 # 1
 ```
 
-On this particular cluster the GPU pool is pinned to `min = max = 1`, so it holds steady at one GPU node; raising `max` is all that is needed for the autoscaler to provision additional GPU nodes (through Cluster API → the infrastructure provider) whenever GPU-requesting pods are `Pending`, and to scale the pool back down to `min` when the GPUs fall idle.
+On this particular cluster the GPU pool is pinned to `min = max = 1`, so it holds steady at one GPU node; raising `max` on the `Cluster` topology (as shown above) is all that is needed for the autoscaler to provision additional GPU nodes (through Cluster API → the infrastructure provider) whenever GPU-requesting pods are `Pending`, and to scale the pool back down to `min` when the GPUs fall idle.
 
-This satisfies the requirement: NKP provides a cluster autoscaler (the upstream Cluster Autoscaler via Cluster API) that scales accelerator-specific node groups up and down based on pending pods requesting those accelerators — uniformly across cloud, hybrid, Nutanix, vSphere, and pre-provisioned infrastructure.
+:::tip[Conformance: satisfied]
+NKP provides a cluster autoscaler (the upstream Cluster Autoscaler via Cluster API) that scales accelerator-specific node groups up and down based on pending pods requesting those accelerators — uniformly across cloud, hybrid, Nutanix, vSphere, and pre-provisioned infrastructure.
+:::
 
 ## Horizontal Pod Autoscaler
+
+This requirement is a **MUST**: *if the platform supports the HorizontalPodAutoscaler, it must function correctly for pods that use accelerators, including the ability to scale them on custom AI/ML metrics.*
 
 The HorizontalPodAutoscaler (HPA, `autoscaling/v2`) is a core Kubernetes API. NKP ships the **Prometheus Adapter**, which serves **both** the resource metrics API (`metrics.k8s.io`, for CPU/memory) **and** the custom metrics API (`custom.metrics.k8s.io`) — bridging Prometheus series (including the DCGM GPU metrics) to the HPA. This lets HPA scale pods that use accelerators on standard resource metrics *and* on custom AI/ML metrics such as GPU utilization.
 
@@ -960,7 +1035,7 @@ gpu-inference-hpa   Deployment/gpu-inference   100/70    1         3         2  
 
 `kubectl describe hpa` confirms the scaling decision was driven by the GPU custom metric:
 
-```
+```text {2,12}
 Metrics:                                                                  ( current / target )
   "DCGM_FI_DEV_GPU_UTIL" on Service/nvidia-dcgm-exporter (target value):  100 / 70
 Conditions:
@@ -975,9 +1050,15 @@ Events:
   Normal  SuccessfulRescale  47s   horizontal-pod-autoscaler  New size: 2; reason: Service metric DCGM_FI_DEV_GPU_UTIL above target
 ```
 
-Because this node has a single physical GPU, the additional replica remains `Pending` until GPU capacity is available (in production, additional GPU nodes — or cluster autoscaling of GPU node pools — provide that capacity). This satisfies the requirement: HPA **functions correctly for accelerator pods** and **scales them based on a custom AI/ML metric** (GPU utilization), served through NKP's Prometheus Adapter.
+Because this node has a single physical GPU, the additional replica remains `Pending` until GPU capacity is available (in production, additional GPU nodes — or cluster autoscaling of GPU node pools — provide that capacity).
+
+:::tip[Conformance: satisfied]
+HPA **functions correctly for accelerator pods** and **scales them based on a custom AI/ML metric** (GPU utilization), served through NKP's Prometheus Adapter.
+:::
 
 ## Accelerator Performance Metrics
+
+This requirement is a **MUST**: *the platform must allow the installation and operation of at least one accelerator-metrics solution that exposes fine-grained per-accelerator utilization and memory usage — and, where the hardware makes them available, temperature, power draw, and interconnect bandwidth — on a standardized, machine-readable endpoint.*
 
 NKP ships the NVIDIA GPU Operator, which includes the **DCGM Exporter** — a DaemonSet that exposes fine-grained, per-GPU performance metrics in Prometheus exposition format on a standardized `/metrics` endpoint (port `9400`). This covers the required core metrics (per-accelerator **utilization** and **memory usage**) and additionally exposes temperature, power draw, clocks, and PCIe/interconnect counters when the hardware reports them. The platform Prometheus discovers and scrapes this endpoint automatically via a `ServiceMonitor` (verified under [Automatic Collection by the Platform Prometheus](#automatic-collection-by-the-platform-prometheus) below).
 
@@ -1096,9 +1177,13 @@ curl -s 'http://kube-prometheus-stack-prometheus.kommander.svc:9090/api/v1/query
 {"metric":{"__name__":"DCGM_FI_DEV_GPU_UTIL","modelName":"NVIDIA A40","job":"nvidia-dcgm-exporter","namespace":"kommander"},"value":[...,"0"]}
 ```
 
-This satisfies the requirement: a per-accelerator metrics solution exposing utilization and memory usage — plus temperature, power, clocks, and interconnect counters — on a standardized, machine-readable Prometheus endpoint that the platform monitoring stack discovers and collects automatically.
+:::tip[Conformance: satisfied]
+A per-accelerator metrics solution exposing utilization and memory usage — plus temperature, power, clocks, and interconnect counters — on a standardized, machine-readable Prometheus endpoint that the platform monitoring stack discovers and collects automatically.
+:::
 
 ## AI Job and Inference Service Metrics
+
+This requirement is a **MUST**: *the platform must provide a monitoring system capable of discovering and collecting metrics from workloads that expose them in a standard format (e.g. the Prometheus exposition format).*
 
 NKP ships a fully integrated monitoring system based on **kube-prometheus-stack** (chart v82.13.6, Grafana + Prometheus + Alertmanager), **Loki** (v6.55.0) for logs, **Thanos** for long-term storage, and **Prometheus Adapter** (v5.3.0). Prometheus automatically discovers and scrapes any workload that exposes metrics in the standard Prometheus exposition format via `ServiceMonitor`/`PodMonitor` resources — no platform-specific glue is required.
 
@@ -1350,19 +1435,24 @@ curl -s 'http://kube-prometheus-stack-prometheus.kommander.svc:9090/api/v1/query
 
 The same `ServiceMonitor`/`PodMonitor` mechanism collects any workload exposing Prometheus-format metrics — including the Kueue endpoint above, and the DCGM exporter's out-of-the-box `ServiceMonitor` (see [Accelerator Performance Metrics](#accelerator-performance-metrics)).
 
-This satisfies the requirement end-to-end: NKP's monitoring system **discovers** workload endpoints via the standard `ServiceMonitor`/`PodMonitor` contract and **collects and stores** their metrics — proven here with AI **job** metrics (Kueue) and **inference service** metrics (KServe, `request_predict_seconds_count = 35`) in the standard Prometheus exposition format.
+:::tip[Conformance: satisfied]
+NKP's monitoring system **discovers** workload endpoints via the standard `ServiceMonitor`/`PodMonitor` contract and **collects and stores** their metrics end-to-end — proven here with AI **job** metrics (Kueue) and **inference service** metrics (KServe, `request_predict_seconds_count = 35`) in the standard Prometheus exposition format.
+:::
 
 ## Secure Accelerator Access
+
+This requirement is a **MUST**: *access to accelerators from within containers must be isolated and mediated by the Kubernetes resource-management framework (device plugin or DRA) and the container runtime, preventing unauthorized access or interference between workloads.*
 
 Access to accelerators from within containers is isolated and mediated by the Kubernetes resource management framework (the NVIDIA device plugin, installed by the GPU Operator) and the container runtime. Only pods that explicitly request `nvidia.com/gpu` receive device access, GPU capacity is enforced per device, and pods without a request cannot reach the accelerator or its device files.
 
 The following was verified on the NKP 2.18 cluster, which has a single NVIDIA A40 GPU node.
 
-### Authorized Pod Can Access Its Allocated GPU
+<Tabs>
+<TabItem value="authorized" label="Authorized → GPU access" default>
 
 Deploy a pod that explicitly requests a GPU under the `nvidia` RuntimeClass:
 
-```yaml
+```yaml title="gpu-authorized — pod that requests nvidia.com/gpu: 1"
 apiVersion: v1
 kind: Pod
 metadata:
@@ -1386,11 +1476,12 @@ The container sees exactly its allocated GPU:
 kubectl exec gpu-authorized -n saa-test -- nvidia-smi -L
 ```
 
-```
+```text {1}
 GPU 0: NVIDIA A40 (UUID: GPU-ff400afb-03b6-3cd9-2fa9-5b8d002ad839)
 ```
 
-### GPU Capacity Is Enforced (Workload Isolation)
+</TabItem>
+<TabItem value="capacity" label="Capacity enforced → second pod Pending">
 
 The node has a single GPU. A second pod that also requests `nvidia.com/gpu: 1` remains `Pending` — the scheduler does not oversubscribe the device:
 
@@ -1415,11 +1506,12 @@ Events:
            taint(s), 5 Insufficient nvidia.com/gpu. ... preemption: 0/8 nodes are available: ...
 ```
 
-### Unauthorized Pod Cannot Access the GPU
+</TabItem>
+<TabItem value="unauthorized" label="Unauthorized → no GPU access">
 
 Deploy a pod that does not request a GPU:
 
-```yaml
+```yaml title="gpu-unauthorized — pod with no GPU request"
 apiVersion: v1
 kind: Pod
 metadata:
@@ -1452,37 +1544,22 @@ kubectl exec gpu-unauthorized -n saa-test -- sh -c 'ls -l /dev/ | grep -i nvidia
 (no NVIDIA device files present)
 ```
 
-This satisfies the requirement: GPU access is mediated exclusively by the Kubernetes device plugin and container runtime — only pods that explicitly request `nvidia.com/gpu` receive device access, capacity is enforced per GPU, and pods without a request can neither run `nvidia-smi` nor reach the underlying device files.
+</TabItem>
+</Tabs>
+
+:::tip[Conformance: satisfied]
+GPU access is mediated exclusively by the Kubernetes device plugin and container runtime — only pods that explicitly request `nvidia.com/gpu` receive device access, capacity is enforced per GPU, and pods without a request can neither run `nvidia-smi` nor reach the underlying device files.
+:::
 
 ## Robust CRD and Controller Operation
+
+This requirement is a **MUST**: *the platform must prove that at least one complex AI operator with a CRD (e.g. Ray, Kubeflow) installs and functions reliably — its pods run correctly, its webhooks are operational, and its custom resources reconcile.*
 
 NKP demonstrates robust CRD and controller operation with the **Slurm Operator** (the [Slinky project](https://slinky.ai/)) from the [AI Applications catalog](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/ai/slurm-operator) — a complex operator that installs its own CRDs, runs mutating and validating admission webhooks, and reconciles custom resources into a fully running Slurm cluster.
 
 ### Install the Slurm Operator
 
-After adding the AI Applications catalog (see the prerequisite note above), the available catalog applications are listed as `App` resources in the workspace namespace:
-
-```bash
-kubectl get apps -n kommander
-```
-
-Expected output:
-
-```
-NAME                            APP ID                 APP VERSION    SOURCE                          AGE
-amd-gpu-operator-1.4.1          amd-gpu-operator       1.4.1          amd-gpu-operator-1.4.1          6m55s
-amd-gpu-operator-1.5.0          amd-gpu-operator       1.5.0          amd-gpu-operator-1.5.0          6m55s
-amd-gpu-operator-1.5.1-beta.0   amd-gpu-operator       1.5.1-beta.0   amd-gpu-operator-1.5.1-beta.0   6m54s
-amd-kmm-operator-1.0.0          amd-kmm-operator       1.0.0          amd-kmm-operator-1.0.0          6m54s
-amd-network-operator-1.2.0      amd-network-operator   1.2.0          amd-network-operator-1.2.0      6m53s
-kagent-0.7.13                   kagent                 0.7.13         kagent-0.7.13                   6m19s
-kai-scheduler-0.15.2            kai-scheduler          0.15.2         kai-scheduler-0.15.2            6m19s
-kueue-0.18.0                    kueue                  0.18.0         kueue-0.18.0                    6m17s
-milvus-operator-1.3.6           milvus-operator        1.3.6          milvus-operator-1.3.6           6m17s
-slurm-operator-1.1.1            slurm-operator         1.1.1          slurm-operator-1.1.1            6m16s
-```
-
-Deploy the Slurm Operator by creating an `AppDeployment` for the `slurm-operator-1.1.1` app:
+Once the AI Applications catalog is added (see [Prerequisites](#prerequisites)), the Slurm Operator is available as the `slurm-operator-1.1.1` app. Deploy it by creating an `AppDeployment`:
 
 ```bash
 nkp create appdeployment slurm-operator \
@@ -1673,7 +1750,9 @@ kubectl get controllers,nodesets,loginsets,restapis -A
 kubectl get pods -n slurm-operator
 ```
 
-This satisfies the requirement: the platform installs a complex AI operator, its CRDs and admission webhooks are operational, and its custom resources are reconciled into a working cluster.
+:::tip[Conformance: satisfied]
+The platform installs a complex AI operator, its CRDs and admission webhooks are operational, and its custom resources are reconciled into a working cluster.
+:::
 
 Additional AI operators available in the NKP catalog include:
 
