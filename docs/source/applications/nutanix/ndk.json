@@ -1,0 +1,39 @@
+{
+  "name": "ndk",
+  "version": "2.1.0",
+  "allVersions": [
+    "2.0.0",
+    "2.1.0"
+  ],
+  "displayName": "Nutanix Data Services for Kubernetes",
+  "description": "Nutanix Data Services for Kubernetes",
+  "category": [
+    "application-and-data-management"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzI2MTlfMTEwMzUpIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yOS45MjE2IDI1Ljk0NTZDMzAuMDY2MSAyNS45NDU2IDMwLjE5NjUgMjYuMDA4MyAzMC4yOTEzIDI2LjEwOTJMMzkuNzk0IDM0Ljk5MTNDMzkuOTE5MSAzNS4wOTQgMzkuOTk5OSAzNS4yNTU5IDM5Ljk5OTkgMzUuNDM4MUMzOS45OTk5IDM1Ljc0ODEgMzkuNzY1OSAzNS45OTk4IDM5LjQ3NzIgMzUuOTk5OEgzMy4wMDM4QzMyLjg2MTIgMzUuOTk5OCAzMi43MzE2IDM1LjkzODIgMzIuNjM3MyAzNS44Mzg0TDI2LjM0ODggMjkuOTYxNkMyNi4yMzQzIDI5Ljg1NzggMjYuMTYyMSAyOS43MDM5IDI2LjE2MjEgMjkuNTMxMUMyNi4xNjIxIDI5LjM4NTkgMjYuMjEzNiAyOS4yNTM2IDI2LjI5NzggMjkuMTUzOUwyOS41MzQ0IDI2LjEyOTJDMjkuNjMgMjYuMDE2NiAyOS43NjgxIDI1Ljk0NTYgMjkuOTIxNiAyNS45NDU2Wk0zOS40NzcyIDEyQzM5Ljc2NTkgMTIgMzkuOTk5OSAxMi4yNTE4IDM5Ljk5OTkgMTIuNTYxN0MzOS45OTk5IDEyLjc0MzkgMzkuOTE5MSAxMi45MDU2IDM5Ljc5NCAxMy4wMDgyTDMwLjI5MTMgMjEuODkwM0MzMC4xOTY1IDIxLjk5MTUgMzAuMDY2MSAyMi4wNTQzIDI5LjkyMTYgMjIuMDU0M0MyOS43NjgxIDIyLjA1NDMgMjkuNjMgMjEuOTgzNSAyOS41MzQ0IDIxLjg3MDZMMjYuMjk3OCAxOC44NDZDMjYuMjEzNiAxOC43NDYyIDI2LjE2MjEgMTguNjEzOSAyNi4xNjIxIDE4LjQ2ODdDMjYuMTYyMSAxOC4yOTYyIDI2LjIzNDMgMTguMTQyIDI2LjM0ODggMTguMDM4NUwzMi42MzczIDEyLjE2MTFDMzIuNzMxNiAxMi4wNjE2IDMyLjg2MTIgMTIgMzMuMDAzOCAxMkgzOS40NzcyWiIgZmlsbD0iIzc4NTVGQSIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE1LjM1NzUgMzUuODUyM0MxNS4yNjQ1IDM1Ljk0MzUgMTUuMTQwNSAzNiAxNS4wMDQzIDM2SDguNTIyNjVDOC4yMzM5NyAzNiA4IDM1Ljc0ODIgOCAzNS40MzhDOCAzNS4yODMyIDguMDU4NDMgMzUuMTQyOSA4LjE1Mjk3IDM1LjA0MTZMMTkuNTExMSAyNC40MjkxQzE5LjYyNSAyNC4zMjYyIDE5LjY5NzIgMjQuMTcxOSAxOS42OTcyIDIzLjk5OTRDMTkuNjk3MiAyMy44MzYzIDE5LjYzMjQgMjMuNjg5OCAxOS41Mjk0IDIzLjU4NzRMOC4xODUxMSAxMi45OUM4LjA3MTcxIDEyLjg4NyA4IDEyLjczMzYgOCAxMi41NjE3QzggMTIuMjUxOCA4LjIzMzk3IDEyIDguNTIyNjUgMTJIMTUuMDA0M0MxNS4xNDEgMTIgMTUuMjY1NiAxMi4wNTYyIDE1LjM1ODUgMTIuMTQ4M0wyNy41ODYxIDIzLjU3NTdDMjcuNjk2OSAyMy42Nzg0IDI3Ljc2NjcgMjMuODI5OCAyNy43NjY3IDIzLjk5OTRDMjcuNzY2NyAyNC4xNjk0IDI3LjY5NjYgMjQuMzIxOSAyNy41ODUzIDI0LjQyNTFMMTUuMzU3NSAzNS44NTIzWiIgZmlsbD0iIzc4NTVGQSIvPgo8L2c+CjxkZWZzPgo8Y2xpcFBhdGggaWQ9ImNsaXAwXzI2MTlfMTEwMzUiPgo8cmVjdCB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==",
+  "overview": "# Overview\nNutanix Data Services for Kubernetes (NDK) simplifies and unifies the life cycle management of business-critical applications by extending enterprise data services to containerized applications.\n## For Information on Features\n- [Nutanix Data Services for Kubernetes](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Data-Services-for-Kubernetes-v2_1:Nutanix-Data-Services-for-Kubernetes-v2_1)\n\n## Prerequisites and Configuration Guide\n### This application is supported only on NKP clusters backed by Nutanix Infrastructure.\n### Nutanix Data Services for Kubernetes 2.1 requires the following applications to be installed on the cluster:\n- cert-manager v1.13.0 or higher\n- csi v3.3.8 or higher\n\n### While enabling Nutanix Data Services for Kubernetes from UI, image pull credentials need to be provided. If the secret object already exists in ntnx-system namespace, it's reference can be provided:\n```\nimageCredentials:\n  # Name of the image pull secret\n  imagePullSecretName: <name of the image pull secret>\n```\n### Or credentials can be provided with below configuration:\n```\nimageCredentials:\n  # Image registry credentials\n  credentials:\n    registry: https://index.docker.io/v1/\n    username:\n    password:\n    email:\n```\n### TLS will be disabled by default. To enable TLS, please follow the section below.\n### For using self-signed certificates (to be issued by existing cert-manager)\n```\ntls:\n  server:\n    enable: true\n    clusterName: <Name of NKP cluster>\n```\n### For using a custom issuer (a pre-existing issuer in ntnx-system namespace)\n```\ntls:\n  server:\n    enable: true\n    mode: \"ISSUER\"\n    issuer:\n      issuerName: <issuer-name>\n    clusterName: <Name of NKP cluster>\n```\n### For using a custom Secret (a pre-existing secret in ntnx-system namespace)\n```\ntls:\n  server:\n    enable: true\n    mode: \"SECRET\"\n    secretName: <Name of pre-existing secret>\n    clusterName: <Name of NKP cluster>\n```\n### For enabling MTLS between NDK intercom service running on source and replication kubernetes clusters, make sure that same certificate authority (CA) signs and issues certificates to NDK intercom service on primary and replication clusters.\nTo configure MTLS, the following change in configuration should be made:\n```\ntls:\n  server:\n    enableMTLS: true\n    mode: \"SECRET\"\n    secretName: <Name of pre-existing secret>\n    clusterName: <Name of NKP cluster>\n```",
+  "supportLink": "",
+  "dependencies": [
+    "cert-manager"
+  ],
+  "requiredDependencies": [],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.18.0 <2.19.0",
+  "type": "nkp-catalog",
+  "certifications": [
+    "nutanix-supported",
+    "airgapped"
+  ],
+  "readme": "",
+  "catalogName": "Nutanix Products",
+  "catalogSlug": "nutanix",
+  "catalogColor": "#22A06B",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+}
