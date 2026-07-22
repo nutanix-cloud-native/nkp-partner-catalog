@@ -9,13 +9,12 @@ import (
 
 	fluxhelmv2 "github.com/fluxcd/helm-controller/api/v2"
 	apimeta "github.com/fluxcd/pkg/apis/meta"
+	"github.com/mesosphere/kommander-applications/apptests/catalog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	ctrlClient "sigs.k8s.io/controller-runtime/pkg/client"
-
-	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/catalog"
 )
 
 const (
@@ -50,7 +49,7 @@ func setTraefikHubValues(ctx context.Context, releaseName, version, namespace st
 		},
 	}
 	cmName := releaseName + "-" + version + "-config-defaults"
-	if err := k8sClient.Get(ctx, ctrlClient.ObjectKey{Name: cmName, Namespace: namespace}, cm); err != nil {
+	if err := catalog.K8sClient.Get(ctx, ctrlClient.ObjectKey{Name: cmName, Namespace: namespace}, cm); err != nil {
 		return err
 	}
 	valuesYAML, _, _ := unstructured.NestedString(cm.Object, "data", "values.yaml")
@@ -59,7 +58,7 @@ func setTraefikHubValues(ctx context.Context, releaseName, version, namespace st
 	if err := unstructured.SetNestedField(cm.Object, valuesYAML, "data", "values.yaml"); err != nil {
 		return err
 	}
-	return k8sClient.Update(ctx, cm)
+	return catalog.K8sClient.Update(ctx, cm)
 }
 
 var _ = Describe("traefik-hub Tests", Label("traefik-hub"), func() {
@@ -74,33 +73,30 @@ var _ = Describe("traefik-hub Tests", Label("traefik-hub"), func() {
 				Skip(fmt.Sprintf("skipping traefik-hub test: %s env var not set", hubTokenEnvVar))
 			}
 
-			err := SetupKindCluster()
+			err := catalog.SetupKindCluster()
 			Expect(err).ToNot(HaveOccurred())
 
-			err = env.InstallLatestFlux(ctx)
+			err = catalog.Env.InstallLatestFlux(catalog.Ctx)
 			Expect(err).ToNot(HaveOccurred())
+
+			Expect(catalog.WaitForFluxCRDs()).To(Succeed())
 		})
 
 		AfterAll(func() {
-			if useExistingCluster || os.Getenv("SKIP_CLUSTER_TEARDOWN") != "" {
-				return
-			}
-
-			err := env.Destroy(ctx)
-			Expect(err).ToNot(HaveOccurred())
+			Expect(catalog.TeardownCluster()).To(Succeed())
 		})
 
 		It("should install successfully with default config", func() {
 			secret := createHubTokenSecret(hubTokenSecretName, catalog.DefaultNamespace)
-			err := k8sClient.Create(ctx, secret)
+			err := catalog.K8sClient.Create(catalog.Ctx, secret)
 			Expect(err).ToNot(HaveOccurred())
 
-			t = catalog.NewAppScenario("traefik-hub", *appVersion).(*catalog.App)
-			GinkgoWriter.Printf("Installing %s @ %s\n", t.Name(), *appVersion)
-			err = t.Install(ctx, env)
+			t = catalog.NewAppScenario("traefik-hub", *catalog.AppVersion).(*catalog.App)
+			GinkgoWriter.Printf("Installing %s @ %s\n", t.Name(), *catalog.AppVersion)
+			err = t.Install(catalog.Ctx, catalog.Env)
 			Expect(err).ToNot(HaveOccurred())
 
-			err = setTraefikHubValues(ctx, t.Name(), *appVersion, catalog.DefaultNamespace)
+			err = setTraefikHubValues(catalog.Ctx, t.Name(), *catalog.AppVersion, catalog.DefaultNamespace)
 			Expect(err).ToNot(HaveOccurred())
 			GinkgoWriter.Printf("Install applied, waiting for HelmRelease to become Ready\n")
 
@@ -116,7 +112,7 @@ var _ = Describe("traefik-hub Tests", Label("traefik-hub"), func() {
 			}
 
 			Eventually(func() error {
-				err = k8sClient.Get(ctx, ctrlClient.ObjectKeyFromObject(hr), hr)
+				err = catalog.K8sClient.Get(catalog.Ctx, ctrlClient.ObjectKeyFromObject(hr), hr)
 				if err != nil {
 					GinkgoWriter.Printf("HelmRelease Get error: %v\n", err)
 					return err
@@ -148,36 +144,33 @@ var _ = Describe("traefik-hub Tests", Label("traefik-hub"), func() {
 				Skip(fmt.Sprintf("skipping traefik-hub upgrade test: %s env var not set", hubTokenEnvVar))
 			}
 
-			t = catalog.NewAppScenario("traefik-hub", *appVersion).(*catalog.App)
+			t = catalog.NewAppScenario("traefik-hub", *catalog.AppVersion).(*catalog.App)
 			if !t.HasPreviousVersion() {
 				Skip("skipping upgrade test: no previous version available")
 			}
 
-			err := SetupKindCluster()
+			err := catalog.SetupKindCluster()
 			Expect(err).ToNot(HaveOccurred())
 
-			err = env.InstallLatestFlux(ctx)
+			err = catalog.Env.InstallLatestFlux(catalog.Ctx)
 			Expect(err).ToNot(HaveOccurred())
+
+			Expect(catalog.WaitForFluxCRDs()).To(Succeed())
 		})
 
 		AfterAll(func() {
-			if useExistingCluster || os.Getenv("SKIP_CLUSTER_TEARDOWN") != "" {
-				return
-			}
-
-			err := env.Destroy(ctx)
-			Expect(err).ToNot(HaveOccurred())
+			Expect(catalog.TeardownCluster()).To(Succeed())
 		})
 
 		It("should install the previous version successfully", func() {
 			secret := createHubTokenSecret(hubTokenSecretName, catalog.DefaultNamespace)
-			err := k8sClient.Create(ctx, secret)
+			err := catalog.K8sClient.Create(catalog.Ctx, secret)
 			Expect(err).ToNot(HaveOccurred())
 
-			err = t.InstallPreviousVersion(ctx, env)
+			err = t.InstallPreviousVersion(catalog.Ctx, catalog.Env)
 			Expect(err).ToNot(HaveOccurred())
 
-			err = setTraefikHubValues(ctx, t.Name(), *appVersion, catalog.DefaultNamespace)
+			err = setTraefikHubValues(catalog.Ctx, t.Name(), *catalog.AppVersion, catalog.DefaultNamespace)
 			Expect(err).ToNot(HaveOccurred())
 
 			hr = &fluxhelmv2.HelmRelease{
@@ -188,7 +181,7 @@ var _ = Describe("traefik-hub Tests", Label("traefik-hub"), func() {
 			}
 
 			Eventually(func() error {
-				err = k8sClient.Get(ctx, ctrlClient.ObjectKeyFromObject(hr), hr)
+				err = catalog.K8sClient.Get(catalog.Ctx, ctrlClient.ObjectKeyFromObject(hr), hr)
 				if err != nil {
 					return err
 				}
@@ -204,7 +197,7 @@ var _ = Describe("traefik-hub Tests", Label("traefik-hub"), func() {
 		})
 
 		It("should upgrade traefik-hub successfully", func() {
-			err := t.Upgrade(ctx, env)
+			err := t.Upgrade(catalog.Ctx, catalog.Env)
 			Expect(err).ToNot(HaveOccurred())
 
 			hr = &fluxhelmv2.HelmRelease{
@@ -215,7 +208,7 @@ var _ = Describe("traefik-hub Tests", Label("traefik-hub"), func() {
 			}
 
 			Eventually(func() error {
-				err = k8sClient.Get(ctx, ctrlClient.ObjectKeyFromObject(hr), hr)
+				err = catalog.K8sClient.Get(catalog.Ctx, ctrlClient.ObjectKeyFromObject(hr), hr)
 				if err != nil {
 					return err
 				}

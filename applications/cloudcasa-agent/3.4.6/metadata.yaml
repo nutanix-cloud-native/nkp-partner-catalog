@@ -1,4 +1,3 @@
-# Trigger E2E smoke run to validate pre-refactor baseline.
 schema: catalog.nkp.nutanix.com/v1/application-metadata
 displayName: "CloudCasa Agent"
 description: "Backup, restore, DR, and data migration for NKP and all other Kubernetes clusters"
