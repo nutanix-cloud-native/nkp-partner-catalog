@@ -1,0 +1,31 @@
+---
+title: Substitution variables
+sidebar_position: 4
+---
+
+# Substitution variables
+
+## Overview
+
+When NKP deploys a catalog application, it fills in a set of variables on the
+Flux Kustomization's `spec.postBuild.substitute`. Reference them in your
+manifests as `${variable}` instead of hardcoding values, and Flux replaces them
+at deploy time.
+
+## Available variables
+
+Each variable becomes available in the NKP version noted below and remains available in all later versions.
+
+| Variable | Introduced in NKP | Availability | Description |
+| --- | --- | --- | --- |
+| `releaseName` | 2.16 | Always | The deployment's release name: the AppDeployment's release-name annotation if set, otherwise its `metadata.name`. |
+| `releaseNamespace` | 2.16 | Always | The namespace the application is deployed into: the workspace namespace for workspace deployments, or the project namespace for project deployments. |
+| `workspaceNamespace` | 2.16 | Always | The workspace's namespace. |
+| `appName` | 2.17 | Always | The catalog application's ID, derived from its `applications/<app-name>` directory (e.g. `jupyterhub`). |
+| `appVersion` | 2.17 | Always | The catalog application's version, derived from its `applications/<app-name>/<version>` directory (e.g. `4.3.2`). |
+| `projectNamespace` | 2.17 | Project deployments only | The project's namespace. |
+| `clusterName` | 2.19 | Always | The name of the target cluster (the KommanderCluster's name). |
+| `workspaceName` | 2.19 | When the target namespace resolves to a workspace or project | The name of the Workspace the deployment belongs to (for a project deployment, its parent workspace). |
+| `projectName` | 2.19 | Project deployments only | The name of the project the deployment belongs to. |
+| `clusterUUID` | 2.19 | When the `kommander.mesosphere.io/cluster-id` label is set | The target cluster's ID, taken from that label on the KommanderCluster. |
+| `clusterType` | 2.19 | When a value is available | The target cluster's type, resolved in precedence order: (1) for CAPI-managed clusters, the referenced CAPI Cluster's `spec.infrastructureRef.kind` (for example `NutanixCluster`, `AWSCluster`, `AzureCluster`, `DockerCluster`); (2) for non-CAPI clusters, the `kommander.mesosphere.io/cluster-type` label, one of `EKS`, `GKE`, `AKS`, `Unknown`. |

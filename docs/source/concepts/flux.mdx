@@ -17,7 +17,7 @@ A [HelmRelease](https://fluxcd.io/flux/components/helm/helmreleases/) is a Flux 
 
 ## Kustomization
 
-A [Kustomization](https://fluxcd.io/flux/components/kustomize/kustomizations/) is a Flux resource that applies Kubernetes manifests from a Git repository or other source, optionally using Kustomize. In NKP, Kustomizations support GitOps workflows for deploying and managing resources across clusters in a project or workspace.
+A [Kustomization](https://fluxcd.io/flux/components/kustomize/kustomizations/) is a Flux resource that applies Kubernetes manifests from a Git repository or other source, optionally using Kustomize. In NKP, Kustomizations support GitOps workflows for deploying and managing resources across clusters in a project or workspace. NKP fills in per-deployment values on a Kustomization's `spec.postBuild.substitute`; see [Substitution variables](/docs/concepts/substitution-variables).
 
 ## Resources
 
