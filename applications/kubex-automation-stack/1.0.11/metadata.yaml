@@ -13,7 +13,7 @@ overview: |
 
   The **Kubex Automation Stack** deploys the core enterprise components required for continuous Kubex data collection, machine-learning analysis, and autonomous resource optimization within Kubernetes environments.
 
-  Powered by **Densify’s** analytics engine, the stack bridges the gap between infrastructure efficiency and application performance by automating cloud cost optimization (FinOps) and workload right-sizing.
+  Powered by **Kubex’s** analytics engine, the stack bridges the gap between infrastructure efficiency and application performance by automating cloud cost optimization (FinOps) and workload right-sizing.
 
   ---
 
