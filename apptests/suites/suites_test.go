@@ -9,7 +9,7 @@ import (
 // skipApps have hand-written specs that need extra setup (secrets, ConfigMap
 // patches); every other app under applications/ gets a default install +
 // upgrade template test via auto-scan.
-var skipApps = []string{"kasm", "traefik-hub"}
+var skipApps = []string{"kasm", "traefik-hub", "kubex-automation-stack"}
 
 //nolint:gochecknoinits // init required for test registration before suite runs
 func init() {
