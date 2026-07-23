@@ -2,20 +2,42 @@ set unstable
 # Docs recipes for nkp-partner-catalog.
 # docs/source and docs/site live on main; built output is published to gh-pages.
 
+# Default sibling-repo root (parent of nkp-partner-catalog checkout).
+sibling_root := justfile_directory() + "/../.."
+
+# Generate catalog-data.json by crawling catalog repos.
+# Pass repo root overrides: just generate-catalog /other/root
 [script]
-docs-build base_url='/nkp-partner-catalog/':
+generate-catalog root=sibling_root:
+    ROOT="{{ justfile_directory() }}"
+    cd "$ROOT/site"
+    node scripts/generate-catalog.js \
+      nkp-ai-applications-catalog="{{ root }}/nkp-ai-applications-catalog" \
+      nkp-partner-catalog="{{ root }}/nkp-partner-catalog" \
+      nkp-nutanix-product-catalog="{{ root }}/nkp-nutanix-product-catalog" \
+      kommander-applications="{{ root }}/kommander/kommander-applications" \
+      -o "$ROOT/source/catalog-data.json"
+
+# Sync generated assets into site/static/ before a build.
+[script]
+_sync-static:
     ROOT="{{ justfile_directory() }}"
     mkdir -p "$ROOT/site/static/schemas/v1"
     rsync -a --delete "$ROOT/source/schemas/v1/" "$ROOT/site/static/schemas/v1/"
+    if [ -f "$ROOT/source/catalog-data.json" ]; then
+        cp "$ROOT/source/catalog-data.json" "$ROOT/site/static/catalog-data.json"
+    fi
+
+[script]
+docs-build base_url='/nkp-partner-catalog/': _sync-static
+    ROOT="{{ justfile_directory() }}"
     cd "$ROOT/site"
     npm ci --prefer-offline --ignore-scripts
     BASE_URL="{{ base_url }}" npm run build
 
 [script]
-docs-local host='0.0.0.0' port='3000' base_url='/':
+docs-local host='0.0.0.0' port='3000' base_url='/': _sync-static
     ROOT="{{ justfile_directory() }}"
-    mkdir -p "$ROOT/site/static/schemas/v1"
-    rsync -a --delete "$ROOT/source/schemas/v1/" "$ROOT/site/static/schemas/v1/"
     cd "$ROOT/site"
     npm ci --prefer-offline --ignore-scripts
     BASE_URL="{{ base_url }}" npm run build
