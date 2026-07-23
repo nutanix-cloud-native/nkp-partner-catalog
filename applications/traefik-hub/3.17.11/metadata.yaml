@@ -1,7 +1,10 @@
 schema: catalog.nkp.nutanix.com/v1/application-metadata
 allowMultipleInstances: false
 category:
-- api-gateway
+- inferencing-and-serving
+appScreens:
+- ai
+- general
 displayName: Traefik API Management
 description: Cloud-Native API Intelligence & Management Platform with GitOps-Native Governance
 licensing:
