@@ -1,7 +1,7 @@
 schema: catalog.nkp.nutanix.com/v1/application-metadata
 allowMultipleInstances: false
 category:
-- inferencing-serving
+- inferencing-and-serving
 appScreens:
 - ai
 - general
