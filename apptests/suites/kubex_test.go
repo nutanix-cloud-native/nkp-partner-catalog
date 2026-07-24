@@ -3,6 +3,7 @@ package suites
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	fluxhelmv2 "github.com/fluxcd/helm-controller/api/v2"
@@ -16,15 +17,37 @@ import (
 	ctrlClient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-// disableKubexForwarderJob patches the defaults ConfigMap to turn off the
-// container-optimization-data-forwarder post-install Job. That Job requires
-// live Densify SaaS credentials (the shipped defaults are placeholders), so it
-// always fails on a CI cluster and blocks the HelmRelease from ever becoming
-// Ready. Disabling it lets us assert the operator and collectors install and
-// reconcile to Ready -- the meaningful signal we can verify without external
-// credentials. Applying the kustomization rewrites this ConfigMap back to the
-// shipped defaults, so this must be re-run after every install/upgrade.
-func disableKubexForwarderJob(ctx context.Context, releaseName, namespace string) error {
+// kubex-automation-stack ships a container-optimization-data-forwarder Job as a
+// Helm post-install/post-upgrade hook. That Job authenticates to Densify SaaS and
+// forwards collected metrics; Helm blocks on it, so the HelmRelease only reaches
+// Ready if the forward succeeds. The catalog ships placeholder Densify creds, so
+// without a real (test) Densify account the Job cannot succeed on a CI cluster.
+//
+// Rather than disabling the forwarder (which would make "green" mean nothing more
+// than "the chart templated"), this test is gated on real credentials, exactly
+// like traefik-hub gates on TRAEFIK_HUB_TOKEN: when the DENSIFY_* env vars are set
+// we inject them and assert the real forwarder reaches Ready (a true end-to-end
+// test); when they are absent we skip.
+const (
+	densifyUsernameEnvVar  = "DENSIFY_USERNAME"  //nolint:gosec // env var name, not a credential
+	densifyEPasswordEnvVar = "DENSIFY_EPASSWORD" //nolint:gosec // env var name, not a credential
+	densifyHostEnvVar      = "DENSIFY_HOST"      //nolint:gosec // env var name, not a credential
+)
+
+// densifyCredsPresent reports whether all Densify credentials required to run the
+// functional forwarder test are available in the environment.
+func densifyCredsPresent() bool {
+	return os.Getenv(densifyUsernameEnvVar) != "" &&
+		os.Getenv(densifyEPasswordEnvVar) != "" &&
+		os.Getenv(densifyHostEnvVar) != ""
+}
+
+// setDensifyCredentials patches the defaults ConfigMap, replacing the shipped
+// placeholder Densify credentials with the real ones from the environment so the
+// forwarder Job can authenticate and forward. Applying the kustomization rewrites
+// this ConfigMap back to the shipped placeholders, so this must be re-run after
+// every install/upgrade.
+func setDensifyCredentials(ctx context.Context, releaseName, namespace string) error {
 	cm := &unstructured.Unstructured{
 		Object: map[string]interface{}{
 			"apiVersion": "v1",
@@ -42,17 +65,17 @@ func disableKubexForwarderJob(ctx context.Context, releaseName, namespace string
 		return err
 	}
 
-	forwarder, ok := values["container-optimization-data-forwarder"].(map[string]interface{})
-	if !ok || forwarder == nil {
-		forwarder = map[string]interface{}{}
-		values["container-optimization-data-forwarder"] = forwarder
-	}
-	job, ok := forwarder["job"].(map[string]interface{})
-	if !ok || job == nil {
-		job = map[string]interface{}{}
-		forwarder["job"] = job
-	}
-	job["enable"] = false
+	stack := ensureMap(values, "stack")
+	densify := ensureMap(stack, "densify")
+	densify["username"] = os.Getenv(densifyUsernameEnvVar)
+	densify["encrypted_password"] = os.Getenv(densifyEPasswordEnvVar)
+
+	forwarder := ensureMap(values, "container-optimization-data-forwarder")
+	config := ensureMap(forwarder, "config")
+	fwd := ensureMap(config, "forwarder")
+	fwdDensify := ensureMap(fwd, "densify")
+	url := ensureMap(fwdDensify, "url")
+	url["host"] = os.Getenv(densifyHostEnvVar)
 
 	out, err := yaml.Marshal(values)
 	if err != nil {
@@ -64,19 +87,14 @@ func disableKubexForwarderJob(ctx context.Context, releaseName, namespace string
 	return catalog.K8sClient.Update(ctx, cm)
 }
 
-func kubexReady(hr *fluxhelmv2.HelmRelease, requireUpgrade bool) error {
-	if err := catalog.K8sClient.Get(catalog.Ctx, ctrlClient.ObjectKeyFromObject(hr), hr); err != nil {
-		return err
+// ensureMap returns m[key] as a map, creating it if absent or of the wrong type.
+func ensureMap(m map[string]interface{}, key string) map[string]interface{} {
+	child, ok := m[key].(map[string]interface{})
+	if !ok || child == nil {
+		child = map[string]interface{}{}
+		m[key] = child
 	}
-	GinkgoWriter.Printf("HelmRelease %s/%s conditions: %v\n", hr.Namespace, hr.Name, hr.Status.Conditions)
-	for _, cond := range hr.Status.Conditions {
-		if cond.Status == metav1.ConditionTrue &&
-			cond.Type == apimeta.ReadyCondition &&
-			(!requireUpgrade || cond.Reason == fluxhelmv2.UpgradeSucceededReason) {
-			return nil
-		}
-	}
-	return fmt.Errorf("helm release not ready yet")
+	return child
 }
 
 func newKubexHelmRelease() *fluxhelmv2.HelmRelease {
@@ -92,6 +110,23 @@ func newKubexHelmRelease() *fluxhelmv2.HelmRelease {
 	}
 }
 
+// kubexReady polls the HelmRelease until it reports Ready. When requireUpgrade is
+// true it additionally requires the Ready condition reason to be UpgradeSucceeded.
+func kubexReady(hr *fluxhelmv2.HelmRelease, requireUpgrade bool) error {
+	if err := catalog.K8sClient.Get(catalog.Ctx, ctrlClient.ObjectKeyFromObject(hr), hr); err != nil {
+		return err
+	}
+	for _, cond := range hr.Status.Conditions {
+		if cond.Status == metav1.ConditionTrue && cond.Type == apimeta.ReadyCondition {
+			if requireUpgrade && cond.Reason != fluxhelmv2.UpgradeSucceededReason {
+				continue
+			}
+			return nil
+		}
+	}
+	return fmt.Errorf("helm release not ready yet")
+}
+
 var _ = Describe("kubex-automation-stack Tests", Label("kubex-automation-stack"), func() {
 	Describe("Installing kubex-automation-stack", Ordered, Label("install"), func() {
 		var (
@@ -100,12 +135,13 @@ var _ = Describe("kubex-automation-stack Tests", Label("kubex-automation-stack")
 		)
 
 		BeforeAll(func() {
-			err := catalog.SetupKindCluster()
-			Expect(err).ToNot(HaveOccurred())
+			if !densifyCredsPresent() {
+				Skip(fmt.Sprintf("skipping kubex-automation-stack test: %s/%s/%s env vars not set",
+					densifyUsernameEnvVar, densifyEPasswordEnvVar, densifyHostEnvVar))
+			}
 
-			err = catalog.Env.InstallLatestFlux(catalog.Ctx)
-			Expect(err).ToNot(HaveOccurred())
-
+			Expect(catalog.SetupKindCluster()).To(Succeed())
+			Expect(catalog.Env.InstallLatestFlux(catalog.Ctx)).To(Succeed())
 			Expect(catalog.WaitForFluxCRDs()).To(Succeed())
 		})
 
@@ -113,14 +149,12 @@ var _ = Describe("kubex-automation-stack Tests", Label("kubex-automation-stack")
 			Expect(catalog.TeardownCluster()).To(Succeed())
 		})
 
-		It("should install successfully with default config", func() {
+		It("should install successfully and forward to Densify", func() {
 			k = catalog.NewAppScenario("kubex-automation-stack", *catalog.AppVersion).(*catalog.App)
 			GinkgoWriter.Printf("Installing %s @ %s\n", k.Name(), *catalog.AppVersion)
-			err := k.Install(catalog.Ctx, catalog.Env)
-			Expect(err).ToNot(HaveOccurred())
+			Expect(k.Install(catalog.Ctx, catalog.Env)).To(Succeed())
 
-			Expect(disableKubexForwarderJob(catalog.Ctx, k.Name(), catalog.DefaultNamespace)).To(Succeed())
-			GinkgoWriter.Printf("Install applied, waiting for HelmRelease to become Ready\n")
+			Expect(setDensifyCredentials(catalog.Ctx, k.Name(), catalog.DefaultNamespace)).To(Succeed())
 
 			hr = newKubexHelmRelease()
 			Eventually(func() error {
@@ -136,17 +170,18 @@ var _ = Describe("kubex-automation-stack Tests", Label("kubex-automation-stack")
 		)
 
 		BeforeAll(func() {
+			if !densifyCredsPresent() {
+				Skip(fmt.Sprintf("skipping kubex-automation-stack upgrade test: %s/%s/%s env vars not set",
+					densifyUsernameEnvVar, densifyEPasswordEnvVar, densifyHostEnvVar))
+			}
+
 			k = catalog.NewAppScenario("kubex-automation-stack", *catalog.AppVersion).(*catalog.App)
 			if !k.HasPreviousVersion() {
 				Skip("skipping upgrade test: no previous version available")
 			}
 
-			err := catalog.SetupKindCluster()
-			Expect(err).ToNot(HaveOccurred())
-
-			err = catalog.Env.InstallLatestFlux(catalog.Ctx)
-			Expect(err).ToNot(HaveOccurred())
-
+			Expect(catalog.SetupKindCluster()).To(Succeed())
+			Expect(catalog.Env.InstallLatestFlux(catalog.Ctx)).To(Succeed())
 			Expect(catalog.WaitForFluxCRDs()).To(Succeed())
 		})
 
@@ -155,10 +190,9 @@ var _ = Describe("kubex-automation-stack Tests", Label("kubex-automation-stack")
 		})
 
 		It("should install the previous version successfully", func() {
-			err := k.InstallPreviousVersion(catalog.Ctx, catalog.Env)
-			Expect(err).ToNot(HaveOccurred())
+			Expect(k.InstallPreviousVersion(catalog.Ctx, catalog.Env)).To(Succeed())
 
-			Expect(disableKubexForwarderJob(catalog.Ctx, k.Name(), catalog.DefaultNamespace)).To(Succeed())
+			Expect(setDensifyCredentials(catalog.Ctx, k.Name(), catalog.DefaultNamespace)).To(Succeed())
 
 			hr = newKubexHelmRelease()
 			Eventually(func() error {
@@ -167,12 +201,11 @@ var _ = Describe("kubex-automation-stack Tests", Label("kubex-automation-stack")
 		})
 
 		It("should upgrade kubex-automation-stack successfully", func() {
-			err := k.Upgrade(catalog.Ctx, catalog.Env)
-			Expect(err).ToNot(HaveOccurred())
+			Expect(k.Upgrade(catalog.Ctx, catalog.Env)).To(Succeed())
 
 			// Upgrade re-applies the kustomization, which resets the ConfigMap to
-			// the shipped defaults (forwarder Job re-enabled), so patch again.
-			Expect(disableKubexForwarderJob(catalog.Ctx, k.Name(), catalog.DefaultNamespace)).To(Succeed())
+			// the shipped placeholder creds, so re-inject the real ones.
+			Expect(setDensifyCredentials(catalog.Ctx, k.Name(), catalog.DefaultNamespace)).To(Succeed())
 
 			hr = newKubexHelmRelease()
 			Eventually(func() error {

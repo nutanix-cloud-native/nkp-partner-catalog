@@ -6,9 +6,11 @@ import (
 	"github.com/mesosphere/kommander-applications/apptests/catalog"
 )
 
-// skipApps have hand-written specs that need extra setup (secrets, ConfigMap
-// patches); every other app under applications/ gets a default install +
-// upgrade template test via auto-scan.
+// skipApps are excluded from the auto-scan default install/upgrade test because
+// they have hand-written specs (see the matching *_test.go) that need extra
+// setup: TLS secrets (kasm), a hub token (traefik-hub), or real Densify SaaS
+// credentials (kubex-automation-stack). Every other app under applications/ gets
+// the default auto-scan test.
 var skipApps = []string{"kasm", "traefik-hub", "kubex-automation-stack"}
 
 //nolint:gochecknoinits // init required for test registration before suite runs
