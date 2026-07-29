@@ -10,12 +10,20 @@ import TabItem from '@theme/TabItem';
 
 # CNCF AI Conformance
 
+<div style={{ float: 'right', width: '140px', margin: '0 0 0.75rem 1rem', textAlign: 'center' }}>
+  <a href="https://github.com/cncf/k8s-ai-conformance/tree/main/v1.35/nkp" target="_blank" rel="noopener noreferrer">
+    <img src="/img/ai-conformance/cncf-ai-conformance-logo-color-v2.png" alt="CNCF Kubernetes AI Conformance logo" />
+  </a>
+</div>
+
 The [CNCF Kubernetes AI Conformance](https://github.com/kubernetes-sigs/wg-device-management/blob/main/conformance/README.md) defines a set of additional capabilities, APIs, and configurations that a Kubernetes cluster MUST offer, on top of standard CNCF Kubernetes Conformance, to reliably and efficiently run AI/ML workloads.
 
 This page shows how NKP 2.18 meets these requirements using Kubernetes v1.35.2 and the NVIDIA GPU Operator v26.3.0, deployed via Flux CD as platform HelmReleases.
 
+<div style={{ clear: 'both' }} />
+
 :::note
-NKP already holds **CNCF Certified Kubernetes** conformance, which the AI Conformance requirements build on — it was certified under the name **Konvoy** (NKP's former product name); see the [v1.35 Konvoy conformance submission](https://github.com/cncf/k8s-conformance/tree/master/v1.35/konvoy). For product installation, configuration, and operational guidance, see the official [NKP 2.18 documentation](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform-v2_18).
+NKP is **CNCF Kubernetes AI Conformant** for v1.35; see the [v1.35 NKP AI conformance submission](https://github.com/cncf/k8s-ai-conformance/tree/main/v1.35/nkp). NKP also holds **CNCF Certified Kubernetes** conformance, which AI Conformance builds on. That certification was submitted under NKP's former product name, **Konvoy**; see the [v1.35 Konvoy conformance submission](https://github.com/cncf/k8s-conformance/tree/master/v1.35/konvoy). For installation, configuration, and operations guidance, see the official [NKP 2.18 documentation](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform-v2_18).
 :::
 
 ## Requirements Overview
