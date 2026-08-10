@@ -1,0 +1,31 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: DM NKP GitOps Custom App
+allowMultipleInstances: true
+category:
+  - dm-nkp-gitops-app-catalog
+  - general
+  - observability
+  - demo
+description: |
+  A production-ready Golang application with OpenTelemetry telemetry (metrics, logs, traces),
+  designed for deployment on Nutanix NKP. Serves as a reference for building cloud-native
+  apps with full observability. Connects to OpenTelemetry Collector (OTLP :4317).
+dependencies: []
+icon: ""
+licensing:
+  - Pro
+  - Ultimate
+overview: |
+  **What it is** — A demo app with built-in OpenTelemetry (metrics, logs, traces) and health endpoints, showing how to build observable services on NKP.
+
+  **Highlights**
+  - OTLP export to OpenTelemetry Collector; works with Prometheus, Loki, Tempo, and Grafana
+  - Optional integration with Traefik and cert-manager/Let's Encrypt for TLS
+  - Reference for NKP custom apps and observability stack integration
+
+  **Documentation:** [GitHub](https://github.com/deepak-muley/dm-nkp-gitops-custom-app) | **Project:** [dm-nkp-gitops-custom-app](https://github.com/deepak-muley/dm-nkp-gitops-custom-app)
+scope:
+  - project
+  - workspace
+supportLink: https://github.com/deepak-muley/dm-nkp-gitops-custom-app
+type: custom
