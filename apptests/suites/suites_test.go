@@ -50,6 +50,7 @@ var _ = BeforeSuite(func() {
 
 		k8sClient, err = genericClient.New(typedClient.Config(), genericClient.Options{Scheme: scheme})
 		Expect(err).ShouldNot(HaveOccurred())
+		env.SetClient(k8sClient)
 	} else {
 		var err error
 		network, err = kind.EnsureDockerNetworkExist(ctx, "", false)
