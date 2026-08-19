@@ -2,6 +2,23 @@
 
 This example demonstrates how to package and test an application that requires a centralized management component along with distributed agents across multiple workload clusters.
 
+## Example Structure
+
+```text
+opencost/
+  opencost-README.md
+  2.4.0/
+    metadata.yaml
+    kustomization.yaml
+    values-central.yaml
+    values-agent.yaml
+    helmrelease/
+      kustomization.yaml
+      helmrelease.yaml
+      cm.yaml
+      opencost-ui-dashboard-cm.yaml
+```
+
 ## Key Features Demonstrated
 
 ### 1. Centralized vs. Workload Configurations

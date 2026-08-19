@@ -2,6 +2,21 @@
 
 This example demonstrates how to properly configure a **Workspace-scoped** application that deploys cluster-wide resources (such as Custom Resource Definitions or ClusterRoles).
 
+## Example Structure
+
+```text
+kubescape-operator/
+  kubescape-operator-README.md
+  1.29.12/
+    metadata.yaml
+    kustomization.yaml
+    helmrelease.yaml
+    helmrelease/
+      kustomization.yaml
+      helmrelease.yaml
+      cm.yaml
+```
+
 ## Key Features Demonstrated
 
 ### 1. Understanding `scope` vs `allowMultipleInstances`

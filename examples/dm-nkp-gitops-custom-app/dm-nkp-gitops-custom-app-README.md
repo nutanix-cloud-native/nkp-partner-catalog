@@ -2,6 +2,23 @@
 
 This application serves as a comprehensive example demonstrating how to address common validation and registry challenges when onboarding an application to the NKP Partner Catalog.
 
+## Example Structure
+
+```text
+dm-nkp-gitops-custom-app/
+  dm-nkp-gitops-custom-app-README.md
+  0.1.0/
+    .bloodhound.yaml
+    metadata.yaml
+    kustomization.yaml
+    helmrelease.yaml
+    values.yaml
+    helmrelease/
+      kustomization.yaml
+      helmrelease.yaml
+      cm.yaml
+```
+
 ## Key Features Demonstrated
 
 ### 1. Handling Custom Resource Validation Exceptions (`.bloodhound.yaml`)
