@@ -1,5 +1,5 @@
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
+kind: OCIRepository
 metadata:
   name: ${releaseName}-1.18.0-n4k.nirmata.2-repo
   namespace: ${releaseNamespace}
