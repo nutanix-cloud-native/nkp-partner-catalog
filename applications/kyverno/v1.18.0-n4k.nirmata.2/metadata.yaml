@@ -2,10 +2,11 @@ schema: catalog.nkp.nutanix.com/v1/application-metadata
 allowMultipleInstances: false
 category:
   - security
-displayName: Kyverno
+displayName: Nirmata Enterprise for Kyverno (N4K)
 description: Kubernetes Native Policy Management
 licensing:
   - Enterprise
+nkpVersionSupport: '>=2.17'
 overview: |-
   ## Overview
 
