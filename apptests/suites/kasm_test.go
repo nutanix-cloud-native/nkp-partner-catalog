@@ -11,18 +11,16 @@ import (
 	"encoding/pem"
 	"fmt"
 	"math/big"
-	"os"
 	"time"
 
 	fluxhelmv2 "github.com/fluxcd/helm-controller/api/v2"
 	apimeta "github.com/fluxcd/pkg/apis/meta"
+	"github.com/mesosphere/kommander-applications/apptests/catalog"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	ctrlClient "sigs.k8s.io/controller-runtime/pkg/client"
-
-	"github.com/nutanix-cloud-native/nkp-partner-catalog/apptests/catalog"
 )
 
 // setKasmValues patches the Kasm default ConfigMap with the values required for
@@ -36,7 +34,7 @@ func setKasmValues(ctx context.Context, releaseName, version, namespace string) 
 		},
 	}
 	cmName := releaseName + "-" + version + "-config-defaults"
-	if err := k8sClient.Get(ctx, ctrlClient.ObjectKey{Name: cmName, Namespace: namespace}, cm); err != nil {
+	if err := catalog.K8sClient.Get(ctx, ctrlClient.ObjectKey{Name: cmName, Namespace: namespace}, cm); err != nil {
 		return err
 	}
 	valuesYAML, _, _ := unstructured.NestedString(cm.Object, "data", "values.yaml")
@@ -44,7 +42,7 @@ func setKasmValues(ctx context.Context, releaseName, version, namespace string) 
 	if err := unstructured.SetNestedField(cm.Object, valuesYAML, "data", "values.yaml"); err != nil {
 		return err
 	}
-	return k8sClient.Update(ctx, cm)
+	return catalog.K8sClient.Update(ctx, cm)
 }
 
 func createSelfSignedTLSSecret(name, namespace string) *unstructured.Unstructured {
@@ -91,33 +89,30 @@ var _ = Describe("kasm Tests", Label("kasm"), func() {
 		)
 
 		BeforeAll(func() {
-			err := SetupKindCluster()
+			err := catalog.SetupKindCluster()
 			Expect(err).ToNot(HaveOccurred())
 
-			err = env.InstallLatestFlux(ctx)
+			err = catalog.Env.InstallLatestFlux(catalog.Ctx)
 			Expect(err).ToNot(HaveOccurred())
+
+			Expect(catalog.WaitForFluxCRDs()).To(Succeed())
 		})
 
 		AfterAll(func() {
-			if useExistingCluster || os.Getenv("SKIP_CLUSTER_TEARDOWN") != "" {
-				return
-			}
-
-			err := env.Destroy(ctx)
-			Expect(err).ToNot(HaveOccurred())
+			Expect(catalog.TeardownCluster()).To(Succeed())
 		})
 
 		It("should install successfully with default config", func() {
 			tlsSecret := createSelfSignedTLSSecret("kasm-tls-secret", catalog.DefaultNamespace)
-			err := k8sClient.Create(ctx, tlsSecret)
+			err := catalog.K8sClient.Create(catalog.Ctx, tlsSecret)
 			Expect(err).ToNot(HaveOccurred())
 
-			k = catalog.NewAppScenario("kasm", *appVersion).(*catalog.App)
-			GinkgoWriter.Printf("Installing %s @ %s\n", k.Name(), *appVersion)
-			err = k.Install(ctx, env)
+			k = catalog.NewAppScenario("kasm", *catalog.AppVersion).(*catalog.App)
+			GinkgoWriter.Printf("Installing %s @ %s\n", k.Name(), *catalog.AppVersion)
+			err = k.Install(catalog.Ctx, catalog.Env)
 			Expect(err).ToNot(HaveOccurred())
 
-			err = setKasmValues(ctx, k.Name(), *appVersion, catalog.DefaultNamespace)
+			err = setKasmValues(catalog.Ctx, k.Name(), *catalog.AppVersion, catalog.DefaultNamespace)
 			Expect(err).ToNot(HaveOccurred())
 			GinkgoWriter.Printf("Install applied, waiting for HelmRelease to become Ready\n")
 
@@ -133,7 +128,7 @@ var _ = Describe("kasm Tests", Label("kasm"), func() {
 			}
 
 			Eventually(func() error {
-				err = k8sClient.Get(ctx, ctrlClient.ObjectKeyFromObject(hr), hr)
+				err = catalog.K8sClient.Get(catalog.Ctx, ctrlClient.ObjectKeyFromObject(hr), hr)
 				if err != nil {
 					GinkgoWriter.Printf("HelmRelease Get error: %v\n", err)
 					return err
@@ -161,35 +156,32 @@ var _ = Describe("kasm Tests", Label("kasm"), func() {
 		)
 
 		BeforeAll(func() {
-			k = catalog.NewAppScenario("kasm", *appVersion).(*catalog.App)
+			k = catalog.NewAppScenario("kasm", *catalog.AppVersion).(*catalog.App)
 			if !k.HasPreviousVersion() {
 				Skip("skipping upgrade test: no previous version available")
 			}
 
-			err := SetupKindCluster()
+			err := catalog.SetupKindCluster()
 			Expect(err).ToNot(HaveOccurred())
 
-			err = env.InstallLatestFlux(ctx)
+			err = catalog.Env.InstallLatestFlux(catalog.Ctx)
 			Expect(err).ToNot(HaveOccurred())
+
+			Expect(catalog.WaitForFluxCRDs()).To(Succeed())
 		})
 
 		AfterAll(func() {
-			if useExistingCluster || os.Getenv("SKIP_CLUSTER_TEARDOWN") != "" {
-				return
-			}
-
-			err := env.Destroy(ctx)
-			Expect(err).ToNot(HaveOccurred())
+			Expect(catalog.TeardownCluster()).To(Succeed())
 		})
 
 		It("should install the previous version successfully", func() {
 			tlsSecret := createSelfSignedTLSSecret("kasm-tls-secret", catalog.DefaultNamespace)
-			err := k8sClient.Create(ctx, tlsSecret)
+			err := catalog.K8sClient.Create(catalog.Ctx, tlsSecret)
 			Expect(err).ToNot(HaveOccurred())
-			err = k.InstallPreviousVersion(ctx, env)
+			err = k.InstallPreviousVersion(catalog.Ctx, catalog.Env)
 			Expect(err).ToNot(HaveOccurred())
 
-			err = setKasmValues(ctx, k.Name(), *appVersion, catalog.DefaultNamespace)
+			err = setKasmValues(catalog.Ctx, k.Name(), *catalog.AppVersion, catalog.DefaultNamespace)
 			Expect(err).ToNot(HaveOccurred())
 
 			hr = &fluxhelmv2.HelmRelease{
@@ -200,7 +192,7 @@ var _ = Describe("kasm Tests", Label("kasm"), func() {
 			}
 
 			Eventually(func() error {
-				err = k8sClient.Get(ctx, ctrlClient.ObjectKeyFromObject(hr), hr)
+				err = catalog.K8sClient.Get(catalog.Ctx, ctrlClient.ObjectKeyFromObject(hr), hr)
 				if err != nil {
 					return err
 				}
@@ -216,7 +208,7 @@ var _ = Describe("kasm Tests", Label("kasm"), func() {
 		})
 
 		It("should upgrade kasm successfully", func() {
-			err := k.Upgrade(ctx, env)
+			err := k.Upgrade(catalog.Ctx, catalog.Env)
 			Expect(err).ToNot(HaveOccurred())
 
 			hr = &fluxhelmv2.HelmRelease{
@@ -227,7 +219,7 @@ var _ = Describe("kasm Tests", Label("kasm"), func() {
 			}
 
 			Eventually(func() error {
-				err = k8sClient.Get(ctx, ctrlClient.ObjectKeyFromObject(hr), hr)
+				err = catalog.K8sClient.Get(catalog.Ctx, ctrlClient.ObjectKeyFromObject(hr), hr)
 				if err != nil {
 					return err
 				}
