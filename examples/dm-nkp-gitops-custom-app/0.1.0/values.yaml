@@ -1,0 +1,8 @@
+# Example values profile showing OCI registry and immutable digest usage.
+# Keep this file aligned with chart keys for release engineering examples.
+image:
+  repository: ghcr.io/deepak-muley/dm-nkp-gitops-custom-app
+  digest: "sha256:<immutable-digest>"
+
+service:
+  type: ClusterIP

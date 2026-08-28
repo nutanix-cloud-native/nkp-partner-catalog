@@ -1,0 +1,19 @@
+opencost:
+  prometheus:
+    internal:
+      enabled: true
+  ui:
+    enabled: true
+  exporter:
+    image:
+      registry: ghcr.io
+      repository: opencost/opencost
+      tag: "1.118.0"
+    cloudProviderApiKey: ""
+    replicas: 2
+    persistence:
+      enabled: true
+      size: 20Gi
+    # Central profile: a shared OpenCost plane can aggregate multiple clusters.
+    collectorDataSource:
+      enabled: false

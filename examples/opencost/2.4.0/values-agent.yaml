@@ -1,0 +1,19 @@
+opencost:
+  prometheus:
+    internal:
+      enabled: true
+  ui:
+    enabled: true
+  exporter:
+    image:
+      registry: ghcr.io
+      repository: opencost/opencost
+      tag: "1.118.0"
+    cloudProviderApiKey: ""
+    replicas: 1
+    persistence:
+      enabled: true
+      size: 10Gi
+    # Agent/workload profile: allow data collection without a central Prometheus.
+    collectorDataSource:
+      enabled: true
