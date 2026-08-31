@@ -17,15 +17,10 @@ metadata:
   name: kyverno
   namespace: ${releaseNamespace}
 spec:
-  chart:
-    spec:
-      chart: kyverno
-      version: 3.8.2
-      sourceRef:
-        kind: OCIRepository
-        name: ${releaseName}-${appVersion}-charts
-        namespace: ${releaseNamespace}
-      reconcileStrategy: ChartVersion
+  chartRef:
+    kind: OCIRepository
+    name: ${releaseName}-${appVersion}-charts
+    namespace: ${releaseNamespace}
   install:
     crds: CreateReplace
     createNamespace: true
