@@ -4,7 +4,7 @@ metadata:
   name: ${releaseName}-1.1181.0-chart
   namespace: ${releaseNamespace}
 spec:
-  interval: 6h0m0s
+  interval: 24h
   ref:
     tag: 1.1181.0
   url: oci://registry-1.docker.io/kasmweb/kasm-helm

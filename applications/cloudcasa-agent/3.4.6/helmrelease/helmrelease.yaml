@@ -4,7 +4,7 @@ metadata:
   name: ${releaseName}-3.4.6-chart
   namespace: ${releaseNamespace}
 spec:
-  interval: 6h0m0s
+  interval: 24h
   ref:
     tag: 3.4.6
   url: oci://cloudcasaAgent.azurecr.io/catalogicsoftware/cloudcasa
