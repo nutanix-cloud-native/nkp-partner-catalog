@@ -6,6 +6,10 @@ metadata:
 spec:
   interval: 6h0m0s
   url: oci://ghcr.io/nirmata/charts/kyverno
+  ref:
+    tag: 3.8.2
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
