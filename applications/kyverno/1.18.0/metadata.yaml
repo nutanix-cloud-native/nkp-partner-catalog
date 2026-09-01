@@ -41,8 +41,6 @@ overview: |-
 
   What is never affected: policy enforcement itself. Validation, mutation, and generation of your workloads continue regardless of license state, and policies already installed keep enforcing. Licensing only ever limits how many new policies can be created. If the license Secret is removed, N4K keeps running and falls back to the free tier.
 
-  
-
   Review the **[Nirmata Enterprise Software License Agreement (EULA)](https://nirmata.com/eula/)** before deploying.
 
   ## Resources
