@@ -1,0 +1,39 @@
+{
+  "name": "slurm-operator",
+  "version": "1.1.1",
+  "allVersions": [
+    "1.1.1"
+  ],
+  "displayName": "Slurm Operator",
+  "description": "Kubernetes operator for deploying and managing Slurm clusters, nodesets, and loginsets on NKP.",
+  "category": [
+    "artificial-intelligence",
+    "infrastructure"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "",
+  "overview": "**Overview**\n\nSlurm Operator runs Slurm on Kubernetes and manages the lifecycle of Slurm control-plane and worker components through Kubernetes-native custom resources. It is suitable for HPC and AI batch workloads that need Slurm scheduling with Kubernetes operations.\n\n**Key capabilities**\n\n- Operator-managed Slurm cluster lifecycle on Kubernetes\n- NodeSet and LoginSet abstractions for worker and login node management\n- Supports StatefulSet and DaemonSet scaling modes for Slurm workers\n- CRD-driven upgrades and reconciliation for Slurm components\n\n**Dependencies**\n\n- `cert-manager` (required) for certificate/webhook management used by the operator stack\n\n**Prerequisites**\n\n- Cluster resources sized for control-plane and Slurm workloads\n\n**Resources**\n\n[Documentation](https://slinky.ai/) · [Project](https://github.com/SlinkyProject/slurm-operator) · [Helm Chart](https://github.com/SlinkyProject/slurm-operator/tree/main/helm/slurm-operator)\n",
+  "supportLink": "https://github.com/SlinkyProject/slurm-operator",
+  "dependencies": [],
+  "requiredDependencies": [
+    "cert-manager"
+  ],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.19.0",
+  "type": "nkp-catalog",
+  "certifications": [
+    "qualified",
+    "airgapped"
+  ],
+  "readme": "# slurm-operator\n\nKubernetes operator for running and managing Slurm clusters on NKP.\n\n## Chart Source\n\nThe Slurm Operator chart is published natively as an OCI artifact.\n\n| Field | Value |\n|-------|-------|\n| Chart OCI URL | `oci://ghcr.io/slinkyproject/charts/slurm-operator` |\n| Version | See the active catalog version directory under `applications/slurm-operator/` |\n\n## Dependencies\n\n| Dependency | Type | Notes |\n|------------|------|-------|\n| `cert-manager` | hard (`requiredDependencies`) | Required for certificate/issuer resources rendered by the chart |\n\n## Deployment Notes\n\n- The catalog entry deploys the Helm release into a dedicated namespace:\n  `slurm-operator`.\n- The catalog entry also installs `slurm-operator-crds` first, then deploys the\n  main `slurm-operator` chart with a Flux `dependsOn` relationship.\n- Default values are provided by `<version>/helmrelease/cm.yaml`.\n- Validation overrides are in `<version>/.bloodhound.yaml` for cert-manager\n  resource kinds.\n\n## E2E Smoke Test Validation\n\nUse this flow to validate end-to-end functionality with an already deployed\n`slurm-operator` instance on the NKP cluster through Kommander. This smoke test does not reinstall the operator; it\ncreates a temporary Slurm workload namespace, verifies scheduling works, then\ncleans up all temporary resources.\n\nSet kubeconfig:\n\n```sh\nexport KUBECONFIG=/path/to/workload-cluster.conf\n```\n\nPreflight checks for the deployed slurm-operator:\n\n```sh\nkubectl get pods -n slurm-operator\nkubectl get certificate,issuer -n slurm-operator\nkubectl api-resources --api-group=slinky.slurm.net\n```\n\nCreate temporary smoke workload (reconciled by the existing operator):\n\n```sh\nkubectl create namespace slurm-smoke\nhelm upgrade --install slurm-smoke oci://ghcr.io/slinkyproject/charts/slurm \\\n  --version 1.1.1 \\\n  --namespace slurm-smoke \\\n  --set controller.persistence.enabled=false \\\n  --set nodesets.slinky.replicas=1 \\\n  --wait --timeout 12m\nkubectl wait --for=condition=Ready pod -n slurm-smoke --all --timeout=8m\n```\n\nValidate Slurm scheduling path from the controller pod:\n- `sinfo` verifies Slurm sees the partition and worker node.\n- `srun` verifies an interactive job can be placed and executed immediately.\n- `sbatch` verifies batch submission/queueing/completion metadata.\n\n```sh\n# 1) Cluster view from Slurm (partitions + node state)\nkubectl exec -n slurm-smoke slurm-smoke-controller-0 -- sinfo\n\n# 2) Immediate scheduling check (should print worker hostname)\nkubectl exec -n slurm-smoke slurm-smoke-controller-0 -- srun -N1 -n1 hostname\n\n# 3) Batch job check with detailed status\nkubectl exec -n slurm-smoke slurm-smoke-controller-0 -- sh -lc \\\n  'JOBID=$(sbatch --parsable --wrap=\"hostname\"); echo JOBID=$JOBID; \\\n   squeue -j \"$JOBID\" || true; \\\n   scontrol show job \"$JOBID\"; \\\n   sacct -j \"$JOBID\" --format=JobID,State,ExitCode -n || true'\n```\n\nExpected result:\n- `sinfo` shows a schedulable node (for example `slinky-0`).\n- `srun` returns a worker hostname.\n- `scontrol show job` reports `JobState=COMPLETED` and `ExitCode=0:0`.\n- `squeue` may show the job briefly in queue/running states before completion.\n- `sacct` may print `Slurm accounting storage is disabled` in minimal smoke setups; this is expected when accounting is not configured.\n\nCleanup:\n\n```sh\nhelm uninstall slurm-smoke -n slurm-smoke\nkubectl delete namespace slurm-smoke\nkubectl get controllers,nodesets,loginsets,restapis -A\nkubectl get pods -n slurm-operator\n```\n\n## Links\n\n- [Slinky Project](https://slinky.ai/)\n- [GitHub](https://github.com/SlinkyProject/slurm-operator)\n- [Installation guide](https://slinky.schedmd.com/projects/slurm-operator/en/main/installation.html)\n",
+  "catalogName": "AI Applications",
+  "catalogSlug": "ai",
+  "catalogColor": "#7855FA",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+}
