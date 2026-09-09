@@ -4,7 +4,10 @@ go 1.25.0
 
 require (
 	github.com/fluxcd/helm-controller/api v1.4.3
+	github.com/fluxcd/kustomize-controller/api v1.7.2
+	github.com/fluxcd/pkg/apis/kustomize v1.13.0
 	github.com/fluxcd/pkg/apis/meta v1.22.0
+	github.com/fluxcd/source-controller/api v1.7.3
 	github.com/mesosphere/kommander-applications/apptests v0.0.0-20260505192428-b9ab00a5a6f5
 	github.com/onsi/ginkgo/v2 v2.26.0
 	github.com/onsi/gomega v1.38.2
@@ -49,14 +52,11 @@ require (
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/fluxcd/cli-utils v0.36.0-flux.15 // indirect
 	github.com/fluxcd/flux2/v2 v2.7.3 // indirect
-	github.com/fluxcd/kustomize-controller/api v1.7.2 // indirect
 	github.com/fluxcd/pkg/apis/acl v0.9.0 // indirect
-	github.com/fluxcd/pkg/apis/kustomize v1.13.0 // indirect
 	github.com/fluxcd/pkg/kustomize v1.23.0 // indirect
 	github.com/fluxcd/pkg/runtime v0.88.0 // indirect
 	github.com/fluxcd/pkg/ssa v0.60.0 // indirect
 	github.com/fluxcd/pkg/tar v0.15.0 // indirect
-	github.com/fluxcd/source-controller/api v1.7.3 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
 	github.com/go-errors/errors v1.5.1 // indirect

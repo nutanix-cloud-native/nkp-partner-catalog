@@ -1,0 +1,17 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ${releaseName}-${appVersion}-defaults
+  namespace: ${releaseNamespace}
+data:
+  # Source: https://github.com/Infisical/infisical/blob/v0.162.24/helm-charts/infisical-nkp/values.yaml
+  values.yaml: |
+    config:
+      siteUrl: ${siteUrlNeedsToBeOverridden:""} # Set the site URL: http(s)://<hostname>/"
+    ingress:
+      enabled: true
+      className: kommander-traefik
+      host: "" # Set the <hostname>
+      annotations:
+        traefik.ingress.kubernetes.io/router.tls: "true"
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure

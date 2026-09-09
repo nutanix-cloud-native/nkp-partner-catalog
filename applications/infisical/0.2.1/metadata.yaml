@@ -1,0 +1,59 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: "Infisical"
+description: "Open-source secrets management: secrets, PKI certificates, and KMS keys for your applications and infrastructure."
+category:
+  - security
+licensing:
+  - Pro
+  - Ultimate
+type: preferred-partner
+scope:
+  - workspace
+allowMultipleInstances: false
+dependencies:
+  - cloudnative-pg
+# Validated on NKP 2.18; widen once older releases are verified with the
+# CloudNativePG platform application.
+nkpVersionSupport: ">=2.18"
+supportLink: "https://infisical.com/docs"
+overview: |-
+  ## Overview
+
+  Infisical is an open-source secrets management platform for securely storing,
+  syncing, and managing application secrets, certificates (PKI), and encryption
+  keys (KMS) across your applications and infrastructure.
+
+  Deployed from the NKP Partner Catalog, Infisical provisions its own PostgreSQL
+  database through the NKP CloudNativePG operator and runs entirely within your
+  cluster, giving platform teams a self-hosted, Kubernetes-native secrets
+  management control plane.
+
+  ## Key Features
+
+  - Centralized secrets management with versioning, audit logs, and granular RBAC.
+  - Native Kubernetes integration to sync secrets into workloads.
+  - Built-in PKI (internal certificate authority) and KMS (encryption keys).
+  - Dynamic secrets and automatic secret rotation.
+  - Database provisioned via the NKP CloudNativePG operator; override to an
+    external database when required.
+
+  ## Configuration
+
+  - Override the site URL to use a custom domain. (e.g. `https://infisical.example.com`)
+  - Override the ingress host to use a custom hostname (e.g. `infisical.example.com`).
+
+  Following configuration is required to use a custom domain and hostname:
+
+  ```yaml
+  config:
+    siteUrl: <custom-site-url>
+  ingress:
+    host: <custom-site-hostname>
+  ```
+  See [complete configuration reference](https://github.com/Infisical/infisical/blob/main/helm-charts/infisical-nkp/values.yaml) for more customizations.
+
+  ## More Information
+
+  - **[Documentation](https://infisical.com/docs)**
+  - **[GitHub](https://github.com/Infisical/infisical)**
+icon: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbDpzcGFjZT0icHJlc2VydmUiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBkPSJNNDc3LjggMTczLjZjLTIyLjEtMjIuMi01MS41LTM0LjUtODIuNy0zNC41LTI5LjUgMC01OS41IDEyLjgtODkuNCAzOC4xLTIxLjIgMTcuOS0zOCAzOC42LTQ5LjcgNTUuMi0xMC4yLTEzLjctMjYuMi0zMy4yLTQ2LjYtNTEuMy0xNC45LTEzLjQtMjkuOC0yMy45LTQ0LjItMzEuMi0xNi43LTguNS0zMi45LTEyLjgtNDgtMTIuOC0zMS4zIDAtNjAuOCAxMi4yLTgyLjkgMzQuNVMwIDIyMy41IDAgMjU1czEyLjIgNjEuMiAzNC4zIDgzLjVjMjIuMiAyMi4yIDUxLjYgMzQuNSA4Mi45IDM0LjUgMzUuNCAwIDcwLjctMjUuMiA5NC4xLTQ2LjMgMjAuNS0xOC42IDM1LjktMzcuNSA0NS00OS43IDE2LjIgMjIuMyAzNSA0Ni4xIDU1LjQgNjMuOSAyNi43IDIzLjMgNTMuMiAzNC4xIDgzLjQgMzQuMSAzMS4yIDAgNjAuNS0xMi4zIDgyLjctMzQuNiAyMi4xLTIyLjIgMzQuMy01MS45IDM0LjMtODMuNHMtMTIuMi02MS4xLTM0LjMtODMuNE0xODAuOCAyOTNjLTI0LjQgMjItNDcuNSAzNC42LTYzLjYgMzQuNi0zOS42IDAtNzEuOC0zMi42LTcxLjgtNzIuNnMzMi4yLTcyLjYgNzEuOC03Mi42YzE2LjUgMCAzOC41IDExLjYgNjIgMzIuNSAxMi42IDExLjIgMjUuNSAyNS4zIDM2LjkgNDAtMTAuNSAxMy40LTIzIDI3LTM1LjMgMzguMU0zOTUgMzI5LjVjLTE4LjggMC0zNS40LTctNTMuNi0yMi45QzMyOCAyOTUgMzE0LjEgMjc5IDI5NiAyNTQuNWMxMi4xLTE2LjYgMjUuNC0zMS4yIDM5LTQyLjkgMjEuMS0xNy44IDQxLjktMjcuMyA2MC0yNy4zIDM5LjUgMCA3MS42IDMyLjYgNzEuNiA3Mi42cy0zMi4xIDcyLjYtNzEuNiA3Mi42Ii8+PC9zdmc+

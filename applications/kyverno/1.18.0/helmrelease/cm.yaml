@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+data:
+  values.yaml: |
+    # Chart version 3.8.2 pins appVersion v1.18.0-n4k.nirmata.2 for all controller images by default.
+    # Nirmata N4K images are EULA-gated; provide credentials obtained from support@nirmata.com.
+    global:
+      imagePullSecrets: []
+      # imagePullSecrets:
+      #   - name: nirmata-registry-credentials
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-${appVersion}-config-defaults
+  namespace: ${releaseNamespace}
