@@ -21,6 +21,9 @@ node_modules/
 /docs/site/node_modules/
 /docs/site/.docusaurus/
 /docs/site/build/
+/docs/site/static/offline/
+/docs/.export-work/
+/docs/dist/
 
 # Misc logs
 npm-debug.log*

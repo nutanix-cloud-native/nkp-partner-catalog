@@ -1,1 +1,9 @@
-{"label":"CNCF AI Conformance","collapsed":true}
+{
+  "label": "CNCF AI Conformance",
+  "position": 8,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "ai-conformance/index"
+  }
+}

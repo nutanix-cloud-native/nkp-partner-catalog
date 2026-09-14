@@ -126,6 +126,10 @@ const config = {
             ],
           },
           {
+            type: 'custom-export',
+            position: 'right',
+          },
+          {
             href: 'https://github.com/nutanix-cloud-native/nkp-partner-catalog',
             label: 'GitHub',
             position: 'right',

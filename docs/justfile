@@ -3,21 +3,54 @@ set unstable
 # docs/source and docs/site live on main; built output is published to gh-pages.
 
 [script]
-docs-build base_url='/nkp-partner-catalog/':
+_docs-prepare:
     ROOT="{{ justfile_directory() }}"
     mkdir -p "$ROOT/site/static/schemas/v1"
     rsync -a --delete "$ROOT/source/schemas/v1/" "$ROOT/site/static/schemas/v1/"
     cd "$ROOT/site"
     npm ci --prefer-offline --ignore-scripts
+
+# Build PDF + HTML exports into site/static/offline (and optionally docs/dist).
+[script]
+_docs-export:
+    ROOT="{{ justfile_directory() }}"
+    mkdir -p "$ROOT/site/static/offline" "$ROOT/dist"
+    # Prefer an explicit CHROME_PATH; otherwise use Chrome.app (macOS) or chromium on PATH (CI/devbox).
+    if [ -z "${CHROME_PATH:-}" ]; then
+      if [ -x "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ]; then
+        export CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+      elif command -v chromium >/dev/null 2>&1; then
+        export CHROME_PATH="$(command -v chromium)"
+      elif command -v chromium-browser >/dev/null 2>&1; then
+        export CHROME_PATH="$(command -v chromium-browser)"
+      elif command -v google-chrome >/dev/null 2>&1; then
+        export CHROME_PATH="$(command -v google-chrome)"
+      fi
+    fi
+    node "$ROOT/scripts/build-exports.mjs" --out-dir "$ROOT/site/static/offline"
+    cp -f "$ROOT/site/static/offline/nkp-catalog-docs.pdf" \
+          "$ROOT/site/static/offline/nkp-catalog-docs.html" \
+          "$ROOT/dist/"
+
+# GitHub Pages build, including Export downloads under /offline/.
+[script]
+docs-build base_url='/nkp-partner-catalog/': (_docs-prepare)
+    ROOT="{{ justfile_directory() }}"
+    just --justfile "$ROOT/justfile" --working-directory "$ROOT" _docs-export
+    cd "$ROOT/site"
     BASE_URL="{{ base_url }}" npm run build
 
+# Offline exports only (PDF preferred + HTML secondary).
 [script]
-docs-local host='0.0.0.0' port='3000' base_url='/':
+docs-offline: (_docs-prepare)
     ROOT="{{ justfile_directory() }}"
-    mkdir -p "$ROOT/site/static/schemas/v1"
-    rsync -a --delete "$ROOT/source/schemas/v1/" "$ROOT/site/static/schemas/v1/"
+    just --justfile "$ROOT/justfile" --working-directory "$ROOT" _docs-export
+    echo "Offline exports in $ROOT/dist and $ROOT/site/static/offline"
+
+[script]
+docs-local host='0.0.0.0' port='3000' base_url='/': (_docs-prepare)
+    ROOT="{{ justfile_directory() }}"
     cd "$ROOT/site"
-    npm ci --prefer-offline --ignore-scripts
     BASE_URL="{{ base_url }}" npm run build
     BASE_URL="{{ base_url }}" npm run docusaurus -- serve --dir build --host "{{ host }}" --port "{{ port }}"
 
