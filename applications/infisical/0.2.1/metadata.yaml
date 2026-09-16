@@ -4,6 +4,7 @@ description: "Open-source secrets management: secrets, PKI certificates, and KMS
 category:
   - security
 licensing:
+  - Enterprise
   - Pro
   - Ultimate
 type: preferred-partner

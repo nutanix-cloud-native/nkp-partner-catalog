@@ -6,6 +6,7 @@ category:
 displayName: Kasm
 description: Stream your workspace directly to your web browser on any device and from any location.
 licensing:
+  - Enterprise
   - Pro
   - Ultimate
 overview: |-

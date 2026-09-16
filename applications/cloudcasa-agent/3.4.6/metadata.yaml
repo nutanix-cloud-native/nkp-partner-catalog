@@ -4,6 +4,7 @@ description: "Backup, restore, DR, and data migration for NKP and all other Kube
 category:
   - backup
 licensing:
+  - Enterprise
   - Pro
   - Ultimate
 certifications:
