@@ -17,7 +17,6 @@ requiredDependencies: []
 dependsOn:
   - type: Application
     name: cloudnative-pg
-    version: ""
     optional: true
 # Validated on NKP 2.18; widen once older releases are verified with the
 # CloudNativePG platform application.
