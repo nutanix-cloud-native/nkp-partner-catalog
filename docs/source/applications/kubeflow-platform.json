@@ -1,0 +1,42 @@
+{
+  "name": "kubeflow-platform",
+  "version": "1.11.0",
+  "allVersions": [
+    "1.11.0"
+  ],
+  "displayName": "Kubeflow Platform (Unified Multi-User)",
+  "description": "One authenticated, multi-user home for your Kubeflow apps - reuses NKP login (Dex) and provisions dedicated kubeflow gateway pods with a dedicated LoadBalancer. You must set config.kubeflowIngressHost (DNS name or IP) in app config when enabling.",
+  "category": [
+    "model-development-and-training"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/kubeflow-platform.png",
+  "overview": "**What it is** — Kubeflow Platform is the glue that turns Central Dashboard\nand Pipelines into **one website with one login and per-user workspaces**.\nAuth is **Istio + NKP Dex + oauth2-proxy**. oauth2-proxy sits inline on the dedicated Kubeflow gateway and\ninjects `kubeflow-userid` / `kubeflow-groups`.\n\n**What you get**\n- **One URL, one login.** A single entry point that authenticates every user\n  against **your existing NKP login (Dex)** - no second identity system, no\n  extra passwords.\n- **Dedicated Kubeflow ingress address.** The app provisions dedicated Istio\n  gateway pods (`kubeflow-ingressgateway`) and a separate LoadBalancer\n  Service, so Kubeflow does not share NKP console / Traefik routes.\n- **Per-user workspaces.** Each user gets their own isolated namespace with the\n  right permissions, so teammates don't see or touch each other's work.\n- **Component UIs under one host.** Dashboard at `/`, Pipelines at\n  `/pipeline/`.\n\n**Operator action required** — Set `config.kubeflowIngressHost` (and\noptionally `config.kubeflowIngressURL`) in app config before or when\nenabling. Do not enable with an empty host. Then enable Central Dashboard\nand Pipelines so their baked VirtualServices can reach oauth2-proxy.\n\nSet this in the app configuration (Kommander UI → Configuration, or `configOverrides`):\n\n```yaml\nconfig:\n  # DNS name or IP the browser will open (no http://). Required.\n  kubeflowIngressHost: \"10.22.203.228\"\n  # optional; defaults to http://<kubeflowIngressHost>\n  kubeflowIngressURL: \"\"\n  userIDClaim: email\n```\n\nUse a hostname (for example `kubeflow.example.com`) if you have one. After the LoadBalancer exists,\npoint that DNS at the service.\n\n\n**Onboard users from the UI** — Add a user by listing them under `profiles`\nin this app's configuration. `owner` must equal the Dex claim in\n`config.userIDClaim` (email by default). Each entry creates that user's\nprivate workspace. No `kubectl` required.\n\n**Before you enable**\n- Set `config.kubeflowIngressHost` (required) and optional `config.kubeflowIngressURL`.\n- **istio-helm** (required) — Istio revision for the dedicated gateway pods.\n  Enable it from the workspace catalog. NKP Dex is already on the management\n  plane (same login as the console); there is no Dex app to enable.\n- Enable **Central Dashboard** and **Pipelines** after Platform. Their\n  charts expect this app's oauth2-proxy; port-forward skips login.\n\n**Resources** — [Kubeflow Profiles](https://www.kubeflow.org/docs/components/central-dash/profiles/) |\n[oauth2-proxy](https://oauth2-proxy.github.io/oauth2-proxy/)\n",
+  "supportLink": "https://www.kubeflow.org/docs/components/central-dash/",
+  "dependencies": [],
+  "requiredDependencies": [
+    "istio-helm"
+  ],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.18.0",
+  "nkpRange": {
+    "raw": ">=2.18.0",
+    "min": "2.18",
+    "maxExclusive": "",
+    "label": "NKP 2.18+"
+  },
+  "type": "nkp-catalog",
+  "certifications": [
+    "qualified"
+  ],
+  "readme": "",
+  "catalogName": "AI Applications",
+  "catalogSlug": "ai",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+}

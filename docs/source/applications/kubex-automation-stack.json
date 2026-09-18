@@ -1,0 +1,40 @@
+{
+  "name": "kubex-automation-stack",
+  "version": "1.0.18",
+  "allVersions": [
+    "1.0.11",
+    "1.0.18"
+  ],
+  "displayName": "Kubex for NKP",
+  "description": "AI-driven automated resource optimization for Kubernetes.",
+  "category": [
+    "monitoring"
+  ],
+  "licensing": [
+    "Enterprise",
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/kubex-automation-stack.svg",
+  "overview": "# Kubex for NKP\n\nKubex continuously analyzes and automatically right-sizes Kubernetes workloads, eliminating wasted CPU and memory and maximizing GPU utilization, all without manual intervention. Installing this application deploys the Kubex data forwarder to your NKP cluster, connecting it to your Kubex instance and enabling autonomous, ongoing optimization. To get started, you'll need an active Kubex account. New users can begin a free trial at [kubex.ai](https://www.kubex.ai/).\n\n---\n\n## What Kubex Delivers\n\n**Automated Resource Optimization**\nContinuously analyzes container utilization and automatically right-sizes CPU and memory allocations, eliminating waste without risking application stability.\n\n**AI / GPU / Inference Resource Optimization**\nDynamically manages high-density LLM inference workloads with intelligent GPU sharing, scheduling, and scaling across Kubernetes clusters.\n\n**Cluster-Wide Visibility**\nProvides SRE, Platform Engineering, and FinOps teams with full audit trails and platform-wide insight into resource footprints.\n\n**MCP Access for Teams and Agents**\nKubex exposes an MCP server, giving teams and AI agents programmatic access to optimization data, recommendations, and actions via Claude, Cursor, or any MCP-compatible tool.\n\n---\n\n## Supported Workload Types\n\n**Traditional Microservices**\nStandard stateless and stateful application pods running across the cluster.\n\n**AI Inference Workloads**\nHigh-density LLM inference workloads requiring intelligent GPU sharing and strict governance.\n",
+  "supportLink": "https://www.kubex.ai/",
+  "dependencies": [],
+  "requiredDependencies": [],
+  "allowMultipleInstances": true,
+  "nkpVersionSupport": ">=2.16",
+  "nkpRange": {
+    "raw": ">=2.16",
+    "min": "2.16",
+    "maxExclusive": "",
+    "label": "NKP 2.16+"
+  },
+  "type": "preferred-partner",
+  "certifications": [],
+  "readme": "",
+  "catalogName": "Partner Catalog",
+  "catalogSlug": "partner",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-partner-catalog"
+}

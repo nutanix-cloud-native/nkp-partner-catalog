@@ -1,0 +1,25 @@
+# Local docs tooling (devbox run from docs/)
+.devbox/
+
+# Node / Docusaurus
+site/node_modules/
+site/.docusaurus/
+site/build/
+site/.cache/
+site/.eslintcache
+*.tsbuildinfo
+
+# Offline Export outputs (written by just docs-export / docs-offline)
+site/static/offline/
+.export-work/
+dist/
+
+# Synced at prepare time from source/; do not commit the static copy
+site/static/catalog-data.json
+
+# Logs / OS
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.DS_Store
+*.log

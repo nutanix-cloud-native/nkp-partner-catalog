@@ -1,0 +1,38 @@
+{
+  "name": "ollama",
+  "version": "1.72.0",
+  "allVersions": [
+    "1.72.0"
+  ],
+  "displayName": "Ollama",
+  "description": "Lightweight LLM runtime with OpenAI-compatible API and wide model support.",
+  "category": [
+    "data-and-agents"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/ollama.svg",
+  "overview": "**Overview**\n\nOllama is a lightweight runtime for running large language models locally. It provides an OpenAI-compatible API and supports a wide range of open-source models including Llama, Mistral, Gemma, and more. Runs on Kubernetes; exposes API on port 11434. Use it as the backend for Open WebUI, kagent, or any OpenAI-compatible client.\n\n**Key capabilities**\n\n- **OpenAI-compatible API** — Drop-in backend for kagent, Open WebUI, and other AI frameworks.\n- **GPU support** — NVIDIA and AMD GPU acceleration for production inference; enable in Helm values.\n- **On-demand models** — Pull and serve models at runtime (e.g. `ollama pull llama3.2`).\n- **Persistence** — Optional persistent volume for model storage across restarts.\n- **Lightweight** — Runs on CPU-only clusters for development and testing.\n- **Default resource caps** — the Ollama pod requests 500m CPU / 2Gi memory and is limited to 4 CPU / 8Gi memory by default, so uncapped inference cannot exhaust node capacity.\n\n**In-cluster usage**\n\nOllama exposes an OpenAI-compatible API on port 11434. From another app (Open WebUI, kagent, custom), connect via Kubernetes DNS:\n\n| Endpoint | In-cluster URL |\n|----------|----------------|\n| API | `http://ollama-ollama.ollama.svc.cluster.local:11434` |\n\nSame namespace: `http://ollama-ollama:11434`. Configure your client with this URL (e.g. Open WebUI, kagent `providers.default=ollama`).\n\n**Prerequisites**\n\n- **GPU (optional)** — For GPU acceleration, install NVIDIA or AMD device plugins and set `ollama.gpu.enabled=true` in Helm values.\n- **Storage (optional)** — For persistent model storage, enable `persistentVolume.enabled=true`. After deploy, pull models via `kubectl exec -n <namespace> <ollama-pod> -- ollama pull <model>`.\n\n**Resource defaults**\n\n| Resource | Request | Limit |\n|----------|---------|-------|\n| CPU      | 500m    | 4     |\n| Memory   | 2Gi     | 8Gi   |\n\nOverride for larger models or GPU nodes via **Workspace Configuration** / App Config Overrides:\n\n```yaml\nresources:\n  requests:\n    cpu: \"2\"\n    memory: 8Gi\n  limits:\n    cpu: \"8\"\n    memory: 32Gi\n```\n\n**Resources**\n\n[Documentation](https://ollama.com) · [Project](https://github.com/ollama/ollama) · [Helm chart](https://github.com/otwld/ollama-helm)\n",
+  "supportLink": "https://ollama.com",
+  "dependencies": [],
+  "requiredDependencies": [],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.18.0",
+  "nkpRange": {
+    "raw": ">=2.18.0",
+    "min": "2.18",
+    "maxExclusive": "",
+    "label": "NKP 2.18+"
+  },
+  "type": "nkp-catalog",
+  "certifications": [],
+  "readme": "# ollama\n\nLightweight LLM runtime with an OpenAI-compatible API.\n\n## Chart Source\n\nThe ollama Helm chart is hosted in a **traditional Helm repository**, not an\nOCI registry. It must be pulled locally and pushed to your OCI registry before\nthe NKP catalog can use it.\n\nSource metadata is stored in `.catalog-source.yaml`:\n\n```yaml\nhelmrepo: ollama-helm/ollama\nhelmrepoUrl: https://otwld.github.io/ollama-helm/\nocipush: oci://<your-oci-registry>/ollama-helm/ollama\n```\n\n### How to push the chart to your OCI registry\n\n```bash\n# 1. Add the upstream Helm repository\nhelm repo add ollama-helm https://otwld.github.io/ollama-helm/\nhelm repo update\n\n# 2. Pull the chart version used by this catalog entry\nhelm pull ollama-helm/ollama --version 1.72.0\n\n# 3. Push to your OCI registry\nhelm push ollama-1.72.0.tgz oci://<your-oci-registry>/ollama-helm/ollama\n```\n\nAfter pushing, update the OCI URL in `helmrelease/helmrelease.yaml` and\n`.catalog-source.yaml` to match your registry.\n\n## Default Configuration\n\nThe default Helm values (`helmrelease/cm.yaml`) auto-pull the `llama3.2`\nmodel on startup and enable a 30Gi persistent volume for model storage.\n\n## E2E Smoke Test Validation\n\nUse this flow to validate an already deployed `ollama` instance on the NKP\ncluster. The test verifies runtime health, model availability, and API\nresponses without reinstalling the application.\n\nSet kubeconfig:\n\n```sh\nexport KUBECONFIG=/path/to/workload-cluster.conf\n```\n\nPreflight checks for the deployed Ollama instance:\n\n```sh\nkubectl -n ollama get deploy,pod,svc\nkubectl -n ollama get deploy ollama -o jsonpath='{.spec.template.spec.containers[0].image}{\"\\n\"}'\n```\n\nValidate runtime and model path from the serving pod:\n- `ollama --version` verifies container runtime startup.\n- `ollama list` verifies at least one model is available for inference.\n\n```sh\nPOD=$(kubectl -n ollama get pods -l app.kubernetes.io/name=ollama -o jsonpath='{.items[0].metadata.name}')\nkubectl -n ollama exec \"$POD\" -- ollama --version\nkubectl -n ollama exec \"$POD\" -- ollama list\n```\n\nValidate API path from CI runner or user terminal:\n\n```sh\nkubectl -n ollama port-forward svc/ollama 11434:11434 >/tmp/ollama-port-forward.log 2>&1 &\nPF_PID=$!\ntrap 'kill $PF_PID' EXIT\nsleep 3\ncurl -sS http://127.0.0.1:11434/api/tags\n```\n\nExpected result:\n- Deployment and pod are `READY`.\n- Runtime image resolves to a valid `ollama/ollama:<tag>` value.\n- `ollama --version` returns a valid version string.\n- `ollama list` includes `llama3.2:latest` (or your configured default model).\n- `/api/tags` returns JSON with at least one model entry.\n\n### In-cluster endpoint\n\nThe chart creates the service `ollama-ollama` in namespace `ollama`.\nUse this endpoint from other in-cluster apps:\n\n`http://ollama-ollama.ollama.svc.cluster.local:11434`\n\n## Icon\n\nThe `icon` field in `metadata.yaml` is a base64-encoded SVG. It was generated\nfrom the Ollama favicon in the official repository:\n\n| Field | Value |\n|-------|-------|\n| Source URL | `https://raw.githubusercontent.com/ollama/ollama/main/docs/favicon.svg` |\n| Format | SVG (base64-encoded) |\n\nTo regenerate:\n\n```bash\ncurl -sL https://raw.githubusercontent.com/ollama/ollama/main/docs/favicon.svg | base64 | tr -d '\\n'\n```\n\n## Links\n\n- [ollama.com](https://ollama.com)\n- [GitHub (ollama)](https://github.com/ollama/ollama)\n- [GitHub (Helm chart)](https://github.com/otwld/ollama-helm)\n",
+  "catalogName": "AI Applications",
+  "catalogSlug": "ai",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+}

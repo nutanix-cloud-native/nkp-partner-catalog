@@ -1,5 +1,6 @@
 ---
 sidebar_position: 1
+sidebar_label: Overview
 title: NKP Catalog
 ---
 
@@ -11,8 +12,14 @@ The **NKP Catalog** helps you manage application catalogs and releases on the Nu
 
 <div className="landing-cards">
 
+<Link to="/docs/applications/" className="landing-card">
+<div className="landing-card__body">
+<h3>Applications</h3>
+<p>Browse applications from the Nutanix, partner, and AI catalogs. Filter by NKP version, category, and certification.</p>
+</div>
+</Link>
+
 <Link to="/docs/getting-started/creating-nkp-cluster" className="landing-card">
-<div className="landing-card__icon">⚡</div>
 <div className="landing-card__body">
 <h3>Getting started</h3>
 <p>Create and license NKP clusters, browse the Nutanix product, partner, and AI catalogs.</p>
@@ -20,7 +27,6 @@ The **NKP Catalog** helps you manage application catalogs and releases on the Nu
 </Link>
 
 <Link to="/docs/concepts/oci-artifact" className="landing-card">
-<div className="landing-card__icon">🧠</div>
 <div className="landing-card__body">
 <h3>Concepts</h3>
 <p>OCI artifacts, Flux, HelmRelease, Kustomization, and configuration overrides.</p>
@@ -28,33 +34,29 @@ The **NKP Catalog** helps you manage application catalogs and releases on the Nu
 </Link>
 
 <Link to="/docs/workflows/initialize-catalog-repo" className="landing-card">
-<div className="landing-card__icon">🛠️</div>
 <div className="landing-card__body">
-<h3>Workflows</h3>
+<h3>Guides</h3>
 <p>Initialize catalogs and applications, build and push OCI artifacts, set up releases.</p>
 </div>
 </Link>
 
 <Link to="/docs/sample-application/simple-applications" className="landing-card">
-<div className="landing-card__icon">📦</div>
 <div className="landing-card__body">
-<h3>Sample applications</h3>
+<h3>Examples</h3>
 <p>Simple, complex, and declarative input patterns for catalog applications.</p>
 </div>
 </Link>
 
 <Link to="/docs/api/application-metadata" className="landing-card">
-<div className="landing-card__icon">📘</div>
 <div className="landing-card__body">
-<h3>API Reference</h3>
+<h3>API</h3>
 <p>Application metadata, user inputs, and release specification schemas.</p>
 </div>
 </Link>
 
 <Link to="/docs/cli" className="landing-card">
-<div className="landing-card__icon">💻</div>
 <div className="landing-card__body">
-<h3>CLI Reference</h3>
+<h3>CLI</h3>
 <p>Auto-generated reference for all <code>nkp</code> commands and flags.</p>
 </div>
 </Link>

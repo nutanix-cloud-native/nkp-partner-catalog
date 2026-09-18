@@ -1,0 +1,55 @@
+{
+  "name": "nutanix-ai",
+  "version": "2.8.0",
+  "allVersions": [
+    "2.4.0",
+    "2.5.0",
+    "2.6.0",
+    "2.7.0",
+    "2.8.0"
+  ],
+  "displayName": "Nutanix Enterprise AI",
+  "description": "Inference endpoint management platform.",
+  "category": [
+    "inferencing-and-serving"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/nutanix-ai.svg",
+  "overview": "# Overview\nNutanix Enterprise AI is a comprehensive inference endpoint management product designed to streamline and optimize your AI model orchestration experience. Nutanix Enterprise AI allows you to select, deploy, and manage large language models (LLMs) on a Kubernetes cluster.You can deploy Nutanix Enterprise AI on Nutanix Kubernetes Platform (NKP), and public cloud Kubernetes platforms such as Amazon Elastic Kubernetes Service (EKS), Azure Kubernetes Service (AKS), and Google Kubernetes Engine (GKE).\n\n## Enabling Nutanix Enterprise AI Application\n- [Enabling Nutanix Enterprise AI Application Guide](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform-v2_18:top-nai-in-workspace-c.html)\n## For Information on Features\n- [Nutanix Enterprise AI Guide](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Enterprise-AI)",
+  "supportLink": "",
+  "dependencies": [
+    "cert-manager"
+  ],
+  "requiredDependencies": [
+    "kube-prometheus-stack",
+    "nvidia-gpu-operator",
+    "opentelemetry-operator",
+    "kserve",
+    "envoy-gateway-nai",
+    "leaderworkerset",
+    "cloudnative-pg"
+  ],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.18 <2.20",
+  "nkpRange": {
+    "raw": ">=2.18 <2.20",
+    "min": "2.18",
+    "maxExclusive": "2.20",
+    "label": "NKP 2.18–2.19"
+  },
+  "type": "nkp-catalog",
+  "certifications": [
+    "nutanix-supported",
+    "airgapped"
+  ],
+  "readme": "",
+  "catalogName": "Nutanix Products",
+  "catalogSlug": "nutanix",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+}

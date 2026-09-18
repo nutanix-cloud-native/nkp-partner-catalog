@@ -1,0 +1,44 @@
+{
+  "name": "kubeflow-pipelines",
+  "version": "2.15.0",
+  "allVersions": [
+    "2.15.0"
+  ],
+  "displayName": "Kubeflow Pipelines",
+  "description": "End-to-end ML pipelines (train, tune, serve) with experiments and recurring runs.",
+  "category": [
+    "model-development-and-training"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace",
+    "project"
+  ],
+  "icon": "/catalog-icons/kubeflow-pipelines.png",
+  "overview": "**What it is** — Kubeflow Pipelines runs end-to-end ML pipelines (train, tune,\nserve) with experiments and recurring runs. Kubernetes-native; deploys via\nFlux from a Helm chart baked from kubeflow/manifests (multi-user\n`platform-agnostic-multi-user`). For the supported browser UI, enable\n**Kubeflow Platform** first so traffic goes through oauth2-proxy and the\ndedicated Kubeflow gateway (Istio + Dex, not Traefik).\n\n**Highlights**\n- End-to-end pipelines (data → train → tune → serve)\n- Experiments, recurring runs, and artifact tracking\n- Tunable resources/replicas/scheduling via `configOverrides` (Helm-chart backed)\n\n**Prerequisites**\n- **Kubeflow Platform** (required) — enable it with `config.kubeflowIngressHost`\n  before this app. Baked VirtualServices route `/pipeline/` through\n  `oauth2-proxy`; without Platform there is no login path.\n- **istio-helm** (required) — multi-user manifests include VirtualService,\n  DestinationRule, and AuthorizationPolicy.\n- **Namespace** — Deploys into the shared `kubeflow` namespace (upstream\n  Pipelines hardcodes it). Platform also uses that namespace.\n\n**How to use**\n\n- **UI** — Open the Platform LoadBalancer URL at `/pipeline/` (same host as\n  Central Dashboard at `/`). Do not port-forward `ml-pipeline-ui`: that\n  skips oauth2-proxy, so the UI is missing `kubeflow-userid`.\n- **API/SDK** — In-cluster HTTP API is `http://ml-pipeline.kubeflow.svc.cluster.local:8888`\n  and is Istio-gated. Call it from a Profile namespace / authenticated\n  workload, not from a raw port-forward. See\n  [Connect the Pipelines SDK](https://www.kubeflow.org/docs/components/pipelines/user-guides/core-functions/connect-api/).\n\n**Documentation:** [Kubeflow Pipelines](https://www.kubeflow.org/docs/components/pipelines/) | **Project:** [kubeflow/manifests](https://github.com/kubeflow/manifests)\n",
+  "supportLink": "https://www.kubeflow.org/docs/components/pipelines/",
+  "dependencies": [],
+  "requiredDependencies": [
+    "istio-helm",
+    "kubeflow-platform"
+  ],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.18.0",
+  "nkpRange": {
+    "raw": ">=2.18.0",
+    "min": "2.18",
+    "maxExclusive": "",
+    "label": "NKP 2.18+"
+  },
+  "type": "nkp-catalog",
+  "certifications": [
+    "qualified"
+  ],
+  "readme": "",
+  "catalogName": "AI Applications",
+  "catalogSlug": "ai",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+}

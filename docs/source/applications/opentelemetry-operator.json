@@ -1,0 +1,47 @@
+{
+  "name": "opentelemetry-operator",
+  "version": "0.114.1",
+  "allVersions": [
+    "0.93.0",
+    "0.102.0",
+    "0.114.1"
+  ],
+  "displayName": "OpenTelemetry Operator",
+  "description": "An implementation of a Kubernetes Operator, that manages collectors and auto-instrumentation of the workload using OpenTelemetry instrumentation libraries.",
+  "category": [
+    "observability"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/opentelemetry-operator.svg",
+  "overview": "## For Information on Features\n- [OpenTelemetry Operator for Kubernetes](https://opentelemetry.io/docs/platforms/kubernetes/operator/)\n\n## Prerequisites and Configuration Guide\n### Before you begin, ensure that you have a NKP cluster running Kubernetes version >= 1.34\n### OpenTelemetry Operator requires the following applications to be installed on the NKP cluster:\n- cert-manager >= v1.19.3\n- kube-prometheus-stack >= 82.13.6",
+  "supportLink": "",
+  "dependencies": [
+    "cert-manager"
+  ],
+  "requiredDependencies": [
+    "kube-prometheus-stack"
+  ],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.18.0",
+  "nkpRange": {
+    "raw": ">=2.18.0",
+    "min": "2.18",
+    "maxExclusive": "",
+    "label": "NKP 2.18+"
+  },
+  "type": "nkp-catalog",
+  "certifications": [
+    "nutanix-supported",
+    "airgapped"
+  ],
+  "readme": "",
+  "catalogName": "Nutanix Products",
+  "catalogSlug": "nutanix",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+}

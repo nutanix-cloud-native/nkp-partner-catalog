@@ -1,7 +1,6 @@
 {
-  "label": "CLI Reference",
+  "label": "CLI",
   "position": 7,
-  "className": "sidebar-cli-ref",
   "link": {
     "type": "generated-index",
     "title": "CLI commands",

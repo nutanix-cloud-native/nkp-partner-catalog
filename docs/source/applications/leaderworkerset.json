@@ -1,0 +1,43 @@
+{
+  "name": "leaderworkerset",
+  "version": "0.8.0",
+  "allVersions": [
+    "0.8.0"
+  ],
+  "displayName": "LeaderWorkerSet",
+  "description": "Kubernetes LeaderWorkerSet (LWS) operator for multi-node leader/worker workloads.",
+  "category": [
+    "inferencing-and-serving"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/leaderworkerset.png",
+  "overview": "## For Information on Features\n- [LeaderWorkerSet (LWS)](https://lws.sigs.k8s.io/)\n\n## Prerequisites and Configuration Guide\n### Before you begin, ensure that you have a NKP cluster running Kubernetes version >= 1.35",
+  "supportLink": "",
+  "dependencies": [
+    "cert-manager"
+  ],
+  "requiredDependencies": [],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.18.0",
+  "nkpRange": {
+    "raw": ">=2.18.0",
+    "min": "2.18",
+    "maxExclusive": "",
+    "label": "NKP 2.18+"
+  },
+  "type": "nkp-catalog",
+  "certifications": [
+    "nutanix-supported",
+    "airgapped"
+  ],
+  "readme": "",
+  "catalogName": "Nutanix Products",
+  "catalogSlug": "nutanix",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+}

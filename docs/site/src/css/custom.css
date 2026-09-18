@@ -90,27 +90,6 @@ pre {
    Sidebar and TOC: larger font sizes for readability (GH Pages)
    --------------------------------------------------------------------------- */
 
-/* CLI Reference category: icon on the category link only (href is /docs/cli), not on child doc links */
-.sidebar-cli-ref a.menu__link[href$="/cli"]::before,
-.sidebar-cli-ref a.menu__link[href$="/cli/"]::before {
-  content: '';
-  display: inline-block;
-  width: 1.2em;
-  height: 1.2em;
-  margin-right: 0.5rem;
-  vertical-align: middle;
-  background: url(/img/cli-icon.svg) no-repeat center;
-  background-size: contain;
-  flex-shrink: 0;
-  opacity: 0.85;
-}
-
-[data-theme='dark'] .sidebar-cli-ref a.menu__link[href$="/cli"]::before,
-[data-theme='dark'] .sidebar-cli-ref a.menu__link[href$="/cli/"]::before {
-  filter: brightness(0) invert(1);
-  opacity: 0.9;
-}
-
 /* Left sidebar: doc tree / hierarchy (categories + doc links) */
 .theme-doc-sidebar-container .menu__link,
 .theme-doc-sidebar-container .menu__list-item-collapsible .menu__link {
@@ -121,8 +100,7 @@ pre {
 }
 
 /* Right sidebar: table of contents */
-.theme-doc-toc-desktop .table-of-contents__link,
-[class*="tableOfContents"] .table-of-contents__link {
+.theme-doc-toc-desktop .table-of-contents__link {
   font-size: 0.9375rem; /* 15px */
 }
 .theme-doc-toc-desktop .table-of-contents__link--active {
@@ -323,33 +301,24 @@ html[data-theme='dark'] .DocSearch-Button-Key {
 }
 
 /* Search modal overlay: match portal nav (grey-900) */
-[class*='searchModal'] {
+[class^='searchModal_'] {
   background: rgba(34, 39, 46, 0.88) !important;
 }
 
 /* Search modal box */
-[class*='searchModalContainer'] {
+[class^='searchModalContainer_'] {
   background: var(--ifm-background-surface-color) !important;
   border: 1px solid var(--ifm-color-emphasis-200);
   border-radius: 8px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
 
-[data-theme='dark'] [class*='searchModalContainer'] {
+[data-theme='dark'] [class^='searchModalContainer_'] {
   border-color: var(--ifm-color-emphasis-300);
 }
 
-/* Selected result row: Nutanix primary (plugin uses .cursor for selected) */
-[class*='cursor'] {
-  background-color: var(--ifm-color-primary) !important;
-}
-
-[class*='cursor'] [class*='hitWrapper'] mark {
-  color: rgba(255, 255, 255, 0.95) !important;
-}
-
 /* Highlight matched text in results */
-[class*='hitWrapper'] mark {
+[class^='hitWrapper_'] mark {
   color: var(--ifm-color-primary);
 }
 
@@ -374,24 +343,16 @@ html[data-theme='dark'] .DocSearch-Button-Key {
   background: var(--ifm-background-surface-color);
   text-decoration: none !important;
   color: inherit !important;
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .landing-card:hover {
   border-color: var(--ifm-color-primary);
   box-shadow: 0 4px 16px rgba(34, 165, 247, 0.12);
-  transform: translateY(-2px);
 }
 
 [data-theme='dark'] .landing-card:hover {
   box-shadow: 0 4px 16px rgba(34, 165, 247, 0.2);
-}
-
-.landing-card__icon {
-  font-size: 1.75rem;
-  line-height: 1;
-  flex-shrink: 0;
-  margin-top: 0.125rem;
 }
 
 .landing-card__body h3 {
@@ -496,4 +457,11 @@ html[data-theme='dark'] .DocSearch-Button-Key {
 
 .navbar-export > .navbar__link {
   cursor: pointer;
+}
+
+.navbar-export__trigger {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font: inherit;
 }

@@ -1,0 +1,1276 @@
+{
+  "totalApps": 31,
+  "nkpVersions": [
+    "2.16",
+    "2.17",
+    "2.18",
+    "2.19"
+  ],
+  "catalogs": [
+    {
+      "id": "nkp-ai-applications-catalog",
+      "name": "AI Applications",
+      "slug": "ai",
+      "repo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog",
+      "appCount": 15,
+      "apps": [
+        {
+          "name": "amd-device-metrics-exporter",
+          "version": "1.4.2",
+          "allVersions": [
+            "1.4.2"
+          ],
+          "displayName": "AMD Device Metrics Exporter",
+          "description": "Exports Prometheus-format metrics from AMD GPUs (and optionally NICs) for monitoring in HPC and AI environments.",
+          "category": [
+            "accelerated-infrastructure"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/amd-device-metrics-exporter.svg",
+          "supportLink": "",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-core-platform",
+          "certifications": [
+            "qualified"
+          ],
+          "catalogName": "AI Applications",
+          "catalogSlug": "ai",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+        },
+        {
+          "name": "amd-gpu-operator",
+          "version": "1.5.1-beta.0",
+          "allVersions": [
+            "1.4.1",
+            "1.5.0",
+            "1.5.1",
+            "1.5.1-beta.0"
+          ],
+          "displayName": "AMD GPU Operator",
+          "description": "The AMD GPU Operator manages AMD GPU resources in a Kubernetes cluster and automates tasks related to bootstrapping GPU nodes (drivers, device plugin, NFD, KMM, metrics, DRA, auto-remediation).",
+          "category": [
+            "accelerated-infrastructure"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/amd-gpu-operator.svg",
+          "supportLink": "",
+          "dependencies": [
+            "amd-kmm-operator"
+          ],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "qualified"
+          ],
+          "catalogName": "AI Applications",
+          "catalogSlug": "ai",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+        },
+        {
+          "name": "amd-kmm-operator",
+          "version": "1.0.0",
+          "allVersions": [
+            "1.0.0"
+          ],
+          "displayName": "AMD KMM Operator",
+          "description": "Shared Kernel Module Management (KMM) operator for AMD GPU and Network operators. Provides standalone KMM, private registry credential plumbing, and node containerd trust configuration.",
+          "category": [
+            "accelerated-infrastructure"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/amd-kmm-operator.svg",
+          "supportLink": "",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "qualified"
+          ],
+          "catalogName": "AI Applications",
+          "catalogSlug": "ai",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+        },
+        {
+          "name": "amd-network-operator",
+          "version": "1.2.0",
+          "allVersions": [
+            "1.2.0"
+          ],
+          "displayName": "AMD Network Operator",
+          "description": "The AMD Network Operator simplifies deployment and management of AMD AI NICs (AINICs) in Kubernetes and works with the AMD GPU Operator for high-performance networking in AI/ML and HPC workloads.",
+          "category": [
+            "accelerated-infrastructure"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/amd-network-operator.svg",
+          "supportLink": "",
+          "dependencies": [
+            "amd-kmm-operator"
+          ],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "qualified"
+          ],
+          "catalogName": "AI Applications",
+          "catalogSlug": "ai",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+        },
+        {
+          "name": "jupyterhub",
+          "version": "4.3.2",
+          "allVersions": [
+            "4.3.2"
+          ],
+          "displayName": "JupyterHub",
+          "description": "JupyterHub brings the power of notebooks to groups of users.",
+          "category": [
+            "model-development-and-training"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/jupyterhub.png",
+          "supportLink": "https://jupyter.org/hub",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "qualified"
+          ],
+          "catalogName": "AI Applications",
+          "catalogSlug": "ai",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+        },
+        {
+          "name": "kai-scheduler",
+          "version": "0.15.2",
+          "allVersions": [
+            "0.15.2"
+          ],
+          "displayName": "KAI Scheduler",
+          "description": "Kubernetes-native scheduler for AI and ML workloads with queue-based and fair-share scheduling.",
+          "category": [
+            "scheduling-and-orchestration"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/kai-scheduler.svg",
+          "supportLink": "https://github.com/kai-scheduler/KAI-Scheduler",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "qualified",
+            "airgapped"
+          ],
+          "catalogName": "AI Applications",
+          "catalogSlug": "ai",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+        },
+        {
+          "name": "kubeflow-central-dashboard",
+          "version": "1.10.0",
+          "allVersions": [
+            "1.10.0"
+          ],
+          "displayName": "Kubeflow Central Dashboard",
+          "description": "Single UI for Pipelines and other Kubeflow components. Enable Kubeflow Platform first for SSO.",
+          "category": [
+            "model-development-and-training"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace",
+            "project"
+          ],
+          "icon": "/catalog-icons/kubeflow-central-dashboard.png",
+          "supportLink": "https://www.kubeflow.org/docs/components/central-dash/",
+          "dependencies": [],
+          "requiredDependencies": [
+            "istio-helm",
+            "kubeflow-platform"
+          ],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "qualified"
+          ],
+          "catalogName": "AI Applications",
+          "catalogSlug": "ai",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+        },
+        {
+          "name": "kubeflow-pipelines",
+          "version": "2.15.0",
+          "allVersions": [
+            "2.15.0"
+          ],
+          "displayName": "Kubeflow Pipelines",
+          "description": "End-to-end ML pipelines (train, tune, serve) with experiments and recurring runs.",
+          "category": [
+            "model-development-and-training"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace",
+            "project"
+          ],
+          "icon": "/catalog-icons/kubeflow-pipelines.png",
+          "supportLink": "https://www.kubeflow.org/docs/components/pipelines/",
+          "dependencies": [],
+          "requiredDependencies": [
+            "istio-helm",
+            "kubeflow-platform"
+          ],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "qualified"
+          ],
+          "catalogName": "AI Applications",
+          "catalogSlug": "ai",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+        },
+        {
+          "name": "kubeflow-platform",
+          "version": "1.11.0",
+          "allVersions": [
+            "1.11.0"
+          ],
+          "displayName": "Kubeflow Platform (Unified Multi-User)",
+          "description": "One authenticated, multi-user home for your Kubeflow apps - reuses NKP login (Dex) and provisions dedicated kubeflow gateway pods with a dedicated LoadBalancer. You must set config.kubeflowIngressHost (DNS name or IP) in app config when enabling.",
+          "category": [
+            "model-development-and-training"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/kubeflow-platform.png",
+          "supportLink": "https://www.kubeflow.org/docs/components/central-dash/",
+          "dependencies": [],
+          "requiredDependencies": [
+            "istio-helm"
+          ],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "qualified"
+          ],
+          "catalogName": "AI Applications",
+          "catalogSlug": "ai",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+        },
+        {
+          "name": "kuberay",
+          "version": "1.7.0",
+          "allVersions": [
+            "1.7.0"
+          ],
+          "displayName": "kuberay",
+          "description": "Kubernetes-native operator for managing RayCluster, RayJob, and RayService resources on NKP.",
+          "category": [
+            "model-development-and-training"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/kuberay.png",
+          "supportLink": "https://docs.ray.io/en/latest/index.html",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.19.0",
+          "nkpRange": {
+            "raw": ">=2.19.0",
+            "min": "2.19",
+            "maxExclusive": "",
+            "label": "NKP 2.19+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [],
+          "catalogName": "AI Applications",
+          "catalogSlug": "ai",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+        },
+        {
+          "name": "kueue",
+          "version": "0.18.0",
+          "allVersions": [
+            "0.18.0"
+          ],
+          "displayName": "Kueue",
+          "description": "Kubernetes-native job queueing with quota management and all-or-nothing (gang) admission for batch and AI/ML workloads.",
+          "category": [
+            "scheduling-and-orchestration"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/kueue.svg",
+          "supportLink": "https://kueue.sigs.k8s.io/docs/",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "qualified"
+          ],
+          "catalogName": "AI Applications",
+          "catalogSlug": "ai",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+        },
+        {
+          "name": "milvus-operator",
+          "version": "1.3.6",
+          "allVersions": [
+            "1.3.6"
+          ],
+          "displayName": "Milvus Operator",
+          "description": "The Milvus Operator provides an easy and solid solution to deploy and manage a full Milvus service stack including both the milvus components and its relevant dependencies.",
+          "category": [
+            "data-and-agents"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/milvus-operator.svg",
+          "supportLink": "https://milvus.io/docs",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "qualified"
+          ],
+          "catalogName": "AI Applications",
+          "catalogSlug": "ai",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+        },
+        {
+          "name": "ollama",
+          "version": "1.72.0",
+          "allVersions": [
+            "1.72.0"
+          ],
+          "displayName": "Ollama",
+          "description": "Lightweight LLM runtime with OpenAI-compatible API and wide model support.",
+          "category": [
+            "data-and-agents"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/ollama.svg",
+          "supportLink": "https://ollama.com",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [],
+          "catalogName": "AI Applications",
+          "catalogSlug": "ai",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+        },
+        {
+          "name": "ray-cluster",
+          "version": "1.7.0",
+          "allVersions": [
+            "1.7.0"
+          ],
+          "displayName": "Ray Cluster",
+          "description": "Deploy and manage Ray cluster workloads using the Ray Cluster Helm chart on NKP.",
+          "category": [
+            "model-development-and-training"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/ray-cluster.png",
+          "supportLink": "https://docs.ray.io/en/latest/cluster/kubernetes/index.html",
+          "dependencies": [],
+          "requiredDependencies": [
+            "kuberay"
+          ],
+          "allowMultipleInstances": true,
+          "nkpVersionSupport": ">=2.19.0",
+          "nkpRange": {
+            "raw": ">=2.19.0",
+            "min": "2.19",
+            "maxExclusive": "",
+            "label": "NKP 2.19+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [],
+          "catalogName": "AI Applications",
+          "catalogSlug": "ai",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+        },
+        {
+          "name": "slurm-operator",
+          "version": "1.1.1",
+          "allVersions": [
+            "1.1.1"
+          ],
+          "displayName": "Slurm Operator",
+          "description": "Kubernetes operator for deploying and managing Slurm clusters, nodesets, and loginsets on NKP.",
+          "category": [
+            "scheduling-and-orchestration"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/slurm-operator.png",
+          "supportLink": "https://github.com/SlinkyProject/slurm-operator",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "qualified",
+            "airgapped"
+          ],
+          "catalogName": "AI Applications",
+          "catalogSlug": "ai",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+        }
+      ]
+    },
+    {
+      "id": "nkp-partner-catalog",
+      "name": "Partner Catalog",
+      "slug": "partner",
+      "repo": "https://github.com/nutanix-cloud-native/nkp-partner-catalog",
+      "appCount": 6,
+      "apps": [
+        {
+          "name": "cloudcasa-agent",
+          "version": "3.4.6",
+          "allVersions": [
+            "3.4.6"
+          ],
+          "displayName": "CloudCasa Agent",
+          "description": "Backup, restore, DR, and data migration for NKP and all other Kubernetes clusters",
+          "category": [
+            "backup"
+          ],
+          "licensing": [
+            "Enterprise",
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/cloudcasa-agent.svg",
+          "supportLink": "https://cloudcasa.io/kubernetes-backup-support/",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": true,
+          "nkpVersionSupport": "",
+          "nkpRange": {
+            "raw": "",
+            "min": "2.16",
+            "maxExclusive": "",
+            "label": "NKP 2.16+"
+          },
+          "type": "preferred-partner",
+          "certifications": [
+            "airgapped"
+          ],
+          "catalogName": "Partner Catalog",
+          "catalogSlug": "partner",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-partner-catalog"
+        },
+        {
+          "name": "infisical",
+          "version": "0.2.1",
+          "allVersions": [
+            "0.2.1"
+          ],
+          "displayName": "Infisical",
+          "description": "Open-source secrets management: secrets, PKI certificates, and KMS keys for your applications and infrastructure.",
+          "category": [
+            "security"
+          ],
+          "licensing": [
+            "Enterprise",
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/infisical.svg",
+          "supportLink": "https://infisical.com/docs",
+          "dependencies": [
+            "cloudnative-pg"
+          ],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18",
+          "nkpRange": {
+            "raw": ">=2.18",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "preferred-partner",
+          "certifications": [],
+          "catalogName": "Partner Catalog",
+          "catalogSlug": "partner",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-partner-catalog"
+        },
+        {
+          "name": "kasm",
+          "version": "1.1181.0",
+          "allVersions": [
+            "1.1181.0"
+          ],
+          "displayName": "Kasm",
+          "description": "Stream your workspace directly to your web browser on any device and from any location.",
+          "category": [
+            "virtual-desktop",
+            "infrastructure"
+          ],
+          "licensing": [
+            "Enterprise",
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/kasm.svg",
+          "supportLink": "https://docs.kasmweb.com/",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": "",
+          "nkpRange": {
+            "raw": "",
+            "min": "2.16",
+            "maxExclusive": "",
+            "label": "NKP 2.16+"
+          },
+          "type": "preferred-partner",
+          "certifications": [],
+          "catalogName": "Partner Catalog",
+          "catalogSlug": "partner",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-partner-catalog"
+        },
+        {
+          "name": "kubex-automation-stack",
+          "version": "1.0.18",
+          "allVersions": [
+            "1.0.11",
+            "1.0.18"
+          ],
+          "displayName": "Kubex for NKP",
+          "description": "AI-driven automated resource optimization for Kubernetes.",
+          "category": [
+            "monitoring"
+          ],
+          "licensing": [
+            "Enterprise",
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/kubex-automation-stack.svg",
+          "supportLink": "https://www.kubex.ai/",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": true,
+          "nkpVersionSupport": ">=2.16",
+          "nkpRange": {
+            "raw": ">=2.16",
+            "min": "2.16",
+            "maxExclusive": "",
+            "label": "NKP 2.16+"
+          },
+          "type": "preferred-partner",
+          "certifications": [],
+          "catalogName": "Partner Catalog",
+          "catalogSlug": "partner",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-partner-catalog"
+        },
+        {
+          "name": "kyverno",
+          "version": "1.18.0",
+          "allVersions": [
+            "1.18.0"
+          ],
+          "displayName": "Nirmata Enterprise for Kyverno (N4K)",
+          "description": "Kubernetes Native Policy Management",
+          "category": [
+            "security"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate",
+            "Enterprise"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/kyverno.svg",
+          "supportLink": "https://kyverno.io/docs",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.17",
+          "nkpRange": {
+            "raw": ">=2.17",
+            "min": "2.17",
+            "maxExclusive": "",
+            "label": "NKP 2.17+"
+          },
+          "type": "preferred-partner",
+          "certifications": [],
+          "catalogName": "Partner Catalog",
+          "catalogSlug": "partner",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-partner-catalog"
+        },
+        {
+          "name": "traefik-hub",
+          "version": "3.18.1",
+          "allVersions": [
+            "3.17.11",
+            "3.18.1"
+          ],
+          "displayName": "Traefik API Management",
+          "description": "Cloud-Native API Intelligence & Management Platform with GitOps-Native Governance",
+          "category": [
+            "inferencing-and-serving"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate",
+            "Enterprise"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/traefik-hub.svg",
+          "supportLink": "https://doc.traefik.io/traefik-hub/",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": "",
+          "nkpRange": {
+            "raw": "",
+            "min": "2.16",
+            "maxExclusive": "",
+            "label": "NKP 2.16+"
+          },
+          "type": "preferred-partner",
+          "certifications": [],
+          "catalogName": "Partner Catalog",
+          "catalogSlug": "partner",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-partner-catalog"
+        }
+      ]
+    },
+    {
+      "id": "nkp-nutanix-product-catalog",
+      "name": "Nutanix Products",
+      "slug": "nutanix",
+      "repo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog",
+      "appCount": 10,
+      "apps": [
+        {
+          "name": "envoy-gateway",
+          "version": "1.6.3",
+          "allVersions": [
+            "1.5.0",
+            "1.6.3"
+          ],
+          "displayName": "Envoy Gateway",
+          "description": "Envoy Gateway is a Kubernetes-native API Gateway and reverse proxy control plane.",
+          "category": [
+            "inferencing-and-serving"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/envoy-gateway.svg",
+          "supportLink": "",
+          "dependencies": [
+            "cert-manager"
+          ],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.16.0",
+          "nkpRange": {
+            "raw": ">=2.16.0",
+            "min": "2.16",
+            "maxExclusive": "",
+            "label": "NKP 2.16+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "airgapped"
+          ],
+          "catalogName": "Nutanix Products",
+          "catalogSlug": "nutanix",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+        },
+        {
+          "name": "kserve",
+          "version": "0.19.0",
+          "allVersions": [
+            "0.15.0",
+            "0.19.0"
+          ],
+          "displayName": "Kserve",
+          "description": "Highly scalable and standards based Model Inference Platform on Kubernetes for Trusted AI.",
+          "category": [
+            "inferencing-and-serving"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/kserve.svg",
+          "supportLink": "",
+          "dependencies": [
+            "cert-manager"
+          ],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "nutanix-supported",
+            "airgapped"
+          ],
+          "catalogName": "Nutanix Products",
+          "catalogSlug": "nutanix",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+        },
+        {
+          "name": "leaderworkerset",
+          "version": "0.8.0",
+          "allVersions": [
+            "0.8.0"
+          ],
+          "displayName": "LeaderWorkerSet",
+          "description": "Kubernetes LeaderWorkerSet (LWS) operator for multi-node leader/worker workloads.",
+          "category": [
+            "inferencing-and-serving"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/leaderworkerset.png",
+          "supportLink": "",
+          "dependencies": [
+            "cert-manager"
+          ],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "nutanix-supported",
+            "airgapped"
+          ],
+          "catalogName": "Nutanix Products",
+          "catalogSlug": "nutanix",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+        },
+        {
+          "name": "envoy-gateway-nai",
+          "version": "1.8.1",
+          "allVersions": [
+            "1.7.0",
+            "1.8.1"
+          ],
+          "displayName": "NAI - Envoy Gateway (Supported by NAI)",
+          "description": "Envoy Gateway is a Kubernetes-native API Gateway and reverse proxy control plane.",
+          "category": [
+            "inferencing-and-serving"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/envoy-gateway-nai.svg",
+          "supportLink": "",
+          "dependencies": [
+            "cert-manager"
+          ],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "nutanix-supported",
+            "airgapped"
+          ],
+          "catalogName": "Nutanix Products",
+          "catalogSlug": "nutanix",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+        },
+        {
+          "name": "ncm-k8s-collector",
+          "version": "1.0.0",
+          "allVersions": [
+            "1.0.0"
+          ],
+          "displayName": "NCM k8s Collector",
+          "description": "NKP OpenTelemetry collector stack (cluster-collector Deployment + node-collector DaemonSet) deployed to workspace clusters and configured by the ncm-k8s-collector-operator.",
+          "category": [
+            "monitoring",
+            "observability"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "",
+          "supportLink": "",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": "",
+          "nkpRange": {
+            "raw": "",
+            "min": "2.16",
+            "maxExclusive": "",
+            "label": "NKP 2.16+"
+          },
+          "type": "internal",
+          "certifications": [
+            "nutanix-supported",
+            "airgapped"
+          ],
+          "catalogName": "Nutanix Products",
+          "catalogSlug": "nutanix",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+        },
+        {
+          "name": "ncm-k8s-collector-operator",
+          "version": "1.0.0",
+          "allVersions": [
+            "1.0.0"
+          ],
+          "displayName": "NCM k8s Collector Operator",
+          "description": "Unified Multi-Cluster Telemetry Operator. Reconciles telemetry.platform/v1 TelemetryIntent custom resources into merged OpenTelemetry Collector configs and deploys a single set of collectors per managed k8s cluster.",
+          "category": [
+            "observability"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "",
+          "supportLink": "",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": "",
+          "nkpRange": {
+            "raw": "",
+            "min": "2.16",
+            "maxExclusive": "",
+            "label": "NKP 2.16+"
+          },
+          "type": "internal",
+          "certifications": [
+            "nutanix-supported",
+            "airgapped"
+          ],
+          "catalogName": "Nutanix Products",
+          "catalogSlug": "nutanix",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+        },
+        {
+          "name": "nc-orchestrator",
+          "version": "1.0.3",
+          "allVersions": [
+            "1.0.3"
+          ],
+          "displayName": "Nutanix Central Connection",
+          "description": "An application that allows users to connect with the Nutanix Central platform",
+          "category": [
+            "general"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/nc-orchestrator.svg",
+          "supportLink": "",
+          "dependencies": [],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.19.0",
+          "nkpRange": {
+            "raw": ">=2.19.0",
+            "min": "2.19",
+            "maxExclusive": "",
+            "label": "NKP 2.19+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "nutanix-supported"
+          ],
+          "catalogName": "Nutanix Products",
+          "catalogSlug": "nutanix",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+        },
+        {
+          "name": "ndk",
+          "version": "2.3.0",
+          "allVersions": [
+            "2.0.0",
+            "2.1.0",
+            "2.3.0"
+          ],
+          "displayName": "Nutanix Data Services for Kubernetes",
+          "description": "Nutanix Data Services for Kubernetes",
+          "category": [
+            "application-and-data-management"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/ndk.svg",
+          "supportLink": "",
+          "dependencies": [
+            "cert-manager"
+          ],
+          "requiredDependencies": [],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0 <2.20.0",
+          "nkpRange": {
+            "raw": ">=2.18.0 <2.20.0",
+            "min": "2.18",
+            "maxExclusive": "2.20",
+            "label": "NKP 2.18–2.19"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "nutanix-supported",
+            "airgapped"
+          ],
+          "catalogName": "Nutanix Products",
+          "catalogSlug": "nutanix",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+        },
+        {
+          "name": "nutanix-ai",
+          "version": "2.8.0",
+          "allVersions": [
+            "2.4.0",
+            "2.5.0",
+            "2.6.0",
+            "2.7.0",
+            "2.8.0"
+          ],
+          "displayName": "Nutanix Enterprise AI",
+          "description": "Inference endpoint management platform.",
+          "category": [
+            "inferencing-and-serving"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/nutanix-ai.svg",
+          "supportLink": "",
+          "dependencies": [
+            "cert-manager"
+          ],
+          "requiredDependencies": [
+            "kube-prometheus-stack",
+            "nvidia-gpu-operator",
+            "opentelemetry-operator",
+            "kserve",
+            "envoy-gateway-nai",
+            "leaderworkerset",
+            "cloudnative-pg"
+          ],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18 <2.20",
+          "nkpRange": {
+            "raw": ">=2.18 <2.20",
+            "min": "2.18",
+            "maxExclusive": "2.20",
+            "label": "NKP 2.18–2.19"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "nutanix-supported",
+            "airgapped"
+          ],
+          "catalogName": "Nutanix Products",
+          "catalogSlug": "nutanix",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+        },
+        {
+          "name": "opentelemetry-operator",
+          "version": "0.114.1",
+          "allVersions": [
+            "0.93.0",
+            "0.102.0",
+            "0.114.1"
+          ],
+          "displayName": "OpenTelemetry Operator",
+          "description": "An implementation of a Kubernetes Operator, that manages collectors and auto-instrumentation of the workload using OpenTelemetry instrumentation libraries.",
+          "category": [
+            "observability"
+          ],
+          "licensing": [
+            "Pro",
+            "Ultimate"
+          ],
+          "scope": [
+            "workspace"
+          ],
+          "icon": "/catalog-icons/opentelemetry-operator.svg",
+          "supportLink": "",
+          "dependencies": [
+            "cert-manager"
+          ],
+          "requiredDependencies": [
+            "kube-prometheus-stack"
+          ],
+          "allowMultipleInstances": false,
+          "nkpVersionSupport": ">=2.18.0",
+          "nkpRange": {
+            "raw": ">=2.18.0",
+            "min": "2.18",
+            "maxExclusive": "",
+            "label": "NKP 2.18+"
+          },
+          "type": "nkp-catalog",
+          "certifications": [
+            "nutanix-supported",
+            "airgapped"
+          ],
+          "catalogName": "Nutanix Products",
+          "catalogSlug": "nutanix",
+          "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+        }
+      ]
+    }
+  ]
+}

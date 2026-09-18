@@ -1,0 +1,40 @@
+{
+  "name": "ray-cluster",
+  "version": "1.7.0",
+  "allVersions": [
+    "1.7.0"
+  ],
+  "displayName": "Ray Cluster",
+  "description": "Deploy and manage Ray cluster workloads using the Ray Cluster Helm chart on NKP.",
+  "category": [
+    "model-development-and-training"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/ray-cluster.png",
+  "overview": "**Overview**\n\nRay Cluster installs workload resources for running Ray head and worker pods on Kubernetes.\nUse this app after KubeRay Operator is installed to create and tune Ray runtime deployments.\n\n**Key capabilities**\n\n- Deploys Ray head/worker runtime components via Helm\n- Supports configurable image and runtime settings through app overrides\n- Targets the dedicated `kuberay` namespace for Ray workloads\n\n**Dependencies**\n\nThis app requires the KubeRay Operator application to be installed first.\n\n**Profiling prerequisites**\n\nRay dashboard CPU profiling and stack trace features require ptrace permissions in Ray pods.\nAdd the following override in App Config Overrides when you need these diagnostics:\n\n```yaml\nhead:\n  securityContext:\n    runAsUser: 0\n    allowPrivilegeEscalation: true\n    capabilities:\n      add: [\"SYS_PTRACE\"]\nworker:\n  securityContext:\n    runAsUser: 0\n    allowPrivilegeEscalation: true\n    capabilities:\n      add: [\"SYS_PTRACE\"]\n```\n\nMemory profiling can require debugger tooling (`gdb` or `lldb`) to be present in the Ray image.\nIf memory flamegraph generation fails, use a custom Ray image that includes these tools.\n\n**Resources**\n\n[Documentation](https://docs.ray.io/en/latest/cluster/kubernetes/index.html) · [Project](https://github.com/ray-project/kuberay)\n",
+  "supportLink": "https://docs.ray.io/en/latest/cluster/kubernetes/index.html",
+  "dependencies": [],
+  "requiredDependencies": [
+    "kuberay"
+  ],
+  "allowMultipleInstances": true,
+  "nkpVersionSupport": ">=2.19.0",
+  "nkpRange": {
+    "raw": ">=2.19.0",
+    "min": "2.19",
+    "maxExclusive": "",
+    "label": "NKP 2.19+"
+  },
+  "type": "nkp-catalog",
+  "certifications": [],
+  "readme": "",
+  "catalogName": "AI Applications",
+  "catalogSlug": "ai",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+}

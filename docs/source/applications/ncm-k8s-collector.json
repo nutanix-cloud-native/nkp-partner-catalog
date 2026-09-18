@@ -1,0 +1,42 @@
+{
+  "name": "ncm-k8s-collector",
+  "version": "1.0.0",
+  "allVersions": [
+    "1.0.0"
+  ],
+  "displayName": "NCM k8s Collector",
+  "description": "NKP OpenTelemetry collector stack (cluster-collector Deployment + node-collector DaemonSet) deployed to workspace clusters and configured by the ncm-k8s-collector-operator.",
+  "category": [
+    "monitoring",
+    "observability"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "",
+  "overview": "# Telemetry Collector\n\nThe `nkp-otel` collector stack: a cluster-collector (Deployment) and a\nnode-collector (DaemonSet) that gather Kubernetes metrics, logs, and object\nsnapshots and export them to one or more backends.",
+  "supportLink": "",
+  "dependencies": [],
+  "requiredDependencies": [],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": "",
+  "nkpRange": {
+    "raw": "",
+    "min": "2.16",
+    "maxExclusive": "",
+    "label": "NKP 2.16+"
+  },
+  "type": "internal",
+  "certifications": [
+    "nutanix-supported",
+    "airgapped"
+  ],
+  "readme": "",
+  "catalogName": "Nutanix Products",
+  "catalogSlug": "nutanix",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+}

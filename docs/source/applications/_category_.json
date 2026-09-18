@@ -1,0 +1,10 @@
+{
+  "label": "Applications",
+  "position": 2,
+  "className": "hidden",
+  "collapsible": false,
+  "link": {
+    "type": "doc",
+    "id": "applications/index"
+  }
+}

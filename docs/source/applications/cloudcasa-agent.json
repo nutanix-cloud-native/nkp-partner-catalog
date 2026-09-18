@@ -1,0 +1,41 @@
+{
+  "name": "cloudcasa-agent",
+  "version": "3.4.6",
+  "allVersions": [
+    "3.4.6"
+  ],
+  "displayName": "CloudCasa Agent",
+  "description": "Backup, restore, DR, and data migration for NKP and all other Kubernetes clusters",
+  "category": [
+    "backup"
+  ],
+  "licensing": [
+    "Enterprise",
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/cloudcasa-agent.svg",
+  "overview": "## Overview\n\nCloudCasa is a Kubernetes backup, recovery, DR, and migration solution for Nutanix Kubernetes Platform and all other\nmajor Kubernetes distributions and managed services.\n\nBuilt for NKP users seeking a powerful, easy-to-use, and scalable solution, CloudCasa combines Nutanix’s high-performance\ninfrastructure with intuitive, Kubernetes-native backup, migration, and DR capabilities.\nIts enterprise-ready design includes full multi-tenancy and RBAC-driven self-service to support platform teams, business units, and service providers.\n\n## Key Features\n\no Kubernetes-native backups with file-level and resource-level recovery.\n\no Manage cross-cluster, cross-tenant, cross-region and cross-cloud backups and recoveries from a single dashboard.\n\no Seamless application migration between NKP clusters, whether on-prem or in the cloud.\n\no Hybrid restore options for rapid failover to secondary Nutanix sites or public cloud clusters.\n\no Back up to Nutanix Objects, S3 and S3-cpmpatible object storage, Azure Blob storage, or NFS/CIFS file storage.\n\no Support for immutable backups to protect against ransomware and satisfy compliance requirements.\n\no Multi-tenant support with granular RBAC to safely delegate backup and restore operations.\n\no Available as SaaS or a self-hosted deployment.\n\n## More Information\n\n**[Sign up](https://cloudcasa.io/) to try CloudCasa for free**\n\n**See the [CloudCasa User Guide]( https://docs.cloudcasa.io/help/)**\n\n**See our [CloudCasa for NKP](https://cloudcasa.io/partners/nutanix-kubernetes-platform-backup-migration-and-dr/) page**",
+  "supportLink": "https://cloudcasa.io/kubernetes-backup-support/",
+  "dependencies": [],
+  "requiredDependencies": [],
+  "allowMultipleInstances": true,
+  "nkpVersionSupport": "",
+  "nkpRange": {
+    "raw": "",
+    "min": "2.16",
+    "maxExclusive": "",
+    "label": "NKP 2.16+"
+  },
+  "type": "preferred-partner",
+  "certifications": [
+    "airgapped"
+  ],
+  "readme": "",
+  "catalogName": "Partner Catalog",
+  "catalogSlug": "partner",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-partner-catalog"
+}

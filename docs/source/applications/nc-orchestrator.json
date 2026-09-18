@@ -1,0 +1,40 @@
+{
+  "name": "nc-orchestrator",
+  "version": "1.0.3",
+  "allVersions": [
+    "1.0.3"
+  ],
+  "displayName": "Nutanix Central Connection",
+  "description": "An application that allows users to connect with the Nutanix Central platform",
+  "category": [
+    "general"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/nc-orchestrator.svg",
+  "overview": "## Overview\n\nThe “Nutanix Central Connection” application enables NKP management clusters to be registered with Nutanix Central.\n\nNutanix Central is a unified management plane to view and manage all Nutanix services. It provides global visibility and management across hybrid multicloud infrastructure and makes it easier for you to establish an enterprise cloud governance framework.\n\n## Key Features\n\n• Access, deploy, and switch between NKP and other Nutanix portfolio products from a single, centralized management plane.\n\n• View and manage all NKP management and workload clusters from a unified management console across all regions, zones.\n\n• Boost Operational efficiency by seamlessly switching between NKP management clusters and manage your entire NKP estate\n\n## More Information\n\n• [Nutanix Central Documentation](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Central)\n\n• [NKP Documentation](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform)\n\n• [NKP Registration to Nutanix Central](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform:nkp-register-nutanix-central-c.html)",
+  "supportLink": "",
+  "dependencies": [],
+  "requiredDependencies": [],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.19.0",
+  "nkpRange": {
+    "raw": ">=2.19.0",
+    "min": "2.19",
+    "maxExclusive": "",
+    "label": "NKP 2.19+"
+  },
+  "type": "nkp-catalog",
+  "certifications": [
+    "nutanix-supported"
+  ],
+  "readme": "",
+  "catalogName": "Nutanix Products",
+  "catalogSlug": "nutanix",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+}

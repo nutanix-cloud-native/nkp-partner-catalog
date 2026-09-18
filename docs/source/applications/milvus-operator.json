@@ -1,0 +1,40 @@
+{
+  "name": "milvus-operator",
+  "version": "1.3.6",
+  "allVersions": [
+    "1.3.6"
+  ],
+  "displayName": "Milvus Operator",
+  "description": "The Milvus Operator provides an easy and solid solution to deploy and manage a full Milvus service stack including both the milvus components and its relevant dependencies.",
+  "category": [
+    "data-and-agents"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/milvus-operator.svg",
+  "overview": "## Overview\nMilvus Operator is a solution that helps you deploy and manage a full Milvus service stack to target Kubernetes (K8s) clusters.\n\n## Key Features\n\n### Scalable and Elastic Architecture\nMilvus is engineered for exceptional scalability and elasticity, accommodating the dynamic demands of modern applications. It achieves this through service-oriented design, decoupling storage, coordinators, and workers, allowing for component-wise scaling. This modular approach ensures that different computational tasks can scale independently according to varying workloads, providing fine-grained resource allocation and isolation.\n\n### Diverse Index Support\nMilvus supports an extensive array of over 10 index types, including widely-used ones such as HNSW, IVF, Product Quantization, and GPU-based indexing. This variety empowers developers to optimize searches according to specific performance and accuracy requirements, ensuring that the database can adapt to a wide range of applications and data characteristics. Continuous expansion of its index offerings, e.g. GPU index, further enhances Milvus's adaptability and effectiveness in handling complex search tasks.\n\n### Versatile Search Capabilities\nMilvus offers a wide range of search types, including top-K Approximate Nearest Neighbor (ANN), Range ANN, and search with metadata filtering, and upcoming hybrid dense and sparse vector search. This diversity enables unmatched query flexibility and precision, granting developers the ability to customize data retrieval strategies to meet specific application demands, thereby optimizing both the relevance and efficiency of search results.\n\n### Tunable Consistency\nMilvus offers a delta consistency model that allows users to specify a \"staleness tolerance\" for query data, enabling a tailored balance between query performance and data freshness. This flexibility is crucial for applications requiring up-to-date results without sacrificing response times, effectively supporting both strong and eventual consistency as per application needs.\n\n### Hardware-Accelerated Compute Support\nMilvus is designed to leverage various types of compute capabilities, such as AVX512 and Neon for SIMD execution, alongside quantization, cache-aware optimizations, and GPU support. This approach enables efficient utilization of specific hardware strengths, ensuring rapid processing and cost-effective scalability. By tailoring resource use to the unique demands of different applications, Milvus enhances both the speed and efficiency of vector data management and search operations.\n\n**In-cluster usage**\n\nThe Milvus Operator deploys and manages Milvus clusters. After creating a Milvus custom resource, connect to the Milvus service in the target namespace:\n\n| Endpoint | In-cluster URL |\n|----------|----------------|\n| gRPC | `milvus-<release>.<namespace>.svc.cluster.local:19530` |\n| HTTP | `http://milvus-<release>.<namespace>.svc.cluster.local:9091` |\n\nReplace `<release>` and `<namespace>` with your Milvus release name and deployment namespace.\n\n## More Information:\n\n- [milvus.io](https://milvus.io/)\n- [Milvus Documentation](https://milvus.io/docs/)\n- [Milvus Operator](https://milvus.io/docs/install_cluster-milvusoperator.md?tab=helm)\n- [List of Helm values](https://github.com/zilliztech/milvus-operator/blob/main/charts/milvus-operator/values.yaml)",
+  "supportLink": "https://milvus.io/docs",
+  "dependencies": [],
+  "requiredDependencies": [],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.18.0",
+  "nkpRange": {
+    "raw": ">=2.18.0",
+    "min": "2.18",
+    "maxExclusive": "",
+    "label": "NKP 2.18+"
+  },
+  "type": "nkp-catalog",
+  "certifications": [
+    "qualified"
+  ],
+  "readme": "",
+  "catalogName": "AI Applications",
+  "catalogSlug": "ai",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+}
