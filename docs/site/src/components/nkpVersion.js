@@ -1,18 +1,35 @@
 'use strict';
 
 // NKP product versions are major.minor only. Patch is ignored on ingest.
+// Floor / GA ceiling / known list: docs/source/config.yaml → applications
+// (synced to ../data/nkp-version-config.json by generate-catalog / _docs-prepare).
 
-const ALL_NKP_VERSIONS = ['2.16', '2.17', '2.18', '2.19', '2.20'];
+function loadFileConfig() {
+  try {
+    return require('../data/nkp-version-config.json');
+  } catch {
+    return {};
+  }
+}
+
+const fileConfig = loadFileConfig();
+
+const ALL_NKP_VERSIONS = (
+  Array.isArray(fileConfig.knownNkpVersions) && fileConfig.knownNkpVersions.length
+    ? fileConfig.knownNkpVersions
+    : ['2.16', '2.17', '2.18', '2.19', '2.20']
+).map(String);
 
 // Assumed floor when metadata omits nkpVersionSupport (or leaves it empty).
-// Unspecified apps are treated as NKP 2.16+ — not "any version".
-const DEFAULT_NKP_FLOOR = '2.16';
+// Unspecified apps are treated as NKP floor+ — not "any version".
+const DEFAULT_NKP_FLOOR = String(fileConfig.nkpVersionFloor || '2.16');
 
 // Highest generally-available NKP major.minor shown in the catalog version filter.
-// Pre-GA entries may still exist in .release/stable.yaml; bump this when a version GAs.
-// Override at generate time with MAX_GA_NKP_VERSION=2.20.
+// Pre-GA entries may still exist in .release/stable.yaml; bump maxGaNkpVersion in
+// docs/source/config.yaml when a version GAs. Env overrides the file value.
 const MAX_GA_NKP_VERSION =
-  (typeof process !== 'undefined' && process.env && process.env.MAX_GA_NKP_VERSION) || '2.19';
+  (typeof process !== 'undefined' && process.env && process.env.MAX_GA_NKP_VERSION) ||
+  String(fileConfig.maxGaNkpVersion || '2.19');
 
 function toMinor(input) {
   if (input == null || input === '') return '';

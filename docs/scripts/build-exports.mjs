@@ -151,11 +151,14 @@ function listDocFiles(dir) {
     if (ent.name === 'schemas') continue;
     const full = path.join(dir, ent.name);
     if (ent.isDirectory()) {
+      // Per-version nkp help dumps are large; the CLI landing page is enough offline.
+      if (path.basename(dir) === 'cli' && /^\d+\.\d+/.test(ent.name)) continue;
       dirs.push(listDocFiles(full));
     } else if (/\.mdx?$/.test(ent.name)) {
       const raw = fs.readFileSync(full, 'utf8');
       const { data, body } = readFrontMatter(raw);
       if (data.internal === true || data.draft === true || data.unlisted === true) continue;
+      if (data.cli_generated === true) continue;
       const title =
         data.title ||
         data.sidebar_label ||

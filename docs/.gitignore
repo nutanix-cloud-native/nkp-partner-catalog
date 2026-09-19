@@ -9,10 +9,16 @@ site/.cache/
 site/.eslintcache
 *.tsbuildinfo
 
-# Offline Export outputs (written by just docs-export / docs-offline)
+# Offline Export outputs (written by _docs-export / docs-offline)
 site/static/offline/
 .export-work/
 dist/
+
+# Downloaded nkp CLI binaries used by generate-cli-docs
+.cache/nkp-cli/
+
+# Local gh-pages clone staged by just docs-deploy (do not commit)
+.docs-deploy/
 
 # Synced at prepare time from source/; do not commit the static copy
 site/static/catalog-data.json

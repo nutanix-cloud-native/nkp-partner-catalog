@@ -61,6 +61,10 @@ const config = {
             if (docPath.startsWith('applications/')) {
               return undefined;
             }
+            // Generated per-version nkp help dumps.
+            if (/^cli\/\d+\.\d+/.test(docPath)) {
+              return undefined;
+            }
             return `https://github.com/nutanix-cloud-native/nkp-partner-catalog/tree/main/docs/source/${docPath}`;
           },
           lastVersion: 'current',

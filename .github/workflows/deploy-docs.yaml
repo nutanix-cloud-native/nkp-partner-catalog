@@ -6,7 +6,7 @@
 #
 # Triggers:
 #   - push to main affecting docs
-#   - nightly cron (picks up new apps in sibling catalog repos)
+#   - nightly cron (regenerates catalog + CLI from downloads.d2iq.com / config.yaml, then publishes)
 #   - manual dispatch
 
 name: Deploy Docs
@@ -67,6 +67,15 @@ jobs:
         run: |
           cd nkp-partner-catalog/docs
           devbox run -- just generate-catalog "${GITHUB_WORKSPACE}"
+
+      - name: Generate versioned CLI reference
+        run: |
+          cd nkp-partner-catalog/docs
+          # Nightly (and CI) always re-fetch nkp so patch bumps on downloads.d2iq.com apply.
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            export NKP_CLI_FORCE_DOWNLOAD=1
+          fi
+          devbox run -- just generate-cli-docs
 
       - name: Build docs
         run: |

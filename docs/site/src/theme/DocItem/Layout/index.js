@@ -11,6 +11,8 @@ import DocItemTOCDesktop from '@theme/DocItem/TOC/Desktop';
 import DocItemContent from '@theme/DocItem/Content';
 import DocBreadcrumbs from '@theme/DocBreadcrumbs';
 import ContentVisibility from '@theme/ContentVisibility';
+import CliDocChrome from '@site/src/components/CliDocChrome';
+import CliCommandBrowser from '@site/src/components/CliCommandBrowser';
 import styles from './styles.module.css';
 
 function useDocTOC() {
@@ -32,21 +34,24 @@ function useDocTOC() {
 
 export default function DocItemLayout({children}) {
   const docTOC = useDocTOC();
-  const {metadata} = useDoc();
-  const isApplicationsSurface =
-    (metadata.id || '').startsWith('applications/');
+  const {metadata, frontMatter} = useDoc();
+  const isApplicationsSurface = (metadata.id || '').startsWith('applications/');
+  const isCliGenerated = frontMatter.cli_generated === true;
+  const cliMinor = frontMatter.nkp_minor;
+  const cliCommandId = frontMatter.nkp_command_id || 'nkp';
   // Listing keeps a full-width filter layout; detail pages are a reading column.
   const isAppDetail =
     isApplicationsSurface && metadata.id !== 'applications/index';
-  const narrowArticle = !docTOC.hidden && !isAppDetail;
+  const narrowArticle = !docTOC.hidden && !isAppDetail && !isCliGenerated;
 
   return (
     <div className="row">
       <div
         className={clsx(
           'col',
-          narrowArticle && styles.docItemCol,
+          !isCliGenerated && narrowArticle && styles.docItemCol,
           isAppDetail && styles.appDetailCol,
+          isCliGenerated && 'col--9',
         )}
       >
         <ContentVisibility metadata={metadata} />
@@ -55,15 +60,28 @@ export default function DocItemLayout({children}) {
           <article>
             <DocBreadcrumbs />
             <DocVersionBadge />
+            {isCliGenerated && cliMinor ? (
+              <CliDocChrome minor={cliMinor} commandId={cliCommandId} />
+            ) : null}
             {docTOC.mobile}
             <DocItemContent>{children}</DocItemContent>
             <DocItemFooter />
           </article>
-          {!isApplicationsSurface && <DocItemPaginator />}
+          {!isApplicationsSurface && !isCliGenerated && <DocItemPaginator />}
         </div>
       </div>
-      {docTOC.desktop && (
-        <div className="col col--3">{docTOC.desktop}</div>
+      {isCliGenerated && cliMinor ? (
+        <div className="col col--3">
+          <div className="cli-command-browser-rail">
+            <CliCommandBrowser
+              minor={cliMinor}
+              activeId={cliCommandId}
+              compact
+            />
+          </div>
+        </div>
+      ) : (
+        docTOC.desktop && <div className="col col--3">{docTOC.desktop}</div>
       )}
     </div>
   );

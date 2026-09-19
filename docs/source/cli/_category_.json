@@ -1,10 +1,9 @@
 {
   "label": "CLI",
   "position": 7,
+  "collapsible": false,
   "link": {
-    "type": "generated-index",
-    "title": "CLI commands",
-    "description": "Auto-generated reference for nkp CLI commands (includes experimental). Regenerate with: nkp experimental catalog docgen",
-    "slug": "cli"
+    "type": "doc",
+    "id": "cli/index"
   }
 }

@@ -6,7 +6,7 @@ import DocRootLayoutSidebar from '@theme/DocRoot/Layout/Sidebar';
 import DocRootLayoutMain from '@theme/DocRoot/Layout/Main';
 import styles from './styles.module.css';
 
-/** Applications listing + detail pages are a top-nav product surface, not docs. */
+/** Applications catalog hides the docs left sidebar; CLI keeps it (landing-only). */
 function useHideDocsSidebar() {
   const {pathname} = useLocation();
   return /\/applications(\/|$)/.test(pathname);

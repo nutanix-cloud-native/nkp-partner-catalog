@@ -16,6 +16,53 @@
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
+
+const DOCS_ROOT = path.resolve(__dirname, '..', '..');
+const SOURCE_CONFIG = path.join(DOCS_ROOT, 'source', 'config.yaml');
+const NKP_VERSION_JSON = path.join(
+  __dirname,
+  '..',
+  'src',
+  'data',
+  'nkp-version-config.json',
+);
+
+/** Sync docs/source/config.yaml → applications into site/src/data for the browser. */
+function syncApplicationsConfig() {
+  if (!fs.existsSync(SOURCE_CONFIG)) {
+    throw new Error(`Missing ${path.relative(DOCS_ROOT, SOURCE_CONFIG)}`);
+  }
+  const root = yaml.load(fs.readFileSync(SOURCE_CONFIG, 'utf8')) || {};
+  const apps = root.applications;
+  if (!apps || typeof apps !== 'object') {
+    throw new Error(
+      `${path.relative(DOCS_ROOT, SOURCE_CONFIG)} missing applications section`,
+    );
+  }
+  if (!apps.nkpVersionFloor || !apps.maxGaNkpVersion) {
+    throw new Error(
+      'applications.nkpVersionFloor and applications.maxGaNkpVersion are required',
+    );
+  }
+  const out = {
+    nkpVersionFloor: String(apps.nkpVersionFloor),
+    maxGaNkpVersion: String(apps.maxGaNkpVersion),
+    knownNkpVersions: (Array.isArray(apps.knownNkpVersions)
+      ? apps.knownNkpVersions
+      : []
+    ).map(String),
+  };
+  fs.mkdirSync(path.dirname(NKP_VERSION_JSON), { recursive: true });
+  fs.writeFileSync(NKP_VERSION_JSON, `${JSON.stringify(out, null, 2)}\n`);
+  console.log(
+    `Synced applications NKP filter → ${path.relative(DOCS_ROOT, NKP_VERSION_JSON)} ` +
+      `(floor ${out.nkpVersionFloor}, max GA ${out.maxGaNkpVersion})`,
+  );
+  return out;
+}
+
+syncApplicationsConfig();
+
 const { parseNkpRange, DEFAULT_NKP_VERSIONS, toMinor, compareMinor, gaNkpVersions } = require('../src/components/nkpVersion');
 
 const CATALOGS = {

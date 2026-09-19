@@ -21,6 +21,17 @@ generate-catalog root=sibling_root:
       --root "{{ root }}" \
       -o "$ROOT/source/catalog-data.json"
 
+# Download released nkp CLIs and regenerate source/cli/<minor>/ from
+# `nkp help --output markdown --tree`. Versions: source/config.yaml → cliDocs.
+# Force re-download: NKP_CLI_FORCE_DOWNLOAD=1 just generate-cli-docs
+[script]
+generate-cli-docs:
+    ROOT="{{ justfile_directory() }}"
+    if [ ! -d "$ROOT/site/node_modules/js-yaml" ]; then
+        (cd "$ROOT/site" && npm ci --prefer-offline --ignore-scripts)
+    fi
+    node "$ROOT/scripts/generate-cli-docs.mjs"
+
 [script]
 _docs-prepare:
     ROOT="{{ justfile_directory() }}"
@@ -32,6 +43,19 @@ _docs-prepare:
     fi
     cd "$ROOT/site"
     npm ci --prefer-offline --ignore-scripts
+    # Sync applications NKP filter from source/config.yaml for the browser bundle.
+    node -e "
+      const fs=require('fs'),path=require('path'),yaml=require('js-yaml');
+      const root=path.resolve('..');
+      const cfg=yaml.load(fs.readFileSync(path.join(root,'source/config.yaml'),'utf8'))||{};
+      const a=cfg.applications;
+      if(!a||!a.nkpVersionFloor||!a.maxGaNkpVersion) throw new Error('config.yaml applications.nkpVersionFloor/maxGaNkpVersion required');
+      const out={nkpVersionFloor:String(a.nkpVersionFloor),maxGaNkpVersion:String(a.maxGaNkpVersion),knownNkpVersions:(a.knownNkpVersions||[]).map(String)};
+      const dest=path.join('src/data/nkp-version-config.json');
+      fs.mkdirSync(path.dirname(dest),{recursive:true});
+      fs.writeFileSync(dest, JSON.stringify(out,null,2)+'\n');
+      console.log('Synced', dest, out);
+    "
 
 # Build PDF + HTML exports for the live site's Export menu.
 [script]
