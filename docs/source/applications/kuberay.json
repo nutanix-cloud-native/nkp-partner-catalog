@@ -1,0 +1,38 @@
+{
+  "name": "kuberay",
+  "version": "1.7.0",
+  "allVersions": [
+    "1.7.0"
+  ],
+  "displayName": "kuberay",
+  "description": "Kubernetes-native operator for managing RayCluster, RayJob, and RayService resources on NKP.",
+  "category": [
+    "model-development-and-training"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/kuberay.png",
+  "overview": "**Overview**\n\nKubeRay Operator installs and manages the Ray control plane on Kubernetes. It provides CRDs\nand controllers for `RayCluster`, `RayJob`, and `RayService`, enabling declarative lifecycle\nmanagement for distributed Ray workloads on NKP.\n\n**Key capabilities**\n\n- Declarative Ray lifecycle management through Kubernetes CRDs\n- Native support for Ray jobs, services, and autoscaling workflows\n- Production-ready reconciliation with retries via Flux and Helm\n- Namespace-isolated deployment in the `kuberay` namespace\n\n**Resources**\n\n[Documentation](https://docs.ray.io/en/latest/cluster/kubernetes/index.html) · [Project](https://github.com/ray-project/kuberay)\n",
+  "supportLink": "https://docs.ray.io/en/latest/index.html",
+  "dependencies": [],
+  "requiredDependencies": [],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.19.0",
+  "nkpRange": {
+    "raw": ">=2.19.0",
+    "min": "2.19",
+    "maxExclusive": "",
+    "label": "NKP 2.19+"
+  },
+  "type": "nkp-catalog",
+  "certifications": [],
+  "readme": "",
+  "catalogName": "AI Applications",
+  "catalogSlug": "ai",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+}

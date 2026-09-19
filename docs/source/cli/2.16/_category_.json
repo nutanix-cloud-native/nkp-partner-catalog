@@ -1,0 +1,10 @@
+{
+  "label": "2.16",
+  "position": 4,
+  "className": "hidden",
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "cli/2.16/index"
+  }
+}

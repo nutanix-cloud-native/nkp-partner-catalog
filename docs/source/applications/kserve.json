@@ -1,0 +1,44 @@
+{
+  "name": "kserve",
+  "version": "0.19.0",
+  "allVersions": [
+    "0.15.0",
+    "0.19.0"
+  ],
+  "displayName": "Kserve",
+  "description": "Highly scalable and standards based Model Inference Platform on Kubernetes for Trusted AI.",
+  "category": [
+    "inferencing-and-serving"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/kserve.svg",
+  "overview": "## For Information on Features\n- [Kserve](https://kserve.github.io/website/docs/intro)\n\n## Prerequisites and Configuration Guide\n### Before you begin, ensure that you have a NKP cluster running Kubernetes version >= 1.35\n### Kserve requires the following applications to be installed on the NKP cluster:\n- cert-manager >= v1.19.3\n- envoy-gateway v1.8.1",
+  "supportLink": "",
+  "dependencies": [
+    "cert-manager"
+  ],
+  "requiredDependencies": [],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.18.0",
+  "nkpRange": {
+    "raw": ">=2.18.0",
+    "min": "2.18",
+    "maxExclusive": "",
+    "label": "NKP 2.18+"
+  },
+  "type": "nkp-catalog",
+  "certifications": [
+    "nutanix-supported",
+    "airgapped"
+  ],
+  "readme": "",
+  "catalogName": "Nutanix Products",
+  "catalogSlug": "nutanix",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+}

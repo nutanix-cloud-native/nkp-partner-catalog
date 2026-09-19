@@ -2,19 +2,66 @@ set unstable
 # Docs recipes for nkp-partner-catalog.
 # docs/source and docs/site live on main; built output is published to gh-pages.
 
+# Default sibling-repo root (parent of nkp-partner-catalog checkout).
+# Expected siblings: nkp-ai-applications-catalog, nkp-nutanix-product-catalog.
+sibling_root := justfile_directory() + "/../.."
+
+# Crawl applications/ in the three catalog repos and refresh catalog-data.json,
+# per-app docs pages, and site/static/catalog-icons/. Pass a different org
+# checkout root if needed:
+#   just generate-catalog /other/root
+[script]
+generate-catalog root=sibling_root:
+    ROOT="{{ justfile_directory() }}"
+    cd "$ROOT/site"
+    if [ ! -d node_modules/js-yaml ]; then
+        npm ci --prefer-offline --ignore-scripts
+    fi
+    node scripts/generate-catalog.js \
+      --root "{{ root }}" \
+      -o "$ROOT/source/catalog-data.json"
+
+# Download released nkp CLIs and regenerate source/cli/<minor>/ from
+# `nkp help --output markdown --tree`. Versions: source/config.yaml → cliDocs.
+# Force re-download: NKP_CLI_FORCE_DOWNLOAD=1 just generate-cli-docs
+[script]
+generate-cli-docs:
+    ROOT="{{ justfile_directory() }}"
+    if [ ! -d "$ROOT/site/node_modules/js-yaml" ]; then
+        (cd "$ROOT/site" && npm ci --prefer-offline --ignore-scripts)
+    fi
+    node "$ROOT/scripts/generate-cli-docs.mjs"
+
 [script]
 _docs-prepare:
     ROOT="{{ justfile_directory() }}"
+    # source/schemas/v1 is authoritative; site/static/schemas/v1 is committed build output.
     mkdir -p "$ROOT/site/static/schemas/v1"
     rsync -a --delete "$ROOT/source/schemas/v1/" "$ROOT/site/static/schemas/v1/"
+    if [ -f "$ROOT/source/catalog-data.json" ]; then
+        cp "$ROOT/source/catalog-data.json" "$ROOT/site/static/catalog-data.json"
+    fi
     cd "$ROOT/site"
     npm ci --prefer-offline --ignore-scripts
+    # Sync applications NKP filter from source/config.yaml for the browser bundle.
+    node -e "
+      const fs=require('fs'),path=require('path'),yaml=require('js-yaml');
+      const root=path.resolve('..');
+      const cfg=yaml.load(fs.readFileSync(path.join(root,'source/config.yaml'),'utf8'))||{};
+      const a=cfg.applications;
+      if(!a||!a.nkpVersionFloor||!a.maxGaNkpVersion) throw new Error('config.yaml applications.nkpVersionFloor/maxGaNkpVersion required');
+      const out={nkpVersionFloor:String(a.nkpVersionFloor),maxGaNkpVersion:String(a.maxGaNkpVersion),knownNkpVersions:(a.knownNkpVersions||[]).map(String)};
+      const dest=path.join('src/data/nkp-version-config.json');
+      fs.mkdirSync(path.dirname(dest),{recursive:true});
+      fs.writeFileSync(dest, JSON.stringify(out,null,2)+'\n');
+      console.log('Synced', dest, out);
+    "
 
-# Build PDF + HTML exports into site/static/offline (and optionally docs/dist).
+# Build PDF + HTML exports for the live site's Export menu.
 [script]
 _docs-export:
     ROOT="{{ justfile_directory() }}"
-    mkdir -p "$ROOT/site/static/offline" "$ROOT/dist"
+    mkdir -p "$ROOT/site/static/offline"
     # Prefer an explicit CHROME_PATH; otherwise use Chrome.app (macOS) or chromium on PATH (CI/devbox).
     if [ -z "${CHROME_PATH:-}" ]; then
       if [ -x "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ]; then
@@ -28,9 +75,6 @@ _docs-export:
       fi
     fi
     node "$ROOT/scripts/build-exports.mjs" --out-dir "$ROOT/site/static/offline"
-    cp -f "$ROOT/site/static/offline/nkp-catalog-docs.pdf" \
-          "$ROOT/site/static/offline/nkp-catalog-docs.html" \
-          "$ROOT/dist/"
 
 # GitHub Pages build, including Export downloads under /offline/.
 [script]
@@ -45,11 +89,16 @@ docs-build base_url='/nkp-partner-catalog/': (_docs-prepare)
 docs-offline: (_docs-prepare)
     ROOT="{{ justfile_directory() }}"
     just --justfile "$ROOT/justfile" --working-directory "$ROOT" _docs-export
+    mkdir -p "$ROOT/dist"
+    cp -f "$ROOT/site/static/offline/nkp-catalog-docs.pdf" \
+          "$ROOT/site/static/offline/nkp-catalog-docs.html" \
+          "$ROOT/dist/"
     echo "Offline exports in $ROOT/dist and $ROOT/site/static/offline"
 
 [script]
 docs-local host='0.0.0.0' port='3000' base_url='/': (_docs-prepare)
     ROOT="{{ justfile_directory() }}"
+    just --justfile "$ROOT/justfile" --working-directory "$ROOT" _docs-export
     cd "$ROOT/site"
     BASE_URL="{{ base_url }}" npm run build
     BASE_URL="{{ base_url }}" npm run docusaurus -- serve --dir build --host "{{ host }}" --port "{{ port }}"

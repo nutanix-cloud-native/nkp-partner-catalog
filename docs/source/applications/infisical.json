@@ -1,0 +1,41 @@
+{
+  "name": "infisical",
+  "version": "0.2.1",
+  "allVersions": [
+    "0.2.1"
+  ],
+  "displayName": "Infisical",
+  "description": "Open-source secrets management: secrets, PKI certificates, and KMS keys for your applications and infrastructure.",
+  "category": [
+    "security"
+  ],
+  "licensing": [
+    "Enterprise",
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/infisical.svg",
+  "overview": "## Overview\n\nInfisical is an open-source secrets management platform for securely storing,\nsyncing, and managing application secrets, certificates (PKI), and encryption\nkeys (KMS) across your applications and infrastructure.\n\nDeployed from the NKP Partner Catalog, Infisical provisions its own PostgreSQL\ndatabase through the NKP CloudNativePG operator and runs entirely within your\ncluster, giving platform teams a self-hosted, Kubernetes-native secrets\nmanagement control plane.\n\n## Key Features\n\n- Centralized secrets management with versioning, audit logs, and granular RBAC.\n- Native Kubernetes integration to sync secrets into workloads.\n- Built-in PKI (internal certificate authority) and KMS (encryption keys).\n- Dynamic secrets and automatic secret rotation.\n- Database provisioned via the NKP CloudNativePG operator; override to an\n  external database when required.\n\n## Configuration\n\n- Override the site URL to use a custom domain. (e.g. `https://infisical.example.com`)\n- Override the ingress host to use a custom hostname (e.g. `infisical.example.com`).\n\nFollowing configuration is required to use a custom domain and hostname:\n\n```yaml\nconfig:\n  siteUrl: <custom-site-url>\ningress:\n  host: <custom-site-hostname>\n```\nSee [complete configuration reference](https://github.com/Infisical/infisical/blob/main/helm-charts/infisical-nkp/values.yaml) for more customizations.\n\n## More Information\n\n- **[Documentation](https://infisical.com/docs)**\n- **[GitHub](https://github.com/Infisical/infisical)**",
+  "supportLink": "https://infisical.com/docs",
+  "dependencies": [
+    "cloudnative-pg"
+  ],
+  "requiredDependencies": [],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.18",
+  "nkpRange": {
+    "raw": ">=2.18",
+    "min": "2.18",
+    "maxExclusive": "",
+    "label": "NKP 2.18+"
+  },
+  "type": "preferred-partner",
+  "certifications": [],
+  "readme": "",
+  "catalogName": "Partner Catalog",
+  "catalogSlug": "partner",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-partner-catalog"
+}

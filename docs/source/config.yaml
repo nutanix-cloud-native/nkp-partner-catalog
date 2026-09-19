@@ -1,0 +1,70 @@
+# Shared docs source configuration (human-edited).
+# Add new top-level sections here as other generators need them.
+
+# ---------------------------------------------------------------------------
+# applications — catalog browser NKP version filter (`just generate-catalog`)
+#
+# Controls the Applications page version dropdown and empty-metadata floor.
+# Synced to site/src/data/nkp-version-config.json at generate/prepare time.
+#
+# - nkpVersionFloor: empty nkpVersionSupport ⇒ this minor+ (not "any version")
+# - maxGaNkpVersion: highest MAJOR.MINOR shown in the dropdown (hide pre-GA)
+# - knownNkpVersions: fallback list if .release/stable.yaml is missing/unreadable
+# Override max at generate time: MAX_GA_NKP_VERSION=2.20 just generate-catalog
+# ---------------------------------------------------------------------------
+applications:
+  nkpVersionFloor: "2.16"
+  maxGaNkpVersion: "2.19"
+  knownNkpVersions:
+    - "2.16"
+    - "2.17"
+    - "2.18"
+    - "2.19"
+    - "2.20"
+
+# ---------------------------------------------------------------------------
+# cliDocs — NKP CLI reference generation (`just generate-cli-docs`)
+#
+# Downloads each `latest` tag from downloads.d2iq.com and writes
+# source/cli/<minor>/ from `nkp help --output markdown --tree`.
+#
+# - minor: URL path under /docs/cli/<minor>/ (MAJOR.MINOR)
+# - latest: download tag for https://downloads.d2iq.com/dkp/v<latest>/nkp_v<latest>_…
+# - unlisted: omit from the public version pills (still generated; direct URL works)
+# - label: optional dropdown/label override
+# - defaultMinor: latest GA shown by default
+#
+# Support window (public pills): prefer current GA + ~2 prior GA minors
+# (~1 year at ~3 releases/year). Mark pre-GA/dev as unlisted. When a minor
+# leaves the window, remove it from minors[] or set unlisted (prune first;
+# add an “Older” UI control only once public listed minors exceed ~4).
+# Cron regenerates whatever is listed here — shrinking the set is config-only.
+# ---------------------------------------------------------------------------
+cliDocs:
+  defaultMinor: "2.18"
+  minors:
+    - minor: "2.12"
+      latest: "2.12.2"
+
+    - minor: "2.13"
+      latest: "2.13.3"
+
+    - minor: "2.14"
+      latest: "2.14.3"
+
+    - minor: "2.15"
+      latest: "2.15.2"
+
+    - minor: "2.16"
+      latest: "2.16.1"
+
+    - minor: "2.17"
+      latest: "2.17.1"
+
+    - minor: "2.18"
+      latest: "2.18.0"
+
+    - minor: "2.19"
+      latest: "2.19.0-dev"
+      unlisted: true
+      label: "2.19 (dev)"

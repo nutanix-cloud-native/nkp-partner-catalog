@@ -1,0 +1,11 @@
+{
+  "nkpVersionFloor": "2.16",
+  "maxGaNkpVersion": "2.19",
+  "knownNkpVersions": [
+    "2.16",
+    "2.17",
+    "2.18",
+    "2.19",
+    "2.20"
+  ]
+}

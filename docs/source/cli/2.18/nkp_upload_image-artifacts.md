@@ -1,0 +1,78 @@
+---
+title: nkp upload image-artifacts
+sidebar_label: nkp upload image-artifacts
+sidebar_position: 10
+cli_generated: true
+unlisted: true
+hide_table_of_contents: true
+displayed_sidebar: tutorialSidebar
+nkp_minor: 2.18
+nkp_patch: 2.18.0
+nkp_command_id: nkp_upload_image-artifacts
+nkp_command_kind: leaf
+---
+
+<div class="cli-doc-ref" aria-hidden="true"></div>
+
+Upload image artifacts to remote hosts
+
+Upload artifacts to remote hosts
+
+### Options
+
+<dl class="cli-opts">
+<dt><code>--artifacts-directory</code> <span class="cli-opt__type">string</span></dt>
+<dd>Path to a directory containing the artifacts needed to build the OS image. Useful in an air-gapped environment</dd>
+<dt><code>--bastion-host</code> <span class="cli-opt__type">string</span></dt>
+<dd>IP or hostname for bastion</dd>
+<dt><code>--bastion-port</code> <span class="cli-opt__type">int</span> <span class="cli-opt__default">default <code>22</code></span></dt>
+<dd>SSH port of the bastion host</dd>
+<dt><code>--bastion-private-key-file</code></dt>
+<dd>file Path to a PEM encoded private key file to use to authenticate with the bastion host</dd>
+<dt><code>--bastion-username</code> <span class="cli-opt__type">string</span></dt>
+<dd>The username to connect to the bastion host</dd>
+<dt><code>--bundle</code> <span class="cli-opt__default">default <code>&#91;&#93;</code></span></dt>
+<dd>fileSlice Path to a container image bundle tarball to load in the OS image. Multiple bundles can be provided with a comma separated list. File must be a '.tar' format. Useful in an air-gapped environment</dd>
+<dt><code>--debug</code></dt>
+<dd>Run packer in debug mode. user will be prompted after each step while building the image.</dd>
+<dt><code>--dry-run</code></dt>
+<dd>Do not create artifacts, or delete them after creating. Recommended for tests.</dd>
+<dt><code>--extra-build-name</code> <span class="cli-opt__type">string</span></dt>
+<dd>Additional name to add in the OS image name</dd>
+<dt><code>--fips</code></dt>
+<dd>Enable FIPS support</dd>
+<dt><code>-h</code>, <code>--help</code></dt>
+<dd>help for image-artifacts</dd>
+<dt><code>--kubernetes-version</code> <span class="cli-opt__type">string</span> <span class="cli-opt__default">default <code>1.35.2</code></span></dt>
+<dd>Kubernetes version used to build packages</dd>
+<dt><code>--nvidia-runfile</code></dt>
+<dd>file path to NVIDIA runfile to to upload to remote hosts</dd>
+<dt><code>--overrides</code> <span class="cli-opt__default">default <code>&#91;&#93;</code></span></dt>
+<dd>fileSlice A comma separated list of override YAML files.</dd>
+<dt><code>--provider</code> <span class="cli-opt__type">string</span></dt>
+<dd>An optional provider hint when installing provider specific utilities.</dd>
+<dt><code>--ssh-host</code> <span class="cli-opt__type">strings</span> <span class="cli-opt__default">default <code>&#91;&#93;</code></span></dt>
+<dd>IP or hostname of the remote host(s). A comma separated list can be provided for multiple hosts.</dd>
+<dt><code>--ssh-password</code> <span class="cli-opt__type">string</span></dt>
+<dd>Password to use for SSH authentication (not recommended)</dd>
+<dt><code>--ssh-port</code> <span class="cli-opt__type">int</span> <span class="cli-opt__default">default <code>22</code></span></dt>
+<dd>SSH port of the remote host</dd>
+<dt><code>--ssh-private-key-file</code></dt>
+<dd>file Path to a PEM encoded private key file to use to authenticate with the remote host</dd>
+<dt><code>--ssh-username</code> <span class="cli-opt__type">string</span></dt>
+<dd>The username to connect to the remote host</dd>
+<dt><code>-v</code>, <code>--verbose</code> <span class="cli-opt__type">int</span></dt>
+<dd>Output verbosity</dd>
+<dt><code>--work-directory</code> <span class="cli-opt__type">string</span></dt>
+<dd>Path to a directory to use as a workspace to build the OS image. The directory must already exist.</dd>
+</dl>
+
+### Usage
+
+```bash
+nkp upload image-artifacts [flags]
+```
+
+### Parent command
+
+* [nkp upload](nkp_upload.md) — Upload image artifacts to remote hosts

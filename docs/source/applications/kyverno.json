@@ -1,0 +1,39 @@
+{
+  "name": "kyverno",
+  "version": "1.18.0",
+  "allVersions": [
+    "1.18.0"
+  ],
+  "displayName": "Nirmata Enterprise for Kyverno (N4K)",
+  "description": "Kubernetes Native Policy Management",
+  "category": [
+    "security"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate",
+    "Enterprise"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/kyverno.svg",
+  "overview": "## Overview\n\nNirmata Enterprise for Kyverno (N4K) is the commercial distribution of Kyverno, the Kubernetes-native policy engine, supported by Nirmata, the creators of Kyverno. N4K provides policy-as-code enforcement for validation, mutation, image verification, and resource generation directly as Kubernetes resources, with no new language to learn.\n\n## Highlights\n\n- **Kubernetes Native Policy Management:** Define policies as Kubernetes resources; no new query language required.\n- **Admission, Background, Cleanup, and Reports Controllers:** Enforce policy at admission time, reconcile existing resources in the background, clean up expired resources, and generate policy compliance reports.\n- **Validating, Mutating, and Generating Policies:** Validate, mutate, and generate Kubernetes resources based on custom rules.\n- **Image Verification:** Verify container image signatures and attestations as part of the software supply chain.\n- **Enterprise Support:** Backed by Nirmata's Enterprise Software License Agreement (EULA) and support.\n\n## Getting Started\n\nAccess to N4K images requires a Nirmata support entitlement. Contact **support@nirmata.com** to obtain image registry credentials, then supply an `imagePullSecrets` override before installing.\nNirmata Enterprise Kyverno (N4K) runs in one of two modes: a free tier available to everyone, and a commercial license issued by Nirmata.\n\nFree tier needs no license file. It is limited to 10 policies and 10 node units, with a 15-day trial window measured from the moment N4K first starts in a cluster. A node unit is ceil(node_memory_GiB / 33), summed across the cluster.\n\nA commercial license raises those limits to whatever your agreement covers and removes the trial window. Nirmata issues it as a signed file, which you install through Helm:\n\nyaml\nlicense:\n  create: true\n  value: |\n    <contents of license.lic>\n\nor by pointing license.existingSecret at a Secret that already holds it. Verification is fully offline — N4K never calls home, and no network access to Nirmata is required at any point.\n\nEnforcement is graduated, not a hard cut-off. As a cluster approaches its entitlement, N4K warns: at 90% of a capacity limit, and 30 days before a license expires. Warnings surface in logs, Kubernetes events, and Prometheus metrics. If a licensed limit is exceeded or a license lapses, N4K enters a 30-day grace period during which all functionality is preserved — nothing stops working while you renew. Only after grace elapses does N4K decline to create additional policies.\n\nWhat is never affected: policy enforcement itself. Validation, mutation, and generation of your workloads continue regardless of license state, and policies already installed keep enforcing. Licensing only ever limits how many new policies can be created. If the license Secret is removed, N4K keeps running and falls back to the free tier.\n\nReview the **[Nirmata Enterprise Software License Agreement (EULA)](https://nirmata.com/eula/)** before deploying.\n\n## Resources\n\n- [Kyverno Documentation](https://kyverno.io/docs)\n- [Nirmata Kyverno Charts](https://nirmata.github.io/kyverno-charts/)",
+  "supportLink": "https://kyverno.io/docs",
+  "dependencies": [],
+  "requiredDependencies": [],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.17",
+  "nkpRange": {
+    "raw": ">=2.17",
+    "min": "2.17",
+    "maxExclusive": "",
+    "label": "NKP 2.17+"
+  },
+  "type": "preferred-partner",
+  "certifications": [],
+  "readme": "",
+  "catalogName": "Partner Catalog",
+  "catalogSlug": "partner",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-partner-catalog"
+}

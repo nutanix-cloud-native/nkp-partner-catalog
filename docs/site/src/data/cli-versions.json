@@ -1,0 +1,70 @@
+{
+  "defaultMinor": "2.18",
+  "minors": [
+    {
+      "minor": "2.12",
+      "latest": "2.12.2",
+      "patches": [
+        "2.12.2"
+      ],
+      "unlisted": false
+    },
+    {
+      "minor": "2.13",
+      "latest": "2.13.3",
+      "patches": [
+        "2.13.3"
+      ],
+      "unlisted": false
+    },
+    {
+      "minor": "2.14",
+      "latest": "2.14.3",
+      "patches": [
+        "2.14.3"
+      ],
+      "unlisted": false
+    },
+    {
+      "minor": "2.15",
+      "latest": "2.15.2",
+      "patches": [
+        "2.15.2"
+      ],
+      "unlisted": false
+    },
+    {
+      "minor": "2.16",
+      "latest": "2.16.1",
+      "patches": [
+        "2.16.1"
+      ],
+      "unlisted": false
+    },
+    {
+      "minor": "2.17",
+      "latest": "2.17.1",
+      "patches": [
+        "2.17.1"
+      ],
+      "unlisted": false
+    },
+    {
+      "minor": "2.18",
+      "latest": "2.18.0",
+      "patches": [
+        "2.18.0"
+      ],
+      "unlisted": false
+    },
+    {
+      "minor": "2.19",
+      "latest": "2.19.0-dev",
+      "patches": [
+        "2.19.0-dev"
+      ],
+      "unlisted": true,
+      "label": "2.19 (dev)"
+    }
+  ]
+}

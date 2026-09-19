@@ -1,0 +1,44 @@
+{
+  "name": "kubeflow-central-dashboard",
+  "version": "1.10.0",
+  "allVersions": [
+    "1.10.0"
+  ],
+  "displayName": "Kubeflow Central Dashboard",
+  "description": "Single UI for Pipelines and other Kubeflow components. Enable Kubeflow Platform first for SSO.",
+  "category": [
+    "model-development-and-training"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace",
+    "project"
+  ],
+  "icon": "/catalog-icons/kubeflow-central-dashboard.png",
+  "overview": "**What it is** — Kubeflow Central Dashboard is the home page for Kubeflow\ncomponent UIs. Login and routing come from **Kubeflow Platform**\n\n**Highlights**\n- Single UI for discovering enabled Kubeflow components\n- Baked VirtualService sends `/` through Platform's oauth2-proxy\n- Tunable resources/replicas/scheduling via `configOverrides` (Helm-chart backed)\n\n**Prerequisites**\n- **Kubeflow Platform** (required) — enable it with\n  `config.kubeflowIngressHost` first. Without Platform there is no SSO\n  entry point; baked routes expect `oauth2-proxy`.\n- **istio-helm** (required) — VirtualService / AuthorizationPolicy.\n- **Namespace** — Workloads land in `kubeflow-central-dashboard`\n\n**Access** — Open the Platform LoadBalancer URL at `/` (the same host as\nPipelines at `/pipeline/`). Do not port-forward `svc/centraldashboard`:\nthat skips oauth2-proxy, so the dashboard has no `kubeflow-userid`.\n\n**Documentation:** [Kubeflow Central Dashboard](https://www.kubeflow.org/docs/components/central-dash/) | **Project:** [kubeflow/manifests](https://github.com/kubeflow/manifests)\n",
+  "supportLink": "https://www.kubeflow.org/docs/components/central-dash/",
+  "dependencies": [],
+  "requiredDependencies": [
+    "istio-helm",
+    "kubeflow-platform"
+  ],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.18.0",
+  "nkpRange": {
+    "raw": ">=2.18.0",
+    "min": "2.18",
+    "maxExclusive": "",
+    "label": "NKP 2.18+"
+  },
+  "type": "nkp-catalog",
+  "certifications": [
+    "qualified"
+  ],
+  "readme": "",
+  "catalogName": "AI Applications",
+  "catalogSlug": "ai",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog"
+}

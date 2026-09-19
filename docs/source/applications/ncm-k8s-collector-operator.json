@@ -1,0 +1,41 @@
+{
+  "name": "ncm-k8s-collector-operator",
+  "version": "1.0.0",
+  "allVersions": [
+    "1.0.0"
+  ],
+  "displayName": "NCM k8s Collector Operator",
+  "description": "Unified Multi-Cluster Telemetry Operator. Reconciles telemetry.platform/v1 TelemetryIntent custom resources into merged OpenTelemetry Collector configs and deploys a single set of collectors per managed k8s cluster.",
+  "category": [
+    "observability"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "",
+  "overview": "## Overview\nUnified Multi-Cluster Telemetry Operator is a single collector operator that\nlets multiple clients declare the telemetry they want via a\n`telemetryintents.telemetry.nutanix.com` `TelemetryIntent` CR. It:\n\n- Merges every intent in a workspace into two OpenTelemetry Collector configs\n  per cluster (a per-node DaemonSet config and a cluster-singleton Deployment\n  config) using an embedded, version-pinned catalog.\n- Deploys one collector App per workspace on the management cluster and every\n  attached workload cluster, plus any cluster attached in the future, with no\n  human action.\n\nDeleting every intent triggers a clean tear-down of the collectors across all\nclusters, driven by a finalizer on each `TelemetryIntent`.",
+  "supportLink": "",
+  "dependencies": [],
+  "requiredDependencies": [],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": "",
+  "nkpRange": {
+    "raw": "",
+    "min": "2.16",
+    "maxExclusive": "",
+    "label": "NKP 2.16+"
+  },
+  "type": "internal",
+  "certifications": [
+    "nutanix-supported",
+    "airgapped"
+  ],
+  "readme": "",
+  "catalogName": "Nutanix Products",
+  "catalogSlug": "nutanix",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+}

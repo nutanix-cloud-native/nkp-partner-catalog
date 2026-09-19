@@ -1,0 +1,40 @@
+{
+  "name": "kasm",
+  "version": "1.1181.0",
+  "allVersions": [
+    "1.1181.0"
+  ],
+  "displayName": "Kasm",
+  "description": "Stream your workspace directly to your web browser on any device and from any location.",
+  "category": [
+    "virtual-desktop",
+    "infrastructure"
+  ],
+  "licensing": [
+    "Enterprise",
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/kasm.svg",
+  "overview": "## Overview\n\nKasm Workspaces provides secure, containerized, and browser-accessible workspaces for a variety of applications. It delivers isolated and secure environments that can be accessed via web browsers, eliminating the need for local installations and enhancing security by keeping sensitive data within your infrastructure. Kasm is ideal for providing VDI, remote browser access, and secure access to development environments.\n\nThe Kasm Helm chart simplifies the deployment of a Kasm Workspaces instance on Kubernetes, enabling rapid deployment and management of your virtual workspace infrastructure.\n\n## Highlights\n\n- **Browser-Based Access:** Access workspaces from any modern web browser, regardless of the user's operating system.\n- **Containerized Environments:** Provides isolated and secure workspaces using Docker containers.\n- **Centralized Management:** Manage and scale your workspace infrastructure from a single control plane.\n- **Enhanced Security:** Keep sensitive data within your infrastructure and leverage Kasm's security features.\n- **Simplified Deployment:** Deploy Kasm Workspaces on Kubernetes with a single Helm chart.\n\n## Getting Started\n\nSet the required values before deploying. **`publicAddr` must be updated to your actual FQDN before enabling:**\n```yaml\npublicAddr: \"<kasm.example.com>\"\ncertificate:\n  secretName: \"<kasm-tls-secret>\"\n  certManager:\n    enabled: true\n    addWildCard: true\n    issuerName: \"<issuerName>\"\n    issuerKind: \"<issuerKind>\"\n    issuerGroup: \"cert-manager.io\"\nproxyService:\n  type: ClusterIP\ningress:\n  enabled: true\n```\nNKP comes with CertManager but the values for `issuerName`, `issuerKind` needs to be populated.\n\nFor more configuration options, checkout [Kasm Helm Github](https://github.com/kasmtech/kasm-helm/blob/release/1.18.1/charts/kasm/values.yaml).\n\n## Post-Deployment\n\nOnce deployed, ensure your DNS is pointed to the cluster ingress and access Kasm at `https://<publicAddr>`.\n\nTo retrieve credentials, run:\n```bash\nNS=$(kubectl get helmrelease -A | grep kasm | awk '{print $1}') && \\\nRELEASE=$(kubectl get helmrelease -A | grep kasm | awk '{print $1\"-\"$2}') && \\\nkubectl get secret -n $NS -l \"owner=helm,name=$RELEASE,status=deployed\" -o jsonpath='{.items[0].data.release}' | base64 -d | base64 -d | gunzip | python3 -c \"import sys,json; print(json.load(sys.stdin)['info']['notes'])\"\n```\n\nA Kasm Agent is required to start a Kasm session. The agent must be installed separately on a dedicated VM. Refer to the [Kasm Agent Installation Guide](https://docs.kasm.com/docs/1.18.1/install/multi_server_install#install-agent-server-roles) for setup instructions.\n\n## Resources\n\n- [Kasm Workspaces Documentation](https://docs.kasm.com/)\n- [Kasm Helm Github](https://github.com/kasmtech/kasm-helm/tree/release/1.18.1)",
+  "supportLink": "https://docs.kasmweb.com/",
+  "dependencies": [],
+  "requiredDependencies": [],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": "",
+  "nkpRange": {
+    "raw": "",
+    "min": "2.16",
+    "maxExclusive": "",
+    "label": "NKP 2.16+"
+  },
+  "type": "preferred-partner",
+  "certifications": [],
+  "readme": "",
+  "catalogName": "Partner Catalog",
+  "catalogSlug": "partner",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-partner-catalog"
+}

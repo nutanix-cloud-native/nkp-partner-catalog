@@ -151,11 +151,14 @@ function listDocFiles(dir) {
     if (ent.name === 'schemas') continue;
     const full = path.join(dir, ent.name);
     if (ent.isDirectory()) {
+      // Per-version nkp help dumps are large; the CLI landing page is enough offline.
+      if (path.basename(dir) === 'cli' && /^\d+\.\d+/.test(ent.name)) continue;
       dirs.push(listDocFiles(full));
     } else if (/\.mdx?$/.test(ent.name)) {
       const raw = fs.readFileSync(full, 'utf8');
       const { data, body } = readFrontMatter(raw);
-      if (data.internal === true || data.draft === true) continue;
+      if (data.internal === true || data.draft === true || data.unlisted === true) continue;
+      if (data.cli_generated === true) continue;
       const title =
         data.title ||
         data.sidebar_label ||
@@ -186,13 +189,15 @@ function collectDocs() {
   const categories = [];
   for (const ent of fs.readdirSync(SOURCE_ROOT, { withFileTypes: true })) {
     if (ent.name.startsWith('.') || ent.name === 'schemas') continue;
+    // Application pages are generated SPA shells and do not contain useful offline content.
+    if (ent.name === 'applications') continue;
     const full = path.join(SOURCE_ROOT, ent.name);
     if (ent.isDirectory()) {
       categories.push(listDocFiles(full));
     } else if (/\.mdx?$/.test(ent.name)) {
       const raw = fs.readFileSync(full, 'utf8');
       const { data, body } = readFrontMatter(raw);
-      if (data.internal === true) continue;
+      if (data.internal === true || data.draft === true || data.unlisted === true) continue;
       rootFiles.push({
         type: 'doc',
         file: full,

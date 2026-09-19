@@ -1,0 +1,43 @@
+{
+  "name": "envoy-gateway",
+  "version": "1.6.3",
+  "allVersions": [
+    "1.5.0",
+    "1.6.3"
+  ],
+  "displayName": "Envoy Gateway",
+  "description": "Envoy Gateway is a Kubernetes-native API Gateway and reverse proxy control plane.",
+  "category": [
+    "inferencing-and-serving"
+  ],
+  "licensing": [
+    "Pro",
+    "Ultimate"
+  ],
+  "scope": [
+    "workspace"
+  ],
+  "icon": "/catalog-icons/envoy-gateway.svg",
+  "overview": "## For Information on Features\n- [Envoy Gateway](https://gateway.envoyproxy.io/v1.5/concepts/)\n\n## Prerequisites and Configuration Guide\n### Before you begin, ensure that you have a NKP cluster running Kubernetes version >= 1.33\n### Envoy Gateway requires the following applications to be installed on the NKP cluster:\n- cert-manager >= v1.17.2",
+  "supportLink": "",
+  "dependencies": [
+    "cert-manager"
+  ],
+  "requiredDependencies": [],
+  "allowMultipleInstances": false,
+  "nkpVersionSupport": ">=2.16.0",
+  "nkpRange": {
+    "raw": ">=2.16.0",
+    "min": "2.16",
+    "maxExclusive": "",
+    "label": "NKP 2.16+"
+  },
+  "type": "nkp-catalog",
+  "certifications": [
+    "airgapped"
+  ],
+  "readme": "",
+  "catalogName": "Nutanix Products",
+  "catalogSlug": "nutanix",
+  "catalogRepo": "https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog"
+}

@@ -1,0 +1,2275 @@
+{
+  "minor": "2.18",
+  "patch": "2.18.0",
+  "unlisted": false,
+  "commands": [
+    {
+      "id": "nkp",
+      "command": "nkp",
+      "title": "nkp",
+      "summary": "",
+      "file": "index.md",
+      "slug": "",
+      "parentId": null,
+      "depth": 0,
+      "segments": [
+        "nkp"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_attach",
+      "command": "nkp attach",
+      "title": "nkp attach",
+      "summary": "Attach one of [cluster]",
+      "file": "nkp_attach.md",
+      "slug": "nkp_attach",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "attach"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_attach_cluster",
+      "command": "nkp attach cluster",
+      "title": "nkp attach cluster",
+      "summary": "Attach a cluster",
+      "file": "nkp_attach_cluster.md",
+      "slug": "nkp_attach_cluster",
+      "parentId": "nkp_attach",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "attach",
+        "cluster"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_check",
+      "command": "nkp check",
+      "title": "nkp check",
+      "summary": "Check, one of [cluster]",
+      "file": "nkp_check.md",
+      "slug": "nkp_check",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "check"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_check_cluster",
+      "command": "nkp check cluster",
+      "title": "nkp check cluster",
+      "summary": "Check a cluster, one of [fips]",
+      "file": "nkp_check_cluster.md",
+      "slug": "nkp_check_cluster",
+      "parentId": "nkp_check",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "check",
+        "cluster"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_check_cluster_fips",
+      "command": "nkp check cluster fips",
+      "title": "nkp check cluster fips",
+      "summary": "Validate the components in your cluster are FIPS compliant",
+      "file": "nkp_check_cluster_fips.md",
+      "slug": "nkp_check_cluster_fips",
+      "parentId": "nkp_check_cluster",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "check",
+        "cluster",
+        "fips"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_cluster",
+      "command": "nkp cluster",
+      "title": "nkp cluster",
+      "summary": "Get cluster information",
+      "file": "nkp_cluster.md",
+      "slug": "nkp_cluster",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "cluster"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_cluster_type",
+      "command": "nkp cluster type",
+      "title": "nkp cluster type",
+      "summary": "Retrieve cluster type",
+      "file": "nkp_cluster_type.md",
+      "slug": "nkp_cluster_type",
+      "parentId": "nkp_cluster",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "cluster",
+        "type"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_completion",
+      "command": "nkp completion",
+      "title": "nkp completion",
+      "summary": "Generate the autocompletion script for the specified shell",
+      "file": "nkp_completion.md",
+      "slug": "nkp_completion",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "completion"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_completion_bash",
+      "command": "nkp completion bash",
+      "title": "nkp completion bash",
+      "summary": "Generate the autocompletion script for bash",
+      "file": "nkp_completion_bash.md",
+      "slug": "nkp_completion_bash",
+      "parentId": "nkp_completion",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "completion",
+        "bash"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_completion_fish",
+      "command": "nkp completion fish",
+      "title": "nkp completion fish",
+      "summary": "Generate the autocompletion script for fish",
+      "file": "nkp_completion_fish.md",
+      "slug": "nkp_completion_fish",
+      "parentId": "nkp_completion",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "completion",
+        "fish"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_completion_powershell",
+      "command": "nkp completion powershell",
+      "title": "nkp completion powershell",
+      "summary": "Generate the autocompletion script for powershell",
+      "file": "nkp_completion_powershell.md",
+      "slug": "nkp_completion_powershell",
+      "parentId": "nkp_completion",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "completion",
+        "powershell"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_completion_zsh",
+      "command": "nkp completion zsh",
+      "title": "nkp completion zsh",
+      "summary": "Generate the autocompletion script for zsh",
+      "file": "nkp_completion_zsh.md",
+      "slug": "nkp_completion_zsh",
+      "parentId": "nkp_completion",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "completion",
+        "zsh"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_config",
+      "command": "nkp config",
+      "title": "nkp config",
+      "summary": "Manage Kommander configuration",
+      "file": "nkp_config.md",
+      "slug": "nkp_config",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "config"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_config_get",
+      "command": "nkp config get",
+      "title": "nkp config get",
+      "summary": "Retrieve Kommander configuration",
+      "file": "nkp_config_get.md",
+      "slug": "nkp_config_get",
+      "parentId": "nkp_config",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "config",
+        "get"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_config_get_default-workspace",
+      "command": "nkp config get default-workspace",
+      "title": "nkp config get default-workspace",
+      "summary": "Displays the name of the configured default Workspace",
+      "file": "nkp_config_get_default-workspace.md",
+      "slug": "nkp_config_get_default-workspace",
+      "parentId": "nkp_config_get",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "config",
+        "get",
+        "default-workspace"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_config_set",
+      "command": "nkp config set",
+      "title": "nkp config set",
+      "summary": "Modify Kommander configuration",
+      "file": "nkp_config_set.md",
+      "slug": "nkp_config_set",
+      "parentId": "nkp_config",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "config",
+        "set"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_config_set_default-workspace",
+      "command": "nkp config set default-workspace",
+      "title": "nkp config set default-workspace",
+      "summary": "Set the name of the default Workspace to use in all commands when none is provided",
+      "file": "nkp_config_set_default-workspace.md",
+      "slug": "nkp_config_set_default-workspace",
+      "parentId": "nkp_config_set",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "config",
+        "set",
+        "default-workspace"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create",
+      "command": "nkp create",
+      "title": "nkp create",
+      "summary": "Create one of [appdeployment, bootstrap, bundle, capi-components, catalog-application, catalog-bundle, cluster, image, image-bundle, metadata, nodepool, package-bundle, project, workspace]",
+      "file": "nkp_create.md",
+      "slug": "nkp_create",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "create"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_create_appdeployment",
+      "command": "nkp create appdeployment",
+      "title": "nkp create appdeployment",
+      "summary": "Create an AppDeployment",
+      "file": "nkp_create_appdeployment.md",
+      "slug": "nkp_create_appdeployment",
+      "parentId": "nkp_create",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "create",
+        "appdeployment"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_bootstrap",
+      "command": "nkp create bootstrap",
+      "title": "nkp create bootstrap",
+      "summary": "Create bootstrap cluster",
+      "file": "nkp_create_bootstrap.md",
+      "slug": "nkp_create_bootstrap",
+      "parentId": "nkp_create",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "create",
+        "bootstrap"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_bundle",
+      "command": "nkp create bundle",
+      "title": "nkp create bundle",
+      "summary": "Create a bundle containing container images and/or Helm charts",
+      "file": "nkp_create_bundle.md",
+      "slug": "nkp_create_bundle",
+      "parentId": "nkp_create",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "create",
+        "bundle"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_capi-components",
+      "command": "nkp create capi-components",
+      "title": "nkp create capi-components",
+      "summary": "Create the CAPI components in the cluster",
+      "file": "nkp_create_capi-components.md",
+      "slug": "nkp_create_capi-components",
+      "parentId": "nkp_create",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "create",
+        "capi-components"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_catalog-application",
+      "command": "nkp create catalog-application",
+      "title": "nkp create catalog-application",
+      "summary": "Create a catalog application or collection in project or workspace namespace",
+      "file": "nkp_create_catalog-application.md",
+      "slug": "nkp_create_catalog-application",
+      "parentId": "nkp_create",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "create",
+        "catalog-application"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_catalog-bundle",
+      "command": "nkp create catalog-bundle",
+      "title": "nkp create catalog-bundle",
+      "summary": "Bundle up the catalog application(s) including container images & any OCI artifacts",
+      "file": "nkp_create_catalog-bundle.md",
+      "slug": "nkp_create_catalog-bundle",
+      "parentId": "nkp_create",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "create",
+        "catalog-bundle"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_cluster",
+      "command": "nkp create cluster",
+      "title": "nkp create cluster",
+      "summary": "Create a Kubernetes cluster, one of [aks, aws, azure, eks, gcp, nutanix, preprovisioned, vsphere]",
+      "file": "nkp_create_cluster.md",
+      "slug": "nkp_create_cluster",
+      "parentId": "nkp_create",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "create",
+        "cluster"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_create_cluster_aks",
+      "command": "nkp create cluster aks",
+      "title": "nkp create cluster aks",
+      "summary": "Create a Konvoy cluster in AKS",
+      "file": "nkp_create_cluster_aks.md",
+      "slug": "nkp_create_cluster_aks",
+      "parentId": "nkp_create_cluster",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "cluster",
+        "aks"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_cluster_aws",
+      "command": "nkp create cluster aws",
+      "title": "nkp create cluster aws",
+      "summary": "Create a Konvoy cluster in AWS",
+      "file": "nkp_create_cluster_aws.md",
+      "slug": "nkp_create_cluster_aws",
+      "parentId": "nkp_create_cluster",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "cluster",
+        "aws"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_cluster_azure",
+      "command": "nkp create cluster azure",
+      "title": "nkp create cluster azure",
+      "summary": "Create a Konvoy cluster in Azure",
+      "file": "nkp_create_cluster_azure.md",
+      "slug": "nkp_create_cluster_azure",
+      "parentId": "nkp_create_cluster",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "cluster",
+        "azure"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_cluster_eks",
+      "command": "nkp create cluster eks",
+      "title": "nkp create cluster eks",
+      "summary": "Create a Konvoy cluster in EKS",
+      "file": "nkp_create_cluster_eks.md",
+      "slug": "nkp_create_cluster_eks",
+      "parentId": "nkp_create_cluster",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "cluster",
+        "eks"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_cluster_gcp",
+      "command": "nkp create cluster gcp",
+      "title": "nkp create cluster gcp",
+      "summary": "Create a Konvoy cluster in GCP",
+      "file": "nkp_create_cluster_gcp.md",
+      "slug": "nkp_create_cluster_gcp",
+      "parentId": "nkp_create_cluster",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "cluster",
+        "gcp"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_cluster_nutanix",
+      "command": "nkp create cluster nutanix",
+      "title": "nkp create cluster nutanix",
+      "summary": "Create a Konvoy cluster in Nutanix",
+      "file": "nkp_create_cluster_nutanix.md",
+      "slug": "nkp_create_cluster_nutanix",
+      "parentId": "nkp_create_cluster",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "cluster",
+        "nutanix"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_cluster_preprovisioned",
+      "command": "nkp create cluster preprovisioned",
+      "title": "nkp create cluster preprovisioned",
+      "summary": "Create a Konvoy cluster on pre-provisioned infrastructure",
+      "file": "nkp_create_cluster_preprovisioned.md",
+      "slug": "nkp_create_cluster_preprovisioned",
+      "parentId": "nkp_create_cluster",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "cluster",
+        "preprovisioned"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_cluster_vsphere",
+      "command": "nkp create cluster vsphere",
+      "title": "nkp create cluster vsphere",
+      "summary": "Create a Konvoy cluster in vSphere",
+      "file": "nkp_create_cluster_vsphere.md",
+      "slug": "nkp_create_cluster_vsphere",
+      "parentId": "nkp_create_cluster",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "cluster",
+        "vsphere"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_image",
+      "command": "nkp create image",
+      "title": "nkp create image",
+      "summary": "Create Operating System image for one of [aws, azure, gcp, nutanix, preprovisioned, vsphere]",
+      "file": "nkp_create_image.md",
+      "slug": "nkp_create_image",
+      "parentId": "nkp_create",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "create",
+        "image"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_create_image_aws",
+      "command": "nkp create image aws",
+      "title": "nkp create image aws",
+      "summary": "Create Amazon Machine Image(AMI) for one of [flatcar, oracle-8.9, rhel-8.10, rhel-9.6, rocky-9.7, ubuntu-22.04, ubuntu-24.04]",
+      "file": "nkp_create_image_aws.md",
+      "slug": "nkp_create_image_aws",
+      "parentId": "nkp_create_image",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "image",
+        "aws"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_image_azure",
+      "command": "nkp create image azure",
+      "title": "nkp create image azure",
+      "summary": "Create Azure Image for one of [rhel-9.6, rocky-9, ubuntu-22.04, ubuntu-24.04]",
+      "file": "nkp_create_image_azure.md",
+      "slug": "nkp_create_image_azure",
+      "parentId": "nkp_create_image",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "image",
+        "azure"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_image_gcp",
+      "command": "nkp create image gcp",
+      "title": "nkp create image gcp",
+      "summary": "Create Google Cloud Platform Image for one of [ubuntu-22.04, ubuntu-24.04]",
+      "file": "nkp_create_image_gcp.md",
+      "slug": "nkp_create_image_gcp",
+      "parentId": "nkp_create_image",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "image",
+        "gcp"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_image_nutanix",
+      "command": "nkp create image nutanix",
+      "title": "nkp create image nutanix",
+      "summary": "Create Nutanix Machine Image for one of [rhel-8.10, rhel-9.6, rocky-9.7, ubuntu-22.04, ubuntu-24.04]",
+      "file": "nkp_create_image_nutanix.md",
+      "slug": "nkp_create_image_nutanix",
+      "parentId": "nkp_create_image",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "image",
+        "nutanix"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_image_preprovisioned",
+      "command": "nkp create image preprovisioned",
+      "title": "nkp create image preprovisioned",
+      "summary": "Configuring an existing remote host",
+      "file": "nkp_create_image_preprovisioned.md",
+      "slug": "nkp_create_image_preprovisioned",
+      "parentId": "nkp_create_image",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "image",
+        "preprovisioned"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_image_vsphere",
+      "command": "nkp create image vsphere",
+      "title": "nkp create image vsphere",
+      "summary": "Create Vsphere VM template for one of [flatcar, oracle-9.4, rhel-8.10, rhel-9.6, rocky-9.7, ubuntu-22.04, ubuntu-24.04]",
+      "file": "nkp_create_image_vsphere.md",
+      "slug": "nkp_create_image_vsphere",
+      "parentId": "nkp_create_image",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "image",
+        "vsphere"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_metadata",
+      "command": "nkp create metadata",
+      "title": "nkp create metadata",
+      "summary": "Create a infrastructure metadata, one of [nutanix]",
+      "file": "nkp_create_metadata.md",
+      "slug": "nkp_create_metadata",
+      "parentId": "nkp_create",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "create",
+        "metadata"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_create_metadata_nutanix",
+      "command": "nkp create metadata nutanix",
+      "title": "nkp create metadata nutanix",
+      "summary": "Creates nutanix metadata",
+      "file": "nkp_create_metadata_nutanix.md",
+      "slug": "nkp_create_metadata_nutanix",
+      "parentId": "nkp_create_metadata",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "metadata",
+        "nutanix"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_nodepool",
+      "command": "nkp create nodepool",
+      "title": "nkp create nodepool",
+      "summary": "Create a nodepool, one of [aks, aws, azure, eks, gcp, nutanix, preprovisioned, vsphere]",
+      "file": "nkp_create_nodepool.md",
+      "slug": "nkp_create_nodepool",
+      "parentId": "nkp_create",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "create",
+        "nodepool"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_create_nodepool_aks",
+      "command": "nkp create nodepool aks",
+      "title": "nkp create nodepool aks",
+      "summary": "Create a nodepool in AKS.",
+      "file": "nkp_create_nodepool_aks.md",
+      "slug": "nkp_create_nodepool_aks",
+      "parentId": "nkp_create_nodepool",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "nodepool",
+        "aks"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_nodepool_aws",
+      "command": "nkp create nodepool aws",
+      "title": "nkp create nodepool aws",
+      "summary": "Create a nodepool in AWS.",
+      "file": "nkp_create_nodepool_aws.md",
+      "slug": "nkp_create_nodepool_aws",
+      "parentId": "nkp_create_nodepool",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "nodepool",
+        "aws"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_nodepool_azure",
+      "command": "nkp create nodepool azure",
+      "title": "nkp create nodepool azure",
+      "summary": "Create a nodepool in Azure.",
+      "file": "nkp_create_nodepool_azure.md",
+      "slug": "nkp_create_nodepool_azure",
+      "parentId": "nkp_create_nodepool",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "nodepool",
+        "azure"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_nodepool_eks",
+      "command": "nkp create nodepool eks",
+      "title": "nkp create nodepool eks",
+      "summary": "Create a nodepool in EKS.",
+      "file": "nkp_create_nodepool_eks.md",
+      "slug": "nkp_create_nodepool_eks",
+      "parentId": "nkp_create_nodepool",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "nodepool",
+        "eks"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_nodepool_gcp",
+      "command": "nkp create nodepool gcp",
+      "title": "nkp create nodepool gcp",
+      "summary": "Create a nodepool in GCP.",
+      "file": "nkp_create_nodepool_gcp.md",
+      "slug": "nkp_create_nodepool_gcp",
+      "parentId": "nkp_create_nodepool",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "nodepool",
+        "gcp"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_nodepool_nutanix",
+      "command": "nkp create nodepool nutanix",
+      "title": "nkp create nodepool nutanix",
+      "summary": "Create a nodepool in Nutanix.",
+      "file": "nkp_create_nodepool_nutanix.md",
+      "slug": "nkp_create_nodepool_nutanix",
+      "parentId": "nkp_create_nodepool",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "nodepool",
+        "nutanix"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_nodepool_preprovisioned",
+      "command": "nkp create nodepool preprovisioned",
+      "title": "nkp create nodepool preprovisioned",
+      "summary": "Create a nodepool in Preprovisioned.",
+      "file": "nkp_create_nodepool_preprovisioned.md",
+      "slug": "nkp_create_nodepool_preprovisioned",
+      "parentId": "nkp_create_nodepool",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "nodepool",
+        "preprovisioned"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_nodepool_vsphere",
+      "command": "nkp create nodepool vsphere",
+      "title": "nkp create nodepool vsphere",
+      "summary": "Create a nodepool in vSphere.",
+      "file": "nkp_create_nodepool_vsphere.md",
+      "slug": "nkp_create_nodepool_vsphere",
+      "parentId": "nkp_create_nodepool",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "create",
+        "nodepool",
+        "vsphere"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_package-bundle",
+      "command": "nkp create package-bundle",
+      "title": "nkp create package-bundle",
+      "summary": "Create Operating System package bundle for one of [oracle-8.9, oracle-9.4, rhel-8.10, rhel-9.6, rocky-9.7, ubuntu-22.04, ubuntu-24.04]",
+      "file": "nkp_create_package-bundle.md",
+      "slug": "nkp_create_package-bundle",
+      "parentId": "nkp_create",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "create",
+        "package-bundle"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_project",
+      "command": "nkp create project",
+      "title": "nkp create project",
+      "summary": "Create a Project",
+      "file": "nkp_create_project.md",
+      "slug": "nkp_create_project",
+      "parentId": "nkp_create",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "create",
+        "project"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_create_workspace",
+      "command": "nkp create workspace",
+      "title": "nkp create workspace",
+      "summary": "Create a Workspace",
+      "file": "nkp_create_workspace.md",
+      "slug": "nkp_create_workspace",
+      "parentId": "nkp_create",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "create",
+        "workspace"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_delete",
+      "command": "nkp delete",
+      "title": "nkp delete",
+      "summary": "Delete one of [bootstrap (cluster), capi-components, cluster, nodepool]",
+      "file": "nkp_delete.md",
+      "slug": "nkp_delete",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "delete"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_delete_bootstrap",
+      "command": "nkp delete bootstrap",
+      "title": "nkp delete bootstrap",
+      "summary": "Delete bootstrap cluster",
+      "file": "nkp_delete_bootstrap.md",
+      "slug": "nkp_delete_bootstrap",
+      "parentId": "nkp_delete",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "delete",
+        "bootstrap"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_delete_capi-components",
+      "command": "nkp delete capi-components",
+      "title": "nkp delete capi-components",
+      "summary": "Delete the CAPI components from the cluster",
+      "file": "nkp_delete_capi-components.md",
+      "slug": "nkp_delete_capi-components",
+      "parentId": "nkp_delete",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "delete",
+        "capi-components"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_delete_cluster",
+      "command": "nkp delete cluster",
+      "title": "nkp delete cluster",
+      "summary": "Delete a Kubernetes cluster",
+      "file": "nkp_delete_cluster.md",
+      "slug": "nkp_delete_cluster",
+      "parentId": "nkp_delete",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "delete",
+        "cluster"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_delete_nodepool",
+      "command": "nkp delete nodepool",
+      "title": "nkp delete nodepool",
+      "summary": "Delete a nodepool for a given cluster",
+      "file": "nkp_delete_nodepool.md",
+      "slug": "nkp_delete_nodepool",
+      "parentId": "nkp_delete",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "delete",
+        "nodepool"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_describe",
+      "command": "nkp describe",
+      "title": "nkp describe",
+      "summary": "Describe one of [cluster]",
+      "file": "nkp_describe.md",
+      "slug": "nkp_describe",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "describe"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_describe_cluster",
+      "command": "nkp describe cluster",
+      "title": "nkp describe cluster",
+      "summary": "Describe a Kubernetes cluster status",
+      "file": "nkp_describe_cluster.md",
+      "slug": "nkp_describe_cluster",
+      "parentId": "nkp_describe",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "describe",
+        "cluster"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_detach",
+      "command": "nkp detach",
+      "title": "nkp detach",
+      "summary": "Detach one of [cluster]",
+      "file": "nkp_detach.md",
+      "slug": "nkp_detach",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "detach"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_detach_cluster",
+      "command": "nkp detach cluster",
+      "title": "nkp detach cluster",
+      "summary": "Detach a cluster",
+      "file": "nkp_detach_cluster.md",
+      "slug": "nkp_detach_cluster",
+      "parentId": "nkp_detach",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "detach",
+        "cluster"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_diagnose",
+      "command": "nkp diagnose",
+      "title": "nkp diagnose",
+      "summary": "Generate a support bundle",
+      "file": "nkp_diagnose.md",
+      "slug": "nkp_diagnose",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "diagnose"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_diagnose_default-config",
+      "command": "nkp diagnose default-config",
+      "title": "nkp diagnose default-config",
+      "summary": "Prints the default configuration of the diagnostics bundle collectors",
+      "file": "nkp_diagnose_default-config.md",
+      "slug": "nkp_diagnose_default-config",
+      "parentId": "nkp_diagnose",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "diagnose",
+        "default-config"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_diagnose_ssh",
+      "command": "nkp diagnose ssh",
+      "title": "nkp diagnose ssh",
+      "summary": "Collect node-level diagnostics data over SSH",
+      "file": "nkp_diagnose_ssh.md",
+      "slug": "nkp_diagnose_ssh",
+      "parentId": "nkp_diagnose",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "diagnose",
+        "ssh"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_edit",
+      "command": "nkp edit",
+      "title": "nkp edit",
+      "summary": "Edit a resource on the server",
+      "file": "nkp_edit.md",
+      "slug": "nkp_edit",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "edit"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_experimental",
+      "command": "nkp experimental",
+      "title": "nkp experimental",
+      "summary": "Experimental one of [catalog, gitops, rotate]",
+      "file": "nkp_experimental.md",
+      "slug": "nkp_experimental",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "experimental"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_experimental_catalog",
+      "command": "nkp experimental catalog",
+      "title": "nkp experimental catalog",
+      "summary": "Experimental catalog commands (release, docgen)",
+      "file": "nkp_experimental_catalog.md",
+      "slug": "nkp_experimental_catalog",
+      "parentId": "nkp_experimental",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "experimental",
+        "catalog"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_experimental_catalog_docgen",
+      "command": "nkp experimental catalog docgen",
+      "title": "nkp experimental catalog docgen",
+      "summary": "Generate Markdown CLI documentation from the command tree",
+      "file": "nkp_experimental_catalog_docgen.md",
+      "slug": "nkp_experimental_catalog_docgen",
+      "parentId": "nkp_experimental_catalog",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "experimental",
+        "catalog",
+        "docgen"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_experimental_catalog_release",
+      "command": "nkp experimental catalog release",
+      "title": "nkp experimental catalog release",
+      "summary": "Build the release artifacts for a given catalog repository",
+      "file": "nkp_experimental_catalog_release.md",
+      "slug": "nkp_experimental_catalog_release",
+      "parentId": "nkp_experimental_catalog",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "experimental",
+        "catalog",
+        "release"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_experimental_gitops",
+      "command": "nkp experimental gitops",
+      "title": "nkp experimental gitops",
+      "summary": "commands to interact with NKP's Gitops Host",
+      "file": "nkp_experimental_gitops.md",
+      "slug": "nkp_experimental_gitops",
+      "parentId": "nkp_experimental",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "experimental",
+        "gitops"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_experimental_gitops_clone",
+      "command": "nkp experimental gitops clone",
+      "title": "nkp experimental gitops clone",
+      "summary": "clone a repo hosted on NKP Gitops system",
+      "file": "nkp_experimental_gitops_clone.md",
+      "slug": "nkp_experimental_gitops_clone",
+      "parentId": "nkp_experimental_gitops",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "experimental",
+        "gitops",
+        "clone"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_experimental_rotate",
+      "command": "nkp experimental rotate",
+      "title": "nkp experimental rotate",
+      "summary": "commands to rotate passwords",
+      "file": "nkp_experimental_rotate.md",
+      "slug": "nkp_experimental_rotate",
+      "parentId": "nkp_experimental",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "experimental",
+        "rotate"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_experimental_rotate_dashboard-password",
+      "command": "nkp experimental rotate dashboard-password",
+      "title": "nkp experimental rotate dashboard-password",
+      "summary": "rotate the dashboard password",
+      "file": "nkp_experimental_rotate_dashboard-password.md",
+      "slug": "nkp_experimental_rotate_dashboard-password",
+      "parentId": "nkp_experimental_rotate",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "experimental",
+        "rotate",
+        "dashboard-password"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_generate",
+      "command": "nkp generate",
+      "title": "nkp generate",
+      "summary": "Generate one of [catalog-repository]",
+      "file": "nkp_generate.md",
+      "slug": "nkp_generate",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "generate"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_generate_catalog-repository",
+      "command": "nkp generate catalog-repository",
+      "title": "nkp generate catalog-repository",
+      "summary": "Generate the catalog repository layout and its contents",
+      "file": "nkp_generate_catalog-repository.md",
+      "slug": "nkp_generate_catalog-repository",
+      "parentId": "nkp_generate",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "generate",
+        "catalog-repository"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_get",
+      "command": "nkp get",
+      "title": "nkp get",
+      "summary": "Get one of [appdeployments, clusters, dashboard, kubeconfig, nodepools, projects, workspaces]",
+      "file": "nkp_get.md",
+      "slug": "nkp_get",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "get"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_get_appdeployments",
+      "command": "nkp get appdeployments",
+      "title": "nkp get appdeployments",
+      "summary": "Get AppDeployments from a Workspace, Project, or all Workspaces and Projects",
+      "file": "nkp_get_appdeployments.md",
+      "slug": "nkp_get_appdeployments",
+      "parentId": "nkp_get",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "get",
+        "appdeployments"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_get_clusters",
+      "command": "nkp get clusters",
+      "title": "nkp get clusters",
+      "summary": "Get clusters from specified Workspace",
+      "file": "nkp_get_clusters.md",
+      "slug": "nkp_get_clusters",
+      "parentId": "nkp_get",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "get",
+        "clusters"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_get_dashboard",
+      "command": "nkp get dashboard",
+      "title": "nkp get dashboard",
+      "summary": "Show the UI URL and credentials",
+      "file": "nkp_get_dashboard.md",
+      "slug": "nkp_get_dashboard",
+      "parentId": "nkp_get",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "get",
+        "dashboard"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_get_kubeconfig",
+      "command": "nkp get kubeconfig",
+      "title": "nkp get kubeconfig",
+      "summary": "Retrieve cluster kubeconfig and modify local kubeconfig file",
+      "file": "nkp_get_kubeconfig.md",
+      "slug": "nkp_get_kubeconfig",
+      "parentId": "nkp_get",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "get",
+        "kubeconfig"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_get_nodepools",
+      "command": "nkp get nodepools",
+      "title": "nkp get nodepools",
+      "summary": "Get nodepools for a given cluster",
+      "file": "nkp_get_nodepools.md",
+      "slug": "nkp_get_nodepools",
+      "parentId": "nkp_get",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "get",
+        "nodepools"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_get_projects",
+      "command": "nkp get projects",
+      "title": "nkp get projects",
+      "summary": "Get Projects from a Workspace or all Workspaces",
+      "file": "nkp_get_projects.md",
+      "slug": "nkp_get_projects",
+      "parentId": "nkp_get",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "get",
+        "projects"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_get_workspaces",
+      "command": "nkp get workspaces",
+      "title": "nkp get workspaces",
+      "summary": "Get Workspaces",
+      "file": "nkp_get_workspaces.md",
+      "slug": "nkp_get_workspaces",
+      "parentId": "nkp_get",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "get",
+        "workspaces"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_import",
+      "command": "nkp import",
+      "title": "nkp import",
+      "summary": "Import images from an image bundle into Containerd",
+      "file": "nkp_import.md",
+      "slug": "nkp_import",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "import"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_import_image-bundle",
+      "command": "nkp import image-bundle",
+      "title": "nkp import image-bundle",
+      "summary": "Import images from image bundles into Containerd",
+      "file": "nkp_import_image-bundle.md",
+      "slug": "nkp_import_image-bundle",
+      "parentId": "nkp_import",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "import",
+        "image-bundle"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_install",
+      "command": "nkp install",
+      "title": "nkp install",
+      "summary": "Install one of [kommander]",
+      "file": "nkp_install.md",
+      "slug": "nkp_install",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "install"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_install_kommander",
+      "command": "nkp install kommander",
+      "title": "nkp install kommander",
+      "summary": "Install kommander",
+      "file": "nkp_install_kommander.md",
+      "slug": "nkp_install_kommander",
+      "parentId": "nkp_install",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "install",
+        "kommander"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_move",
+      "command": "nkp move",
+      "title": "nkp move",
+      "summary": "Move one of [capi-resources]",
+      "file": "nkp_move.md",
+      "slug": "nkp_move",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "move"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_move_capi-resources",
+      "command": "nkp move capi-resources",
+      "title": "nkp move capi-resources",
+      "summary": "Move controllers and objects from one cluster to the other",
+      "file": "nkp_move_capi-resources.md",
+      "slug": "nkp_move_capi-resources",
+      "parentId": "nkp_move",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "move",
+        "capi-resources"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_open",
+      "command": "nkp open",
+      "title": "nkp open",
+      "summary": "Open one of [dashboard]",
+      "file": "nkp_open.md",
+      "slug": "nkp_open",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "open"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_open_dashboard",
+      "command": "nkp open dashboard",
+      "title": "nkp open dashboard",
+      "summary": "Open UI in your browser",
+      "file": "nkp_open_dashboard.md",
+      "slug": "nkp_open_dashboard",
+      "parentId": "nkp_open",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "open",
+        "dashboard"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_push",
+      "command": "nkp push",
+      "title": "nkp push",
+      "summary": "Push one of [bundle, image-archive, image-bundle]",
+      "file": "nkp_push.md",
+      "slug": "nkp_push",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "push"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_push_bundle",
+      "command": "nkp push bundle",
+      "title": "nkp push bundle",
+      "summary": "Push from bundles into an existing OCI registry",
+      "file": "nkp_push_bundle.md",
+      "slug": "nkp_push_bundle",
+      "parentId": "nkp_push",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "push",
+        "bundle"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_push_image-archive",
+      "command": "nkp push image-archive",
+      "title": "nkp push image-archive",
+      "summary": "Push OCI/docker image archive tarballs into an existing OCI registry",
+      "file": "nkp_push_image-archive.md",
+      "slug": "nkp_push_image-archive",
+      "parentId": "nkp_push",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "push",
+        "image-archive"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_scale",
+      "command": "nkp scale",
+      "title": "nkp scale",
+      "summary": "Scale one of [nodepool]",
+      "file": "nkp_scale.md",
+      "slug": "nkp_scale",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "scale"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_scale_nodepool",
+      "command": "nkp scale nodepool",
+      "title": "nkp scale nodepool",
+      "summary": "Scale a nodepool of a given cluster to the number of replicas",
+      "file": "nkp_scale_nodepool.md",
+      "slug": "nkp_scale_nodepool",
+      "parentId": "nkp_scale",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "scale",
+        "nodepool"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_serve",
+      "command": "nkp serve",
+      "title": "nkp serve",
+      "summary": "Serve image or Helm chart bundles from an OCI registry",
+      "file": "nkp_serve.md",
+      "slug": "nkp_serve",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "serve"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_serve_bundle",
+      "command": "nkp serve bundle",
+      "title": "nkp serve bundle",
+      "summary": "Serve an OCI registry from previously created bundles",
+      "file": "nkp_serve_bundle.md",
+      "slug": "nkp_serve_bundle",
+      "parentId": "nkp_serve",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "serve",
+        "bundle"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_update",
+      "command": "nkp update",
+      "title": "nkp update",
+      "summary": "Update one of [bootstrap (cluster), controlplane, nodepool]",
+      "file": "nkp_update.md",
+      "slug": "nkp_update",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "update"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_update_bootstrap",
+      "command": "nkp update bootstrap",
+      "title": "nkp update bootstrap",
+      "summary": "Update bootstrap cluster",
+      "file": "nkp_update_bootstrap.md",
+      "slug": "nkp_update_bootstrap",
+      "parentId": "nkp_update",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "update",
+        "bootstrap"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_update_bootstrap_credentials",
+      "command": "nkp update bootstrap credentials",
+      "title": "nkp update bootstrap credentials",
+      "summary": "Update credentials in the cluster",
+      "file": "nkp_update_bootstrap_credentials.md",
+      "slug": "nkp_update_bootstrap_credentials",
+      "parentId": "nkp_update_bootstrap",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "update",
+        "bootstrap",
+        "credentials"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_update_bootstrap_credentials_aws",
+      "command": "nkp update bootstrap credentials aws",
+      "title": "nkp update bootstrap credentials aws",
+      "summary": "Update AWS credentials in the cluster and restart CAPA controllers",
+      "file": "nkp_update_bootstrap_credentials_aws.md",
+      "slug": "nkp_update_bootstrap_credentials_aws",
+      "parentId": "nkp_update_bootstrap_credentials",
+      "depth": 4,
+      "segments": [
+        "nkp",
+        "update",
+        "bootstrap",
+        "credentials",
+        "aws"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_update_bootstrap_credentials_gcp",
+      "command": "nkp update bootstrap credentials gcp",
+      "title": "nkp update bootstrap credentials gcp",
+      "summary": "Update GCP credentials in the cluster and restart CAPG controllers",
+      "file": "nkp_update_bootstrap_credentials_gcp.md",
+      "slug": "nkp_update_bootstrap_credentials_gcp",
+      "parentId": "nkp_update_bootstrap_credentials",
+      "depth": 4,
+      "segments": [
+        "nkp",
+        "update",
+        "bootstrap",
+        "credentials",
+        "gcp"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_update_bootstrap_credentials_vsphere",
+      "command": "nkp update bootstrap credentials vsphere",
+      "title": "nkp update bootstrap credentials vsphere",
+      "summary": "Update VSphere credentials in the cluster and restart CAPV controllers",
+      "file": "nkp_update_bootstrap_credentials_vsphere.md",
+      "slug": "nkp_update_bootstrap_credentials_vsphere",
+      "parentId": "nkp_update_bootstrap_credentials",
+      "depth": 4,
+      "segments": [
+        "nkp",
+        "update",
+        "bootstrap",
+        "credentials",
+        "vsphere"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_update_controlplane",
+      "command": "nkp update controlplane",
+      "title": "nkp update controlplane",
+      "summary": "Update a Kubernetes cluster control plane, one of [aks, aws, azure, gcp, nutanix, preprovisioned, vsphere]",
+      "file": "nkp_update_controlplane.md",
+      "slug": "nkp_update_controlplane",
+      "parentId": "nkp_update",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "update",
+        "controlplane"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_update_controlplane_aks",
+      "command": "nkp update controlplane aks",
+      "title": "nkp update controlplane aks",
+      "summary": "Update a Kubernetes cluster control plane in AKS",
+      "file": "nkp_update_controlplane_aks.md",
+      "slug": "nkp_update_controlplane_aks",
+      "parentId": "nkp_update_controlplane",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "update",
+        "controlplane",
+        "aks"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_update_controlplane_aws",
+      "command": "nkp update controlplane aws",
+      "title": "nkp update controlplane aws",
+      "summary": "Update a Kubernetes cluster control plane in AWS",
+      "file": "nkp_update_controlplane_aws.md",
+      "slug": "nkp_update_controlplane_aws",
+      "parentId": "nkp_update_controlplane",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "update",
+        "controlplane",
+        "aws"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_update_controlplane_azure",
+      "command": "nkp update controlplane azure",
+      "title": "nkp update controlplane azure",
+      "summary": "Update a Kubernetes cluster control plane in Azure",
+      "file": "nkp_update_controlplane_azure.md",
+      "slug": "nkp_update_controlplane_azure",
+      "parentId": "nkp_update_controlplane",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "update",
+        "controlplane",
+        "azure"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_update_controlplane_gcp",
+      "command": "nkp update controlplane gcp",
+      "title": "nkp update controlplane gcp",
+      "summary": "Update a Kubernetes cluster control plane in GCP",
+      "file": "nkp_update_controlplane_gcp.md",
+      "slug": "nkp_update_controlplane_gcp",
+      "parentId": "nkp_update_controlplane",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "update",
+        "controlplane",
+        "gcp"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_update_controlplane_nutanix",
+      "command": "nkp update controlplane nutanix",
+      "title": "nkp update controlplane nutanix",
+      "summary": "Update a Kubernetes cluster control plane in Nutanix",
+      "file": "nkp_update_controlplane_nutanix.md",
+      "slug": "nkp_update_controlplane_nutanix",
+      "parentId": "nkp_update_controlplane",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "update",
+        "controlplane",
+        "nutanix"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_update_controlplane_preprovisioned",
+      "command": "nkp update controlplane preprovisioned",
+      "title": "nkp update controlplane preprovisioned",
+      "summary": "Update a Kubernetes cluster control plane in Preprovisioned",
+      "file": "nkp_update_controlplane_preprovisioned.md",
+      "slug": "nkp_update_controlplane_preprovisioned",
+      "parentId": "nkp_update_controlplane",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "update",
+        "controlplane",
+        "preprovisioned"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_update_controlplane_vsphere",
+      "command": "nkp update controlplane vsphere",
+      "title": "nkp update controlplane vsphere",
+      "summary": "Update a Kubernetes cluster control plane in vSphere",
+      "file": "nkp_update_controlplane_vsphere.md",
+      "slug": "nkp_update_controlplane_vsphere",
+      "parentId": "nkp_update_controlplane",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "update",
+        "controlplane",
+        "vsphere"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_update_nodepool",
+      "command": "nkp update nodepool",
+      "title": "nkp update nodepool",
+      "summary": "Upate a Kubernetes cluster node pool, one of [aws, azure, gcp, preprovisioned, vsphere]",
+      "file": "nkp_update_nodepool.md",
+      "slug": "nkp_update_nodepool",
+      "parentId": "nkp_update",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "update",
+        "nodepool"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_update_nodepool_aws",
+      "command": "nkp update nodepool aws",
+      "title": "nkp update nodepool aws",
+      "summary": "Update a Konvoy cluster node pool in AWS",
+      "file": "nkp_update_nodepool_aws.md",
+      "slug": "nkp_update_nodepool_aws",
+      "parentId": "nkp_update_nodepool",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "update",
+        "nodepool",
+        "aws"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_update_nodepool_azure",
+      "command": "nkp update nodepool azure",
+      "title": "nkp update nodepool azure",
+      "summary": "Update a Konvoy cluster node pool in Azure",
+      "file": "nkp_update_nodepool_azure.md",
+      "slug": "nkp_update_nodepool_azure",
+      "parentId": "nkp_update_nodepool",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "update",
+        "nodepool",
+        "azure"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_update_nodepool_gcp",
+      "command": "nkp update nodepool gcp",
+      "title": "nkp update nodepool gcp",
+      "summary": "Update a Konvoy cluster node pool in GCP",
+      "file": "nkp_update_nodepool_gcp.md",
+      "slug": "nkp_update_nodepool_gcp",
+      "parentId": "nkp_update_nodepool",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "update",
+        "nodepool",
+        "gcp"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_update_nodepool_preprovisioned",
+      "command": "nkp update nodepool preprovisioned",
+      "title": "nkp update nodepool preprovisioned",
+      "summary": "Update a Konvoy cluster node pool in Preprovisioned",
+      "file": "nkp_update_nodepool_preprovisioned.md",
+      "slug": "nkp_update_nodepool_preprovisioned",
+      "parentId": "nkp_update_nodepool",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "update",
+        "nodepool",
+        "preprovisioned"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_update_nodepool_vsphere",
+      "command": "nkp update nodepool vsphere",
+      "title": "nkp update nodepool vsphere",
+      "summary": "Update a Konvoy cluster node pool in vSphere",
+      "file": "nkp_update_nodepool_vsphere.md",
+      "slug": "nkp_update_nodepool_vsphere",
+      "parentId": "nkp_update_nodepool",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "update",
+        "nodepool",
+        "vsphere"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_upgrade",
+      "command": "nkp upgrade",
+      "title": "nkp upgrade",
+      "summary": "Upgrade one of [addons, capi-components, catalogapp, cluster, kommander, workspace]",
+      "file": "nkp_upgrade.md",
+      "slug": "nkp_upgrade",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "upgrade"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_upgrade_addons",
+      "command": "nkp upgrade addons",
+      "title": "nkp upgrade addons",
+      "summary": "Upgrade the core Addons in a cluster, one of [aws, azure, gcp, preprovisioned, vsphere]",
+      "file": "nkp_upgrade_addons.md",
+      "slug": "nkp_upgrade_addons",
+      "parentId": "nkp_upgrade",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "upgrade",
+        "addons"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_upgrade_addons_aws",
+      "command": "nkp upgrade addons aws",
+      "title": "nkp upgrade addons aws",
+      "summary": "Upgrade the core Addons in a AWS cluster",
+      "file": "nkp_upgrade_addons_aws.md",
+      "slug": "nkp_upgrade_addons_aws",
+      "parentId": "nkp_upgrade_addons",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "upgrade",
+        "addons",
+        "aws"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_upgrade_addons_azure",
+      "command": "nkp upgrade addons azure",
+      "title": "nkp upgrade addons azure",
+      "summary": "Upgrade the core Addons in a Azure cluster",
+      "file": "nkp_upgrade_addons_azure.md",
+      "slug": "nkp_upgrade_addons_azure",
+      "parentId": "nkp_upgrade_addons",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "upgrade",
+        "addons",
+        "azure"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_upgrade_addons_gcp",
+      "command": "nkp upgrade addons gcp",
+      "title": "nkp upgrade addons gcp",
+      "summary": "Upgrade the core Addons in a GCP cluster",
+      "file": "nkp_upgrade_addons_gcp.md",
+      "slug": "nkp_upgrade_addons_gcp",
+      "parentId": "nkp_upgrade_addons",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "upgrade",
+        "addons",
+        "gcp"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_upgrade_addons_preprovisioned",
+      "command": "nkp upgrade addons preprovisioned",
+      "title": "nkp upgrade addons preprovisioned",
+      "summary": "Upgrade the core Addons in a Preprovisioned cluster",
+      "file": "nkp_upgrade_addons_preprovisioned.md",
+      "slug": "nkp_upgrade_addons_preprovisioned",
+      "parentId": "nkp_upgrade_addons",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "upgrade",
+        "addons",
+        "preprovisioned"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_upgrade_addons_vsphere",
+      "command": "nkp upgrade addons vsphere",
+      "title": "nkp upgrade addons vsphere",
+      "summary": "Upgrade the core Addons in a vSphere cluster",
+      "file": "nkp_upgrade_addons_vsphere.md",
+      "slug": "nkp_upgrade_addons_vsphere",
+      "parentId": "nkp_upgrade_addons",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "upgrade",
+        "addons",
+        "vsphere"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_upgrade_capi-components",
+      "command": "nkp upgrade capi-components",
+      "title": "nkp upgrade capi-components",
+      "summary": "Upgrade the CAPI components in the cluster",
+      "file": "nkp_upgrade_capi-components.md",
+      "slug": "nkp_upgrade_capi-components",
+      "parentId": "nkp_upgrade",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "upgrade",
+        "capi-components"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_upgrade_catalogapp",
+      "command": "nkp upgrade catalogapp",
+      "title": "nkp upgrade catalogapp",
+      "summary": "Upgrade a Catalog Application to a newer version",
+      "file": "nkp_upgrade_catalogapp.md",
+      "slug": "nkp_upgrade_catalogapp",
+      "parentId": "nkp_upgrade",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "upgrade",
+        "catalogapp"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_upgrade_cluster",
+      "command": "nkp upgrade cluster",
+      "title": "nkp upgrade cluster",
+      "summary": "Upgrade a Kubernetes cluster's version to 1.35.2, one of [eks, nutanix]",
+      "file": "nkp_upgrade_cluster.md",
+      "slug": "nkp_upgrade_cluster",
+      "parentId": "nkp_upgrade",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "upgrade",
+        "cluster"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_upgrade_cluster_eks",
+      "command": "nkp upgrade cluster eks",
+      "title": "nkp upgrade cluster eks",
+      "summary": "Upgrade a Kubernetes cluster's version to 1.35.0 in EKS",
+      "file": "nkp_upgrade_cluster_eks.md",
+      "slug": "nkp_upgrade_cluster_eks",
+      "parentId": "nkp_upgrade_cluster",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "upgrade",
+        "cluster",
+        "eks"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_upgrade_cluster_nutanix",
+      "command": "nkp upgrade cluster nutanix",
+      "title": "nkp upgrade cluster nutanix",
+      "summary": "Upgrade a Kubernetes cluster's version to 1.35.2 in Nutanix",
+      "file": "nkp_upgrade_cluster_nutanix.md",
+      "slug": "nkp_upgrade_cluster_nutanix",
+      "parentId": "nkp_upgrade_cluster",
+      "depth": 3,
+      "segments": [
+        "nkp",
+        "upgrade",
+        "cluster",
+        "nutanix"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_upgrade_kommander",
+      "command": "nkp upgrade kommander",
+      "title": "nkp upgrade kommander",
+      "summary": "Upgrade the Kommander version of the targeted cluster",
+      "file": "nkp_upgrade_kommander.md",
+      "slug": "nkp_upgrade_kommander",
+      "parentId": "nkp_upgrade",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "upgrade",
+        "kommander"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_upgrade_workspace",
+      "command": "nkp upgrade workspace",
+      "title": "nkp upgrade workspace",
+      "summary": "Upgrade all platform applications in the given workspace and its projects to the same version as platform applications running on the management cluster",
+      "file": "nkp_upgrade_workspace.md",
+      "slug": "nkp_upgrade_workspace",
+      "parentId": "nkp_upgrade",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "upgrade",
+        "workspace"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_upload",
+      "command": "nkp upload",
+      "title": "nkp upload",
+      "summary": "Upload image artifacts to remote hosts",
+      "file": "nkp_upload.md",
+      "slug": "nkp_upload",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "upload"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_upload_image-artifacts",
+      "command": "nkp upload image-artifacts",
+      "title": "nkp upload image-artifacts",
+      "summary": "Upload image artifacts to remote hosts",
+      "file": "nkp_upload_image-artifacts.md",
+      "slug": "nkp_upload_image-artifacts",
+      "parentId": "nkp_upload",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "upload",
+        "image-artifacts"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_validate",
+      "command": "nkp validate",
+      "title": "nkp validate",
+      "summary": "Validate one of [catalog-repository]",
+      "file": "nkp_validate.md",
+      "slug": "nkp_validate",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "validate"
+      ],
+      "kind": "parent"
+    },
+    {
+      "id": "nkp_validate_catalog-repository",
+      "command": "nkp validate catalog-repository",
+      "title": "nkp validate catalog-repository",
+      "summary": "Validate the given catalog repository contents",
+      "file": "nkp_validate_catalog-repository.md",
+      "slug": "nkp_validate_catalog-repository",
+      "parentId": "nkp_validate",
+      "depth": 2,
+      "segments": [
+        "nkp",
+        "validate",
+        "catalog-repository"
+      ],
+      "kind": "leaf"
+    },
+    {
+      "id": "nkp_version",
+      "command": "nkp version",
+      "title": "nkp version",
+      "summary": "Print version information",
+      "file": "nkp_version.md",
+      "slug": "nkp_version",
+      "parentId": "nkp",
+      "depth": 1,
+      "segments": [
+        "nkp",
+        "version"
+      ],
+      "kind": "leaf"
+    }
+  ]
+}

@@ -1,7 +1,13 @@
 # Copyright 2025 Nutanix. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Build docs from main (docs/source + docs/site) and deploy via GitHub Pages artifacts.
+# Rebuild the docs site from the three catalog repos and publish to GitHub
+# Pages (gh-pages branch + Pages artifact). Dual publishing is intentional for now.
+#
+# Triggers:
+#   - push to main affecting docs
+#   - nightly cron (regenerates catalog + CLI from downloads.d2iq.com / config.yaml, then publishes)
+#   - manual dispatch
 
 name: Deploy Docs
 
@@ -11,6 +17,10 @@ on:
       - main
     paths:
       - 'docs/**'
+      - '.github/workflows/deploy-docs.yaml'
+  schedule:
+    # 07:00 UTC daily
+    - cron: '0 7 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -22,10 +32,26 @@ jobs:
     runs-on:
       - self-hosted-ncn-docker-medium
     permissions:
-      contents: read
+      contents: write
     steps:
-      - name: Check out main
-        uses: actions/checkout@v4
+      - name: Check out nkp-partner-catalog
+        uses: actions/checkout@v7
+        with:
+          path: nkp-partner-catalog
+
+      - name: Check out nkp-ai-applications-catalog
+        uses: actions/checkout@v7
+        with:
+          repository: nutanix-cloud-native/nkp-ai-applications-catalog
+          path: nkp-ai-applications-catalog
+          token: ${{ secrets.CATALOG_READ_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Check out nkp-nutanix-product-catalog
+        uses: actions/checkout@v7
+        with:
+          repository: nutanix-cloud-native/nkp-nutanix-product-catalog
+          path: nkp-nutanix-product-catalog
+          token: ${{ secrets.CATALOG_READ_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Install NIX
         uses: cachix/install-nix-action@v31
@@ -33,17 +59,43 @@ jobs:
       - name: Install devbox
         uses: jetify-com/devbox-install-action@v0.15.0
         with:
-          project-path: docs
+          project-path: nkp-partner-catalog/docs
           enable-cache: true
           skip-nix-installation: true
 
+      - name: Generate catalog index from sibling repos
+        run: |
+          cd nkp-partner-catalog/docs
+          devbox run -- just generate-catalog "${GITHUB_WORKSPACE}"
+
+      - name: Generate versioned CLI reference
+        run: |
+          cd nkp-partner-catalog/docs
+          # Nightly (and CI) always re-fetch nkp so patch bumps on downloads.d2iq.com apply.
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            export NKP_CLI_FORCE_DOWNLOAD=1
+          fi
+          devbox run -- just generate-cli-docs
+
       - name: Build docs
-        run: cd docs && devbox run -- just docs-build
+        run: |
+          cd nkp-partner-catalog/docs
+          devbox run -- just docs-build
+
+      - name: Publish gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: nkp-partner-catalog/docs/site/build
+          publish_branch: gh-pages
+          user_name: github-actions[bot]
+          user_email: github-actions[bot]@users.noreply.github.com
+          commit_message: 'docs: refresh catalog site'
 
       - name: Upload static files as Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/site/build
+          path: nkp-partner-catalog/docs/site/build
 
   deploy:
     needs: build
@@ -58,4 +110,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
