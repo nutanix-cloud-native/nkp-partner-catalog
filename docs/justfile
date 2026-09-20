@@ -1,21 +1,89 @@
 set unstable
 # Docs recipes for nkp-partner-catalog.
-# docs/source and docs/site live on main; built output is published to gh-pages.
+# Authored content: docs/source (except generated trees). Docusaurus app: docs/site.
+# Live publish is CI (Deploy Docs workflow → Pages artifact). Do not push gh-pages from here.
+
+# Default sibling-repo root (parent of nkp-partner-catalog checkout).
+# Expected siblings (public): nkp-ai-applications-catalog, nkp-nutanix-product-catalog.
+sibling_root := justfile_directory() + "/../.."
+
+# Remove generated / build artifacts under docs/ (keeps authored source + config.yaml).
+[script]
+clean:
+    ROOT="{{ justfile_directory() }}"
+    rm -rf \
+      "$ROOT/source/applications" \
+      "$ROOT/source/catalog-data.json" \
+      "$ROOT/site/static/catalog-icons" \
+      "$ROOT/site/static/catalog-data.json" \
+      "$ROOT/site/static/cli" \
+      "$ROOT/site/static/schemas/v1" \
+      "$ROOT/site/static/offline" \
+      "$ROOT/site/build" \
+      "$ROOT/site/.docusaurus" \
+      "$ROOT/.export-work" \
+      "$ROOT/dist" \
+      "$ROOT/.cache/nkp-cli"
+    # Generated prepare outputs (keep .gitkeep).
+    if [ -d "$ROOT/site/src/data" ]; then
+      find "$ROOT/site/src/data" -maxdepth 1 -type f -name '*.json' -delete
+    fi
+    # Generated CLI version trees only (keep authored index.mdx + _category_.json).
+    if [ -d "$ROOT/source/cli" ]; then
+      find "$ROOT/source/cli" -mindepth 1 -maxdepth 1 -type d -name '[0-9]*' -exec rm -rf {} +
+    fi
+    echo "Cleaned generated docs artifacts under $ROOT"
+
+# Crawl sibling applications/ trees → catalog-data.json, applications/*, catalog-icons/.
+#   just generate-catalog /other/root
+[script]
+generate-catalog root=sibling_root:
+    ROOT="{{ justfile_directory() }}"
+    cd "$ROOT/site"
+    if [ ! -d node_modules/js-yaml ]; then
+        npm ci --prefer-offline --ignore-scripts
+    fi
+    node scripts/generate-catalog.js \
+      --root "{{ root }}" \
+      -o "$ROOT/source/catalog-data.json"
+
+# Probe downloads.d2iq.com and refresh cliDocs.minors[].latest (best-effort).
+[script]
+update-docs-config:
+    ROOT="{{ justfile_directory() }}"
+    if [ ! -d "$ROOT/site/node_modules/js-yaml" ]; then
+        (cd "$ROOT/site" && npm ci --prefer-offline --ignore-scripts)
+    fi
+    node "$ROOT/scripts/update-docs-config.mjs"
+
+# Download nkp CLIs and regenerate source/cli/<minor>/ + site/static/cli/<minor>/commands.json.
+[script]
+generate-cli-docs:
+    ROOT="{{ justfile_directory() }}"
+    if [ ! -d "$ROOT/site/node_modules/js-yaml" ]; then
+        (cd "$ROOT/site" && npm ci --prefer-offline --ignore-scripts)
+    fi
+    node "$ROOT/scripts/generate-cli-docs.mjs"
 
 [script]
 _docs-prepare:
     ROOT="{{ justfile_directory() }}"
     mkdir -p "$ROOT/site/static/schemas/v1"
     rsync -a --delete "$ROOT/source/schemas/v1/" "$ROOT/site/static/schemas/v1/"
+    if [ -f "$ROOT/source/catalog-data.json" ]; then
+        cp "$ROOT/source/catalog-data.json" "$ROOT/site/static/catalog-data.json"
+    else
+        echo "WARN: missing source/catalog-data.json — run: just generate-catalog" >&2
+    fi
     cd "$ROOT/site"
     npm ci --prefer-offline --ignore-scripts
+    # Sync config.yaml → site/src/data/*.json for the browser bundle (gitignored).
+    node "$ROOT/scripts/sync-docs-data.mjs"
 
-# Build PDF + HTML exports into site/static/offline (and optionally docs/dist).
 [script]
 _docs-export:
     ROOT="{{ justfile_directory() }}"
-    mkdir -p "$ROOT/site/static/offline" "$ROOT/dist"
-    # Prefer an explicit CHROME_PATH; otherwise use Chrome.app (macOS) or chromium on PATH (CI/devbox).
+    mkdir -p "$ROOT/site/static/offline"
     if [ -z "${CHROME_PATH:-}" ]; then
       if [ -x "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ]; then
         export CHROME_PATH="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
@@ -28,51 +96,54 @@ _docs-export:
       fi
     fi
     node "$ROOT/scripts/build-exports.mjs" --out-dir "$ROOT/site/static/offline"
-    cp -f "$ROOT/site/static/offline/nkp-catalog-docs.pdf" \
-          "$ROOT/site/static/offline/nkp-catalog-docs.html" \
-          "$ROOT/dist/"
 
-# GitHub Pages build, including Export downloads under /offline/.
+# Run both generators (catalog needs sibling clones; CLI needs network/cache).
 [script]
-docs-build base_url='/nkp-partner-catalog/': (_docs-prepare)
+_generate-docs:
     ROOT="{{ justfile_directory() }}"
+    just --justfile "$ROOT/justfile" --working-directory "$ROOT" generate-catalog
+    just --justfile "$ROOT/justfile" --working-directory "$ROOT" generate-cli-docs
+
+# Full GitHub Pages build (generators + PDF export + docusaurus build).
+[script]
+docs-build base_url='/nkp-partner-catalog/':
+    ROOT="{{ justfile_directory() }}"
+    just --justfile "$ROOT/justfile" --working-directory "$ROOT" _generate-docs
+    just --justfile "$ROOT/justfile" --working-directory "$ROOT" _docs-prepare
     just --justfile "$ROOT/justfile" --working-directory "$ROOT" _docs-export
     cd "$ROOT/site"
     BASE_URL="{{ base_url }}" npm run build
 
-# Offline exports only (PDF preferred + HTML secondary).
+# Fast local preview: generators + prepare + build/serve (skips Chrome/PDF export).
 [script]
-docs-offline: (_docs-prepare)
+docs-preview host='0.0.0.0' port='3000' base_url='/':
     ROOT="{{ justfile_directory() }}"
-    just --justfile "$ROOT/justfile" --working-directory "$ROOT" _docs-export
-    echo "Offline exports in $ROOT/dist and $ROOT/site/static/offline"
-
-[script]
-docs-local host='0.0.0.0' port='3000' base_url='/': (_docs-prepare)
-    ROOT="{{ justfile_directory() }}"
+    just --justfile "$ROOT/justfile" --working-directory "$ROOT" _generate-docs
+    just --justfile "$ROOT/justfile" --working-directory "$ROOT" _docs-prepare
     cd "$ROOT/site"
     BASE_URL="{{ base_url }}" npm run build
     BASE_URL="{{ base_url }}" npm run docusaurus -- serve --dir build --host "{{ host }}" --port "{{ port }}"
 
+# Full local preview including Export PDF/HTML (needs Chrome).
 [script]
-docs-deploy branch='gh-pages' repo='git@github.com:nutanix-cloud-native/nkp-partner-catalog.git': (docs-build)
+docs-local host='0.0.0.0' port='3000' base_url='/':
     ROOT="{{ justfile_directory() }}"
-    DEPLOY_DIR="$ROOT/.docs-deploy"
+    just --justfile "$ROOT/justfile" --working-directory "$ROOT" _generate-docs
+    just --justfile "$ROOT/justfile" --working-directory "$ROOT" _docs-prepare
+    just --justfile "$ROOT/justfile" --working-directory "$ROOT" _docs-export
+    cd "$ROOT/site"
+    BASE_URL="{{ base_url }}" npm run build
+    BASE_URL="{{ base_url }}" npm run docusaurus -- serve --dir build --host "{{ host }}" --port "{{ port }}"
 
-    if [ -d "$DEPLOY_DIR/.git" ]; then
-        git -C "$DEPLOY_DIR" fetch origin && git -C "$DEPLOY_DIR" reset --hard origin/{{ branch }}
-    else
-        git clone --branch {{ branch }} --single-branch --depth 1 {{ repo }} "$DEPLOY_DIR"
-    fi
-
-    rsync -a --delete --exclude='.git' "$ROOT/site/build/" "$DEPLOY_DIR/"
-    cd "$DEPLOY_DIR"
-    git add -A
-    echo ""
-    echo "=== Changes staged in $DEPLOY_DIR ==="
-    git --no-pager diff --cached --stat
-    echo ""
-    echo "To publish, run:"
-    echo "  cd $DEPLOY_DIR"
-    echo "  git commit -m 'docs: update site'"
-    echo "  git push origin {{ branch }}"
+# Offline exports only (PDF preferred + HTML secondary).
+[script]
+docs-offline:
+    ROOT="{{ justfile_directory() }}"
+    just --justfile "$ROOT/justfile" --working-directory "$ROOT" _generate-docs
+    just --justfile "$ROOT/justfile" --working-directory "$ROOT" _docs-prepare
+    just --justfile "$ROOT/justfile" --working-directory "$ROOT" _docs-export
+    mkdir -p "$ROOT/dist"
+    cp -f "$ROOT/site/static/offline/nkp-catalog-docs.pdf" \
+          "$ROOT/site/static/offline/nkp-catalog-docs.html" \
+          "$ROOT/dist/"
+    echo "Offline exports in $ROOT/dist and $ROOT/site/static/offline"

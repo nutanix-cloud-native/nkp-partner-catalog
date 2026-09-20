@@ -1,44 +1,49 @@
 # Docs in `nkp-partner-catalog`
 
-This directory contains docs source and docs tooling.
+Docusaurus 3 site for the NKP Catalog. Authored content lives in `source/`;
+the app lives in `site/`. Run recipes from **`docs/`**.
+
+Live: https://nutanix-cloud-native.github.io/nkp-partner-catalog/
 
 ## Layout
 
-- `source/` — authored docs content (MD/MDX), including:
-  - `source/cli/` (generated CLI reference source files)
-  - `source/schemas/v1/` (generated schema JSON files used by API docs pages)
-- `site/` — Docusaurus app and config
-- `scripts/build-exports.mjs` — builds Single PDF + Single HTML offline exports
+- `source/` — authored MD/MDX and `config.yaml` (`applications` + `cliDocs`)
+- `source/cli/` — authored landing; `source/cli/<minor>/` is **generated** (gitignored)
+- `source/schemas/v1/` — authored JSON Schemas (canonical; prepare copies to `site/static/schemas/v1/`)
+- `source/applications/`, `catalog-data.json`, `site/static/catalog-icons/` — **generated** (gitignored)
+- `site/src/data/` — **generated** from `config.yaml` at prepare (gitignored)
+- `site/static/cli/` — **generated** `commands.json` (gitignored)
+- `scripts/` — CLI generator, config probe, `sync-docs-data`, offline PDF/HTML export
+- `AGENTS.md` + `agents/` — guidance for coding agents
 
 ## Local commands
 
 From `docs/`:
 
-- `just docs-build` — GitHub Pages build (`/nkp-partner-catalog/`) including Export downloads under `site/static/offline/`
-- `just docs-local` — local preview at `/` (does not rebuild PDF/HTML exports)
-- `just docs-offline` — PDF + HTML exports only (`docs/dist/` and `site/static/offline/`)
-- `just docs-deploy` — stage `site/build/` into a local `gh-pages` clone
+- `just clean` — remove generated/build artifacts
+- `just generate-catalog` — crawl public sibling catalog repos → applications + icons + catalog-data
+- `just update-docs-config` — best-effort refresh of CLI `latest` tags in `config.yaml`
+- `just generate-cli-docs` — download nkp CLIs → versioned CLI pages + commands.json
+- `just docs-preview` — generate + prepare + build/serve (**skips** Chrome/PDF)
+- `just docs-local` — full local preview including Export PDF/HTML (needs Chrome)
+- `just docs-build` — production build (`/nkp-partner-catalog/`) including Export
+- `just docs-offline` — PDF + HTML only
 
-## Build behavior
+Sibling clones (public) next to this repo:
 
-Before docs build, schemas are synced from:
+- `nkp-ai-applications-catalog`
+- `nkp-nutanix-product-catalog`
 
-- `docs/source/schemas/v1/` -> `docs/site/static/schemas/v1/`
+Typical loop:
 
-This ensures links such as `/schemas/v1/*.json` resolve during Docusaurus build.
+```bash
+cd docs
+just clean
+just docs-preview    # runs generate-catalog + generate-cli-docs first
+```
 
-`docs-build` and `docs-offline` also generate:
+## Notes
 
-- `nkp-catalog-docs.pdf` (preferred offline format; section outline preserved)
-- `nkp-catalog-docs.html` (secondary; open via `file://`)
-
-The live site **Export** menu downloads those files. No local web server or language runtime is required to read them on Windows or Linux.
-
-PDF generation needs Chrome/Chromium on the build machine (`CHROME_PATH` override supported).
-
-## Deployment behavior
-
-- Workflow: `.github/workflows/deploy-docs.yaml`
-- Trigger: pushes to `main` affecting `docs/**` files, or manual dispatch
-- Output: builds from `docs/site` and syncs generated static files to `gh-pages`
-- Preserve: `source/` and `site/` on `gh-pages` are excluded from build-output rsync delete
+- Offline Export needs Chrome/Chromium (`CHROME_PATH` override supported).
+- Local search from `docusaurus start` is limited; prefer `docs-preview` / `serve` of a build.
+- Production publish is CI → GitHub Pages artifact (not a `gh-pages` push from this tree).
