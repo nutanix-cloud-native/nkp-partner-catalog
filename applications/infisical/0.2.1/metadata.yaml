@@ -13,7 +13,6 @@ scope:
 allowMultipleInstances: false
 dependencies:
   - cloudnative-pg
-requiredDependencies: []
 dependsOn:
   - type: Application
     name: cloudnative-pg
