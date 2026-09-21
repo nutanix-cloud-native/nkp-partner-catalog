@@ -19,9 +19,12 @@ const SOURCE_ROOT = path.join(DOCS_ROOT, 'source');
 const SITE_ROOT = path.join(DOCS_ROOT, 'site');
 const PDF_NAME = 'nkp-catalog-docs.pdf';
 const HTML_NAME = 'nkp-catalog-docs.html';
-const NKP_VERSION = '2.17';
-const NKP_DOCS_BASE =
-  'https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform-v2_17';
+
+const {loadPortalVersion} = require('./docs-config.cjs');
+
+const portal = loadPortalVersion(SITE_ROOT);
+const NKP_VERSION = String(portal.nkpVersion);
+const NKP_DOCS_BASE = String(portal.nkpDocsBaseUrl);
 
 function parseArgs(argv) {
   const out = { outDir: path.join(SITE_ROOT, 'static', 'offline') };
@@ -151,11 +154,14 @@ function listDocFiles(dir) {
     if (ent.name === 'schemas') continue;
     const full = path.join(dir, ent.name);
     if (ent.isDirectory()) {
+      // Per-version nkp help dumps are large; the CLI landing page is enough offline.
+      if (path.basename(dir) === 'cli' && /^\d+\.\d+/.test(ent.name)) continue;
       dirs.push(listDocFiles(full));
     } else if (/\.mdx?$/.test(ent.name)) {
       const raw = fs.readFileSync(full, 'utf8');
       const { data, body } = readFrontMatter(raw);
-      if (data.internal === true || data.draft === true) continue;
+      if (data.internal === true || data.draft === true || data.unlisted === true) continue;
+      if (data.cli_generated === true) continue;
       const title =
         data.title ||
         data.sidebar_label ||
@@ -186,13 +192,15 @@ function collectDocs() {
   const categories = [];
   for (const ent of fs.readdirSync(SOURCE_ROOT, { withFileTypes: true })) {
     if (ent.name.startsWith('.') || ent.name === 'schemas') continue;
+    // Application pages are generated SPA shells and do not contain useful offline content.
+    if (ent.name === 'applications') continue;
     const full = path.join(SOURCE_ROOT, ent.name);
     if (ent.isDirectory()) {
       categories.push(listDocFiles(full));
     } else if (/\.mdx?$/.test(ent.name)) {
       const raw = fs.readFileSync(full, 'utf8');
       const { data, body } = readFrontMatter(raw);
-      if (data.internal === true) continue;
+      if (data.internal === true || data.draft === true || data.unlisted === true) continue;
       rootFiles.push({
         type: 'doc',
         file: full,

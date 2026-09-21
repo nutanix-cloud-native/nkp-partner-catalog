@@ -1,0 +1,29 @@
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.docItemContainer header + *,
+.docItemContainer article > *:first-child {
+  margin-top: 0;
+}
+
+@media (min-width: 997px) {
+  .docItemCol {
+    max-width: 75% !important;
+  }
+
+  /*
+   * Applications detail pages hide the docs sidebar. Without a left rail,
+   * Infima's full-width .col pins a reading-width article to the left edge.
+   * Center a capped column so the page feels balanced.
+   */
+  .appDetailCol {
+    flex: 0 1 52rem;
+    max-width: 52rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}

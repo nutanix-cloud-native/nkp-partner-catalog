@@ -30,11 +30,28 @@ function DownloadItems({className}) {
 }
 
 function ExportDesktop() {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className="navbar__item dropdown dropdown--hoverable dropdown--right navbar-export">
-      <span className="navbar__link" role="button" tabIndex={0} aria-haspopup="true">
+    <div
+      className={`navbar__item dropdown dropdown--hoverable dropdown--right navbar-export${open ? ' dropdown--show' : ''}`}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') {
+          setOpen(false);
+          event.currentTarget.querySelector('.navbar-export__trigger')?.focus();
+        }
+      }}>
+      <button
+        type="button"
+        className="navbar__link navbar-export__trigger"
+        aria-haspopup="true"
+        aria-expanded={open}
+        onClick={() => setOpen((value) => !value)}>
         Export
-      </span>
+      </button>
       <ul className="dropdown__menu">
         <DownloadItems className="dropdown__link" />
       </ul>

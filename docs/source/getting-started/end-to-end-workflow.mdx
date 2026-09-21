@@ -1,16 +1,16 @@
 ---
 title: End-to-end workflow
 sidebar_position: 0
-internal: true
+# Hidden from the sidebar unless ?dev=true or ?unlisted=true (session-sticky).
+# Keep it out of prev/next so Overview does not surface this page.
+dev: true
+pagination_prev: null
+pagination_next: null
+sidebar_custom_props:
+  dev: true
 ---
 
-<div data-internal="true">
-
 # End-to-end user workflow
-
-:::info Internal page
-This page is only visible when `?internal=true` is appended to the URL.
-:::
 
 This diagram shows the user-facing journey from discovery to deployment.
 
@@ -78,25 +78,13 @@ sequenceDiagram
 
     alt Airgapped environments
       activate Bob
-      Bob->>Catalog: Download a .nkp file from portal
-      activate Catalog
-      Catalog-->>Bob: Return .nkp file
-      deactivate Catalog
-      Bob->>Bob: Generate a .nkp file locally if its not hosted
-      Bob->>NKP: Upload a .nkp file to cluster
+      Bob->>Bob: Download airgapped bundle
+      Bob->>NKP: Push images to private registry
       deactivate Bob
-    else Networked environments
-      activate Catalog
-      Catalog->>NKP: Notify of a new version
-      deactivate Catalog
-      Bob->>NKP: User deploys new version of application
     end
 
-    Note over NKP: Validation Checks
-    NKP->>NKP: Check release channel
-    NKP->>NKP: Check .minDKPVersion
-    NKP->>NKP: Check dependencies
-    NKP->>NKP: Check Licensing
+    Bob->>NKP: Deploy application
+    NKP->>NKP: Validate AppDeployment
     NKP->>NKP: Check upgradesFrom (for upgrades)
 
     Note over Catalog: Telemetry
@@ -108,5 +96,3 @@ sequenceDiagram
     deactivate Catalog
     deactivate NKP
 ```
-
-</div>
