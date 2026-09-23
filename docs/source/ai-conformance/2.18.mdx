@@ -23,6 +23,10 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 The [CNCF Kubernetes AI Conformance](https://github.com/kubernetes-sigs/wg-device-management/blob/main/conformance/README.md) defines a set of additional capabilities, APIs, and configurations that a Kubernetes cluster MUST offer, on top of standard CNCF Kubernetes Conformance, to reliably and efficiently run AI/ML workloads.
 
+:::note
+This page documents **NKP 2.18** conformance. A 2.19 page is not published here yet.
+:::
+
 This page shows how NKP 2.18 meets these requirements using Kubernetes v1.35.2 and the NVIDIA GPU Operator v26.3.0, deployed via Flux CD as platform HelmReleases.
 
 <div style={{ clear: 'both' }} />
@@ -429,7 +433,7 @@ NKP provides a well-defined, first-class mechanism (vGPU-enabled node pools on A
 
 This requirement is a **MUST**: *the platform must support the Kubernetes Gateway API with an implementation that provides advanced traffic management for inference services — weighted traffic splitting, header-based routing (e.g. OpenAI protocol headers), and optional service-mesh integration.*
 
-NKP ships the Kubernetes **Gateway API** CRDs (`gateway.networking.k8s.io/v1`) out of the box, and provides [Envoy Gateway](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/nutanix/envoy-gateway) — a CNCF Gateway API implementation — in the Nutanix Products catalog for advanced traffic management of inference services. Envoy Gateway delivers exactly the capabilities the requirement calls for: **weighted traffic splitting** (canary/blue-green model rollouts), **header-based routing** (e.g. routing on OpenAI-style protocol headers), and optional **service-mesh integration**.
+NKP ships the Kubernetes **Gateway API** CRDs (`gateway.networking.k8s.io/v1`) out of the box, and provides [Envoy Gateway](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/envoy-gateway) — a CNCF Gateway API implementation — in the Nutanix Products catalog for advanced traffic management of inference services. Envoy Gateway delivers exactly the capabilities the requirement calls for: **weighted traffic splitting** (canary/blue-green model rollouts), **header-based routing** (e.g. routing on OpenAI-style protocol headers), and optional **service-mesh integration**.
 
 The following was verified on the NKP 2.18 cluster.
 
@@ -628,7 +632,7 @@ NKP supports the Kubernetes Gateway API and ships a conformant implementation (E
 
 This requirement is a **MUST**: *the platform must allow the installation and successful operation of at least one gang-scheduling solution that provides all-or-nothing scheduling for distributed AI workloads (e.g. Kueue, Volcano).*
 
-NKP ships [Kueue](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/ai/kueue) in the AI Applications catalog. Kueue is a CNCF gang scheduler that admits a distributed workload **atomically**: it reserves quota for the *entire* job (all of its pods) at once and unsuspends the job only when the whole gang fits. If the gang does not fit, **nothing** is scheduled — no pod of that job is placed, avoiding the partial-placement deadlock where some workers of a distributed job occupy accelerators while waiting forever for the rest.
+NKP ships [Kueue](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/kueue) in the AI Applications catalog. Kueue is a CNCF gang scheduler that admits a distributed workload **atomically**: it reserves quota for the *entire* job (all of its pods) at once and unsuspends the job only when the whole gang fits. If the gang does not fit, **nothing** is scheduled — no pod of that job is placed, avoiding the partial-placement deadlock where some workers of a distributed job occupy accelerators while waiting forever for the rest.
 
 The following was verified on the NKP 2.18 cluster. Kueue is installed exactly as shown in [AI Job and Inference Service Metrics](#ai-job-and-inference-service-metrics) (`nkp create appdeployment kueue --app kueue-0.18.0 --workspace kommander-workspace`).
 
@@ -1218,7 +1222,7 @@ thanos                  True   Helm install succeeded for release kommander/than
 
 ### AI Job Metrics — Kueue
 
-[Kueue](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/ai/kueue) is a Kubernetes-native job queueing and quota system for batch and AI/ML workloads. Its controller is natively instrumented and serves Prometheus metrics on a secured `/metrics` endpoint (port `8443`).
+[Kueue](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/kueue) is a Kubernetes-native job queueing and quota system for batch and AI/ML workloads. Its controller is natively instrumented and serves Prometheus metrics on a secured `/metrics` endpoint (port `8443`).
 
 Install Kueue from the catalog by creating an `AppDeployment` for the `kueue-0.18.0` app (the app is listed by `kubectl get apps -n kommander` once the AI Applications catalog is added — see the prerequisite note above):
 
@@ -1288,7 +1292,7 @@ The endpoint is standard, typed Prometheus exposition format (24 `kueue_*` metri
 
 ### Inference Service Metrics — KServe
 
-[KServe](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/nutanix/kserve) is a standard model inference platform. Deploying an `InferenceService` (here a scikit-learn iris model in KServe's `RawDeployment` mode) brings up a model server that both serves predictions and exposes per-model Prometheus metrics.
+[KServe](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/kserve) is a standard model inference platform. Deploying an `InferenceService` (here a scikit-learn iris model in KServe's `RawDeployment` mode) brings up a model server that both serves predictions and exposes per-model Prometheus metrics.
 
 Install KServe from the catalog by creating an `AppDeployment` for the `kserve-0.15.0` app:
 
@@ -1568,7 +1572,7 @@ GPU access is mediated exclusively by the Kubernetes device plugin and container
 
 This requirement is a **MUST**: *the platform must prove that at least one complex AI operator with a CRD (e.g. Ray, Kubeflow) installs and functions reliably — its pods run correctly, its webhooks are operational, and its custom resources reconcile.*
 
-NKP demonstrates robust CRD and controller operation with the **Slurm Operator** (the [Slinky project](https://slinky.ai/)) from the [AI Applications catalog](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/ai/slurm-operator) — a complex operator that installs its own CRDs, runs mutating and validating admission webhooks, and reconciles custom resources into a fully running Slurm cluster.
+NKP demonstrates robust CRD and controller operation with the **Slurm Operator** (the [Slinky project](https://slinky.ai/)) from the [AI Applications catalog](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/slurm-operator) — a complex operator that installs its own CRDs, runs mutating and validating admission webhooks, and reconciles custom resources into a fully running Slurm cluster.
 
 ### Install the Slurm Operator
 
@@ -1769,6 +1773,6 @@ The platform installs a complex AI operator, its CRDs and admission webhooks are
 
 Additional AI operators available in the NKP catalog include:
 
-- [Slurm Operator](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/ai/slurm-operator) — Kubernetes operator (Slinky project) for running and managing Slurm clusters, with CRDs (Controller, NodeSet, LoginSet, RestApi, Accounting, Token) and mutating/validating admission webhooks.
-- [kagent](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/ai/kagent) — Declarative AI agent lifecycle management with CRDs (Agent, Tool, ModelConfig, Team) and admission webhooks.
-- [Milvus Operator](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/ai/milvus-operator) — Manages vector database instances.
+- [Slurm Operator](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/slurm-operator) — Kubernetes operator (Slinky project) for running and managing Slurm clusters, with CRDs (Controller, NodeSet, LoginSet, RestApi, Accounting, Token) and mutating/validating admission webhooks.
+- [kagent](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/kagent) — Declarative AI agent lifecycle management with CRDs (Agent, Tool, ModelConfig, Team) and admission webhooks.
+- [Milvus Operator](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/milvus-operator) — Manages vector database instances.

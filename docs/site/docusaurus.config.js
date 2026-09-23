@@ -14,7 +14,18 @@ function normalizeBaseUrl(value) {
   return withLeading.endsWith('/') ? withLeading : `${withLeading}/`;
 }
 
+function loadPortalVersion() {
+  try {
+    return require('./src/data/portal-version.json');
+  } catch {
+    // Before first `_docs-prepare`: read human config (no hardcoded NKP versions).
+    const {loadPortalVersion: fromConfig} = require('../scripts/docs-config.cjs');
+    return fromConfig(__dirname);
+  }
+}
+
 const baseUrl = normalizeBaseUrl();
+const portal = loadPortalVersion();
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -29,9 +40,8 @@ const config = {
   projectName: 'nkp-partner-catalog',
 
   customFields: {
-    nkpVersion: '2.17',
-    nkpDocsBaseUrl:
-      'https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform-v2_17',
+    nkpVersion: portal.nkpVersion,
+    nkpDocsBaseUrl: portal.nkpDocsBaseUrl,
   },
 
   favicon: 'img/nutanix-logo.svg',
@@ -56,7 +66,17 @@ const config = {
         docs: {
           path: path.resolve(__dirname, '..', 'source'),
           sidebarPath: './config/sidebars.js',
-          editUrl: 'https://github.com/nutanix-cloud-native/nkp-partner-catalog/tree/main/docs/source/',
+          editUrl: ({docPath}) => {
+            // Generated catalog pages — no meaningful source file in this repo.
+            if (docPath.startsWith('applications/')) {
+              return undefined;
+            }
+            // Generated per-version nkp help dumps.
+            if (/^cli\/\d+\.\d+/.test(docPath)) {
+              return undefined;
+            }
+            return `https://github.com/nutanix-cloud-native/nkp-partner-catalog/tree/main/docs/source/${docPath}`;
+          },
           lastVersion: 'current',
           versions: {
             current: {
@@ -68,7 +88,7 @@ const config = {
         },
         blog: false,
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: ['./src/css/custom.css', './src/css/catalog.css'],
         },
       }),
     ],
@@ -92,7 +112,7 @@ const config = {
 
   clientModules: [
     require.resolve('./src/clientModules/mermaidPanZoom.js'),
-    require.resolve('./src/clientModules/internalPages.js'),
+    require.resolve('./src/clientModules/devMode.js'),
   ],
 
   themeConfig:
@@ -100,7 +120,7 @@ const config = {
     ({
       docs: {
         sidebar: {
-          autoCollapseCategories: true,
+          autoCollapseCategories: false,
         },
       },
       navbar: {
@@ -112,22 +132,20 @@ const config = {
         },
         items: [
           {
-            type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
+            to: '/docs/applications/',
+            label: 'Applications',
             position: 'left',
-            label: 'Documentation',
+            activeBaseRegex: '/docs/applications(/|$)',
           },
           {
-            type: 'dropdown',
-            label: 'v1',
+            to: '/docs/',
+            label: 'Docs',
             position: 'left',
-            items: [
-              { label: 'v1 (current)', to: '/docs' },
-            ],
+            // Active on docs pages, but not on the Applications surface.
+            activeBaseRegex: '/docs(?:/?$|/(?!applications(?:/|$)))',
           },
           {
-            href: 'https://github.com/nutanix-cloud-native/nkp-partner-catalog',
-            label: 'GitHub',
+            type: 'custom-export',
             position: 'right',
           },
         ],
@@ -136,11 +154,12 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'Documentation',
+            title: 'Docs',
             items: [
+              { label: 'Applications', to: '/docs/applications/' },
               { label: 'Getting started', to: '/docs/getting-started/creating-nkp-cluster' },
-              { label: 'Workflows', to: '/docs/workflows/initialize-catalog-repo' },
-              { label: 'CLI Reference', to: '/docs/cli' },
+              { label: 'Guides', to: '/docs/workflows/initialize-catalog-repo' },
+              { label: 'CLI', to: '/docs/cli' },
             ],
           },
           {

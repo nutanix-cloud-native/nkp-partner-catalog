@@ -12,15 +12,11 @@ tmp-kind-hack-scripts/
 
 # Local tooling/runtime artifacts
 /.devbox/
-/docs/.devbox/
 /.docs-deploy/
 /.local/
 
-# Node.js and Docusaurus build/cache outputs
+# Node.js
 node_modules/
-/docs/site/node_modules/
-/docs/site/.docusaurus/
-/docs/site/build/
 
 # Misc logs
 npm-debug.log*

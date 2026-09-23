@@ -1,0 +1,44 @@
+# Local docs tooling (devbox run from docs/)
+.devbox/
+
+# Node / Docusaurus
+site/node_modules/
+site/.docusaurus/
+site/build/
+site/.cache/
+site/.eslintcache
+*.tsbuildinfo
+
+# Offline Export outputs
+site/static/offline/
+.export-work/
+dist/
+
+# Downloaded nkp CLI binaries
+.cache/nkp-cli/
+
+# Generated catalog (just generate-catalog); do not commit
+source/applications/
+source/catalog-data.json
+site/static/catalog-icons/
+site/static/catalog-data.json
+
+# Generated CLI version trees (just generate-cli-docs); keep authored cli/index.mdx + cli/_category_.json
+source/cli/[0-9]*/
+# commands.json + any other static CLI assets from generate-cli-docs
+site/static/cli/
+
+# Schema static copy (rsync from authored source/schemas/v1 at prepare — do not dual-commit)
+site/static/schemas/v1/
+
+# Derived browser config (written by `just _docs-prepare` / sync-docs-data.mjs
+# from source/config.yaml). Do not commit or hand-edit.
+site/src/data/*
+!site/src/data/.gitkeep
+
+# Logs / OS
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.DS_Store
+*.log

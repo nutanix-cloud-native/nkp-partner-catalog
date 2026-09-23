@@ -90,27 +90,6 @@ pre {
    Sidebar and TOC: larger font sizes for readability (GH Pages)
    --------------------------------------------------------------------------- */
 
-/* CLI Reference category: icon on the category link only (href is /docs/cli), not on child doc links */
-.sidebar-cli-ref a.menu__link[href$="/cli"]::before,
-.sidebar-cli-ref a.menu__link[href$="/cli/"]::before {
-  content: '';
-  display: inline-block;
-  width: 1.2em;
-  height: 1.2em;
-  margin-right: 0.5rem;
-  vertical-align: middle;
-  background: url(/img/cli-icon.svg) no-repeat center;
-  background-size: contain;
-  flex-shrink: 0;
-  opacity: 0.85;
-}
-
-[data-theme='dark'] .sidebar-cli-ref a.menu__link[href$="/cli"]::before,
-[data-theme='dark'] .sidebar-cli-ref a.menu__link[href$="/cli/"]::before {
-  filter: brightness(0) invert(1);
-  opacity: 0.9;
-}
-
 /* Left sidebar: doc tree / hierarchy (categories + doc links) */
 .theme-doc-sidebar-container .menu__link,
 .theme-doc-sidebar-container .menu__list-item-collapsible .menu__link {
@@ -121,8 +100,7 @@ pre {
 }
 
 /* Right sidebar: table of contents */
-.theme-doc-toc-desktop .table-of-contents__link,
-[class*="tableOfContents"] .table-of-contents__link {
+.theme-doc-toc-desktop .table-of-contents__link {
   font-size: 0.9375rem; /* 15px */
 }
 .theme-doc-toc-desktop .table-of-contents__link--active {
@@ -134,11 +112,90 @@ pre {
   font-weight: 600;
 }
 
-/* Center top: breadcrumbs and doc title */
-.theme-doc-breadcrumbs,
-.theme-doc-breadcrumbs a {
-  font-size: 0.9375rem;
+/*
+ * Site-wide breadcrumbs: kill Infima’s padded pills (home oval + active chip).
+ * Applies to every docs page, not only CLI.
+ */
+:root {
+  --ifm-breadcrumb-border-radius: 0;
+  --ifm-breadcrumb-padding-horizontal: 0;
+  --ifm-breadcrumb-padding-vertical: 0;
+  --ifm-breadcrumb-item-background-active: transparent;
+  --ifm-breadcrumb-color-active: var(--ifm-color-emphasis-700);
+  --ifm-breadcrumb-spacing: 0.4rem;
+  --ifm-breadcrumb-size-multiplier: 0.875;
 }
+
+.theme-doc-breadcrumbs {
+  margin-bottom: 0.75rem;
+}
+
+.breadcrumbs__link,
+.breadcrumbs__item--active .breadcrumbs__link,
+.breadcrumbs__link:link:hover,
+.breadcrumbs__link:visited:hover,
+.breadcrumbs__link:any-link:hover {
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.breadcrumbs__link {
+  display: inline-flex !important;
+  align-items: center;
+  color: var(--ifm-color-primary);
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.breadcrumbs__item--active .breadcrumbs__link {
+  color: var(--ifm-color-emphasis-700) !important;
+}
+
+.breadcrumbs__link:hover {
+  text-decoration: underline;
+}
+
+/* Replace Infima’s SVG chevron with a simple › */
+.breadcrumbs__item:not(:last-child)::after {
+  background: none !important;
+  content: '›' !important;
+  display: inline-block !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 0.4rem !important;
+  opacity: 1 !important;
+  filter: none !important;
+  color: var(--ifm-color-emphasis-500);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1;
+  transform: none !important;
+  vertical-align: middle;
+}
+
+/* Docusaurus Home icon uses `top: 1px` that skews the glyph in the hit box */
+.breadcrumbs__item:first-child .breadcrumbs__link {
+  color: var(--ifm-color-emphasis-700);
+  line-height: 0;
+}
+
+.breadcrumbs__item:first-child .breadcrumbs__link:hover {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+svg[class*='breadcrumbHomeIcon'] {
+  position: static !important;
+  top: auto !important;
+  display: block !important;
+  width: 1.125rem !important;
+  height: 1.125rem !important;
+  vertical-align: unset !important;
+}
+
 .theme-doc-markdown header h1:first-child {
   font-size: 2rem; /* main doc title */
 }
@@ -234,20 +291,26 @@ pre {
    CLI reference: generated command docs (developer-friendly)
    --------------------------------------------------------------------------- */
 
-/* Pages that contain .cli-doc-ref (auto-generated CLI docs) */
-article:has(.cli-doc-ref) .markdown > h2:first-of-type {
+/* Title lives in CliDocChrome (same row as version pills); hide MD duplicate. */
+article:has(.cli-doc-ref) .theme-doc-markdown > header {
+  display: none;
+}
+
+article:has(.cli-doc-ref) .theme-doc-markdown-header h1,
+article:has(.cli-doc-ref) header h1 {
   font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--ifm-color-primary);
-  margin-top: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ifm-font-color-base);
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem;
 }
 
 article:has(.cli-doc-ref) .markdown > h3 {
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 600;
   margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.9rem;
   color: var(--ifm-font-color-base);
 }
 
@@ -323,33 +386,24 @@ html[data-theme='dark'] .DocSearch-Button-Key {
 }
 
 /* Search modal overlay: match portal nav (grey-900) */
-[class*='searchModal'] {
+[class^='searchModal_'] {
   background: rgba(34, 39, 46, 0.88) !important;
 }
 
 /* Search modal box */
-[class*='searchModalContainer'] {
+[class^='searchModalContainer_'] {
   background: var(--ifm-background-surface-color) !important;
   border: 1px solid var(--ifm-color-emphasis-200);
   border-radius: 8px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
 
-[data-theme='dark'] [class*='searchModalContainer'] {
+[data-theme='dark'] [class^='searchModalContainer_'] {
   border-color: var(--ifm-color-emphasis-300);
 }
 
-/* Selected result row: Nutanix primary (plugin uses .cursor for selected) */
-[class*='cursor'] {
-  background-color: var(--ifm-color-primary) !important;
-}
-
-[class*='cursor'] [class*='hitWrapper'] mark {
-  color: rgba(255, 255, 255, 0.95) !important;
-}
-
 /* Highlight matched text in results */
-[class*='hitWrapper'] mark {
+[class^='hitWrapper_'] mark {
   color: var(--ifm-color-primary);
 }
 
@@ -374,30 +428,26 @@ html[data-theme='dark'] .DocSearch-Button-Key {
   background: var(--ifm-background-surface-color);
   text-decoration: none !important;
   color: inherit !important;
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .landing-card:hover {
   border-color: var(--ifm-color-primary);
   box-shadow: 0 4px 16px rgba(34, 165, 247, 0.12);
-  transform: translateY(-2px);
 }
 
 [data-theme='dark'] .landing-card:hover {
   box-shadow: 0 4px 16px rgba(34, 165, 247, 0.2);
 }
 
-.landing-card__icon {
-  font-size: 1.75rem;
-  line-height: 1;
-  flex-shrink: 0;
-  margin-top: 0.125rem;
-}
-
 .landing-card__body h3 {
   margin: 0 0 0.375rem;
   font-size: 1rem;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .landing-card__body p {
@@ -405,6 +455,506 @@ html[data-theme='dark'] .DocSearch-Button-Key {
   font-size: 0.875rem;
   color: var(--ifm-color-emphasis-700);
   line-height: 1.5;
+}
+
+.landing-card--latest {
+  border-color: var(--ifm-color-primary);
+}
+
+.cli-version-badge {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--ifm-color-primary);
+}
+
+/* Shared page header: title/crumbs left, version switch trailing */
+.nkp-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  margin: 0 0 1rem;
+}
+
+.nkp-page-header--end {
+  justify-content: flex-end;
+}
+
+.nkp-page-header__start {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.nkp-page-header__title {
+  margin: 0;
+  font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--ifm-font-color-base);
+}
+
+.nkp-page-header .nkp-version-switch {
+  margin: 0;
+  flex: 0 1 auto;
+}
+
+/* Shared NKP version switch (Applications + CLI): pills + Older */
+.nkp-version-switch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin: 0 0 1.25rem;
+}
+
+.nkp-version-switch__label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.nkp-version-switch__list {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.nkp-version-switch__btn {
+  appearance: none;
+  margin: 0;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.nkp-version-switch__btn:hover {
+  border-color: var(--ifm-color-primary);
+}
+
+.nkp-version-switch__btn.is-active {
+  border-color: var(--ifm-color-primary);
+  background: rgba(34, 165, 247, 0.12);
+  color: var(--ifm-color-primary-darkest);
+  font-weight: 600;
+}
+
+html[data-theme='dark'] .nkp-version-switch__btn.is-active {
+  color: var(--ifm-color-primary-light);
+}
+
+.nkp-version-switch__btn:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+.nkp-version-switch__older {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.nkp-version-switch__older-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.nkp-version-switch__older-select {
+  appearance: auto;
+  margin: 0;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font-size: 0.875rem;
+  cursor: pointer;
+  max-width: 8rem;
+}
+
+.nkp-version-switch__older-select.is-active {
+  border-color: var(--ifm-color-primary);
+  background: rgba(34, 165, 247, 0.12);
+  color: var(--ifm-color-primary-darkest);
+  font-weight: 600;
+}
+
+html[data-theme='dark'] .nkp-version-switch__older-select.is-active {
+  color: var(--ifm-color-primary-light);
+}
+
+.nkp-version-switch__older-select:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+/* Back-compat aliases (CLI class names → shared switch) */
+.cli-version-pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin: 0 0 1.25rem;
+}
+
+.cli-breadcrumbs {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+
+.cli-breadcrumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+}
+
+.cli-breadcrumbs li {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+}
+
+.cli-breadcrumbs__sep {
+  margin: 0 0.45rem;
+  color: var(--ifm-color-emphasis-500);
+  user-select: none;
+}
+
+.cli-breadcrumbs a {
+  color: var(--ifm-color-primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.cli-breadcrumbs a:hover {
+  text-decoration: underline;
+}
+
+/* Must beat `.cli-breadcrumbs a` so home matches DocBreadcrumbs (gray, not primary). */
+.cli-breadcrumbs a.cli-breadcrumbs__home {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ifm-color-emphasis-700);
+  line-height: 0;
+}
+
+.cli-breadcrumbs a.cli-breadcrumbs__home:hover {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.cli-breadcrumbs__home svg {
+  display: block;
+  fill: currentColor;
+}
+
+.cli-breadcrumbs__current {
+  color: var(--ifm-color-emphasis-700);
+  font-weight: 500;
+}
+
+.cli-doc-chrome {
+  margin: 0 0 1rem;
+}
+
+.cli-doc-chrome__mobile-nav {
+  display: none;
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 996px) {
+  .cli-doc-chrome__mobile-nav {
+    display: block;
+  }
+
+  .cli-command-browser-rail {
+    display: none;
+  }
+}
+
+.cli-command-browser-rail {
+  position: sticky;
+  top: calc(var(--ifm-navbar-height) + 1rem);
+  max-height: calc(100vh - var(--ifm-navbar-height) - 2rem);
+  overflow: auto;
+  padding: 0.25rem 0 1rem 0.5rem;
+}
+
+.cli-command-browser__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.cli-command-browser__search {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.cli-command-browser__search input {
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font-size: 0.875rem;
+  margin-bottom: 0;
+}
+
+.cli-command-browser__tree-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.cli-command-browser__tree-btn {
+  padding: 0.35rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.cli-command-browser__tree-btn:hover:not(:disabled) {
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+}
+
+.cli-command-browser__tree-btn:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+.cli-command-browser__tree-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.cli-command-browser--compact .cli-command-browser__toolbar {
+  margin-bottom: 0.5rem;
+}
+
+.cli-tree {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cli-tree ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cli-tree__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.25rem;
+  margin: 0 0 0.1rem;
+}
+
+.cli-tree__twist {
+  appearance: none;
+  flex: 0 0 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0.15rem 0 0;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ifm-color-emphasis-600);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cli-tree__twist:hover {
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-primary);
+}
+
+.cli-tree__twist--spacer {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 1.5rem;
+  pointer-events: none;
+}
+
+.cli-tree__chevron {
+  display: inline-block;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.15s ease;
+  margin-left: -0.1rem;
+}
+
+.cli-tree__twist.is-open .cli-tree__chevron {
+  transform: rotate(45deg);
+  margin-top: -0.15rem;
+  margin-left: 0;
+}
+
+.cli-tree__link {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  padding: 0.3rem 0.4rem;
+  border-radius: 6px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.cli-tree__link:hover {
+  background: var(--ifm-color-emphasis-100);
+}
+
+.cli-tree li.is-active > .cli-tree__row > .cli-tree__link {
+  background: rgba(34, 165, 247, 0.12);
+  border-left: 3px solid var(--ifm-color-primary);
+}
+
+.cli-tree__link code {
+  font-size: 0.85rem;
+}
+
+.cli-tree__summary {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.75rem;
+  color: var(--ifm-color-emphasis-700);
+  line-height: 1.35;
+}
+
+.cli-command-browser--compact .cli-tree__summary {
+  display: none;
+}
+
+.cli-command-browser__hint,
+.cli-command-browser__error,
+.cli-command-browser__empty {
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.cli-landing {
+  margin-top: 0;
+}
+
+.cli-landing__lede {
+  margin: 0 0 1.5rem;
+  font-size: 1rem;
+  color: var(--ifm-color-emphasis-700);
+  max-width: 48rem;
+  line-height: 1.55;
+}
+
+.cli-landing__commands-heading {
+  font-size: 1.15rem;
+  margin: 0 0 0.75rem;
+}
+
+/* Stacked Options from generate-cli-docs (dl.cli-opts) */
+article:has(.cli-doc-ref) .markdown .cli-opts {
+  margin: 0.5rem 0 1.25rem;
+  padding: 0;
+}
+
+article:has(.cli-doc-ref) .markdown .cli-opts dt {
+  margin: 0;
+  padding-top: 0.85rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.45;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+article:has(.cli-doc-ref) .markdown .cli-opts dt:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+article:has(.cli-doc-ref) .markdown .cli-opts dt code {
+  font-size: inherit;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+article:has(.cli-doc-ref) .markdown .cli-opts .cli-opt__type,
+article:has(.cli-doc-ref) .markdown .cli-opts .cli-opt__default {
+  font-family: var(--ifm-font-family-base);
+  font-weight: 400;
+  font-size: 0.85em;
+  color: var(--ifm-color-emphasis-600);
+}
+
+article:has(.cli-doc-ref) .markdown .cli-opts .cli-opt__default code {
+  font-weight: 500;
+  font-size: 0.95em;
+  color: var(--ifm-color-emphasis-700);
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+article:has(.cli-doc-ref) .markdown .cli-opts dd {
+  margin: 0.25rem 0 0.65rem;
+  padding: 0;
+  color: var(--ifm-color-emphasis-800);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+article:has(.cli-doc-ref) .markdown details {
+  margin: 1rem 0;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+}
+
+article:has(.cli-doc-ref) .markdown details summary {
+  cursor: pointer;
+  font-weight: 600;
 }
 
 /* ---------------------------------------------------------------------------
@@ -488,4 +1038,19 @@ html[data-theme='dark'] .DocSearch-Button-Key {
 .docusaurus-mermaid-container > svg {
   display: block;
   max-width: 100%;
+}
+
+/* ---------------------------------------------------------------------------
+   Export menu
+   --------------------------------------------------------------------------- */
+
+.navbar-export > .navbar__link {
+  cursor: pointer;
+}
+
+.navbar-export__trigger {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font: inherit;
 }
