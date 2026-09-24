@@ -1,0 +1,110 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: "NGINX Ingress Controller"
+description: "High-performance, production-ready ingress controller for Kubernetes from NGINX"
+category:
+  - networking
+licensing:
+  - Starter
+  - Pro
+  - Ultimate
+type: preferred-partner
+scope:
+  - workspace
+allowMultipleInstances: true
+supportLink: "https://github.com/nginx/kubernetes-ingress/issues"
+overview: |-
+  ## Overview
+
+  Built around the open source high-performance NGINX web server, NGINX Ingress Controller delivers Layer 7 routing, SSL/TLS termination, HTTP/2 and gRPC support, advanced traffic splitting, and comprehensive observability across Nutanix infrastructure.
+
+  Licensing can be added to provide enterprise-grade application delivery, traffic management, and security for Kubernetes workloads running on Nutanix Kubernetes Platform (NKP) through F5 NGINX Plus.
+
+  ## Key Features
+
+  - **Production-Grade Ingress Control:** Native Kubernetes Ingress API support alongside advanced Custom Resource Definitions (VirtualServer, VirtualServerRoute, TransportServer, Policy).
+  - **High Performance & Low Latency:** Optimized NGINX event-driven engine handling high throughput with minimal overhead.
+  - **Flexible Traffic Management:** Basic rate limiting, standard JWT validation, and IP allow/deny lists.
+  - **End-to-End Observability:** Standard Prometheus metrics, OpenTelemetry distributed tracing, and detailed access logging.
+
+  ### Enterprise support and capabilities with F5 NGINX Plus
+
+  If using NGINX Ingress Controller with your F5 NGINX Plusimage and license, you will get access to:
+
+  - Enterprise level support and hardened releases
+  - Advanced JWT and OIDC authentication
+  - Zero downtime reconfiguration for backends and routing rules
+  - Advanced monitor metrics with OpenTelemetry and detailed access loggin
+  - WAF Integration
+
+  Go [here](https://www.f5.com/products/get-f5/nginx-open-source-vs-nginx-one-differences-in-features) for more information and [here](https://docs.nginx.com/nginx/) for documentation on how to enable these features
+
+  ## Deploying F5 NGINX Plus & Providing Secrets
+
+  To deploy F5 NGINX Plus or provide custom sensitive values (like registry credentials or JWT license secrets):
+
+  1. Create a Kubernetes Secret named `<releaseName>-custom-values` (or `imagePullSecret`) in your workspace namespace before or during installation:
+      ```shell
+      kubectl create secret docker-registry regcred \
+        --docker-server=private-registry.nginx.com \
+        --docker-username=<JWT-TOKEN> \
+        --docker-password=none \
+        -n <releaseNamespace>
+      ```
+  2. In the NKP application deployment values, update the controller configuration:
+      ```yaml
+      controller:
+        nginxplus: true
+        image:
+          repository: private-registry.nginx.com/nginx-ic/nginx-plus-ingress
+          tag: "5.6.3"
+        imagePullSecrets:
+          - name: regcred
+      ```
+
+  ## Air-Gapped & Offline Environments
+
+  For highly secure, air-gapped Nutanix environments without public internet access, NGINX Ingress Controller supports two deployment paths:
+
+  ### Path A: Global Registry Mirroring (Recommended - Zero Override)
+
+  If NKP is configured with cluster-wide containerd registry mirroring (e.g., Harbor or internal registry mirroring nginx/nginx-ingress), load the images into your local registry. Containerd automatically intercepts pull requests, so no values.yaml overrides are needed.
+
+  ### Path B: Explicit Image Path Override
+
+  If global registry mirroring is not enabled, update the image repository in your NKP custom overrides:
+
+  ```yaml
+  controller:
+    image:
+      repository: harbor.internal.company.com/nginx/nginx-ingress
+      tag: "5.6.3"
+  ```
+
+  ### Quick-Start Script for Security & Infrastructure Teams
+
+  On a workstation with internet access, run the following commands to mirror all required NGINX images to your internal registry:
+
+  ```shell
+  export PRIVATE_REGISTRY="harbor.internal.company.com/nginx"
+  export NIC_VERSION="5.6.3"
+
+  # 1. Pull public images
+  docker pull nginx/nginx-ingress:${NIC_VERSION}
+
+  # 2. Tag for internal registry
+  docker tag nginx/nginx-ingress:${NIC_VERSION} ${PRIVATE_REGISTRY}/nginx-ingress:${NIC_VERSION}
+
+  # 3. Save, transfer to air-gapped network, and push
+  docker save ${PRIVATE_REGISTRY}/nginx-ingress:${NIC_VERSION} | gzip > nginx-ingress-${NIC_VERSION}.tar.gz
+
+  # (On air-gapped network)
+  docker load < nginx-ingress-${NIC_VERSION}.tar.gz
+  docker push ${PRIVATE_REGISTRY}/nginx-ingress:${NIC_VERSION}
+  ```
+
+  ## More Information
+
+  - **Documentation:** [NGINX Ingress Controller Documentation](https://docs.nginx.com/nginx-ingress-controller/)
+  - **Support & Issues:** [NGINX Ingress Controller GitHub](https://github.com/nginx/kubernetes-ingress)
+  - Trial options and enterprise capabilities: [F5.com](https://www.f5.com/products/get-f5)
+icon: PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNTEuNjY2NzUxMyAxNzEuNzY0MzU5OCI+CiAgPGc+CiAgICA8cGF0aCBkPSJNMS44MTE4MTM4LDEyOC41NzM0MjgxYy44MDQ1ODM4LDEuMzk1NTgwMywxLjkzODg4MTEsMi40ODQyNTYxLDMuMjQ3MzY2NSwzLjIyMjQ4NDNsNjYuNDMyMDgxMSwzOC4zNTQ1ODk4LjAwMjA3MjUtLjAwMjA3MjVjMS4yOTYwNDM1Ljc2MzExMDUsMi44MDM2MDM4LDEuMjAwNjU1Nyw0LjQxNDgzOCwxLjIwMDY1NTcsMS42MTEyNDIyLDAsMy4xMjA4NzUtLjQzNzU0NTIsNC40MTQ4NDYtMS4yMDA2NTU3bDY2LjQzNDE1ODYtMzguMzU0NTg5OGMxLjMwODQ3ODctLjczODIyODIsMi40Mzg2MjQ4LTEuODI0ODMxNSwzLjI0NTI4MjItMy4yMjA0MTE4LjgwNjY1NzQtMS4zOTU1NzY0LDEuMTgxOTkxLTIuOTE5NzI0OCwxLjE2NzQ4MzMtNC40MjMxMzYxVjQ3LjQ0MTEwODVsLS4wMDIwNzI1LS4wMDIwNzI1Yy4wMTI0MzUyLTEuNTAxMzM0OC0uMzYyODk4NS0zLjAyNzU1NTctMS4xNjc0ODMzLTQuNDIzMTM2MS0uODA2NjU3NC0xLjM5NTU4MDMtMS45NDA5NDg2LTIuNDgyMTg3NS0zLjI0NzM1NDctMy4yMjI0ODQzTDgwLjMxODg3MjgsMS40Mzg4MjU4di0uMDAyMDcyNWMtMS4yOTM5NzEtLjc2MzExODQtMi44MDE1MzEzLTEuMjAwNjU5Ni00LjQxMjc3MzQtMS4yMDA2NTk2LTEuNjA5MTYxNywwLTMuMTE2NzIyLjQzNzU0MTMtNC40MTA2OTMsMS4yMDA2NTk2di4wMDIwNzI1TDUuMDYzMzI3MywzOS43OTM0MTU2Yy0xLjMwODQ4NTEuNzQwMjk2OC0yLjQ0Mjc4MjQsMS44MjY5MDQtMy4yNDk0Mzk5LDMuMjIyNDg0My0uODA0NTgzOCwxLjM5NTU4MDMtMS4xNzk5MTgsMi45MjE4MDEzLTEuMTY3NDc1OSw0LjQyMzEzNjFsLS4wMDIwNzM4LjAwMjA3MjV2NzYuNzA5MTgzNWMtLjAxNDUxNTYsMS41MDM0MTEzLjM2MDgxODYsMy4wMjc1NTk3LDEuMTY1NDAyMyw0LjQyMzEzNjEiIHN0eWxlPSJmaWxsOiAjMDA5NjM5OyIvPgogICAgPHBhdGggZD0iTTU0LjYzNzA5NTIsMTE0Ljk5NjA3NWMwLDQuNzE3NjAxNS0zLjgyMzg1MDQsOC41NDM1MjA1LTguNTQzNTIwNSw4LjU0MzUyMDUtNC43MTc1OTc2LDAtOC41NDM1MTY2LTMuODI1OTE5LTguNTQzNTE2Ni04LjU0MzUyMDVsLjAwMjA3MjUuMDAyMDc2NS4wMDgyOTQxLTU4LjY0NzUyN2MwLTQuNTQzNDA2MSw0LjAxNDYyNjEtOC4zMDA4OTYsOS43MDA2MjU0LTguMzAwODk2LDQuMDcwNjEyMSwwLDguNzY5NTQ5LDEuNjQyMzQ2LDExLjY0NTczMDksNS4yMDY5Nzk4bDIuNTgxNzE2NCwzLjA4OTc3MTIsMzUuNjkyMDAxMSw0Mi43MTM0NDU3di00Mi40NzA4MjUyaC0uMDA0MTQ1MWMwLTQuNzE3NjAxNSwzLjgyNTkxNTEtOC41NDM1MTY2LDguNTQ1NTg5MS04LjU0MzUxNjYsNC43MTc2MDE1LDAsOC41NDE0NDQsMy44MjU5MTUxLDguNTQxNDQ0LDguNTQzNTE2NmgtLjAwMjA3MjVsLS4wMDgyOTAxLDU4LjY0MzM3NGMwLDQuNTQzNDEwMS00LjAxNjY5ODYsOC4zMDA5LTkuNzAwNjI5Myw4LjMwMDktNC4wNzI2ODg2LDAtOC43Njk1NDktMS42NDAyNzM0LTExLjY0NTczMDktNS4yMDY5ODM3bC0zOC4yNzM3MTc2LTQ1LjgwMzIxNjl2NDIuNDc0OTc4MmwuMDA0MTQ5LS4wMDIwNzY1WiIgc3R5bGU9ImZpbGw6ICNmZmY7Ii8+CiAgPC9nPgogIDxwYXRoIGQ9Ik0xNDguODcyNDA2LDE0OC45MDYzNzc0Yy45ODI5NzM3Ljk1NzkxNzQsMS40NjM4NTA1LDIuMTQ5NjczMywxLjQ2Mzg1MDUsMy41NDA3Mzg5LDAsMS4zNzc3MzI3LS40ODA4NzY4LDIuNTc5NDAyOC0xLjQ2Mzg1MDUsMy41NjEyNTExLS45Njg5NDEuOTc0NjY5LTIuMTU1MjE3OCwxLjQ3MjM5NzUtMy41NTE2NDI4LDEuNDcyMzk3NS0xLjM4MjczNDYsMC0yLjU2ODY0MDYtLjQ5NzcyODUtMy41NDQ3OTc2LTEuNDcyMzk3NS0uOTYyNDM4LS45ODE4NDgyLTEuNDU3MzE5MS0yLjE4MzUxODMtMS40NTczMTkxLTMuNTYxMjUxMSwwLTEuMzkxMDY1Ni40OTQ4ODEtMi41ODI4MjE1LDEuNDU3MzE5MS0zLjU0MDczODkuOTkyODk5My0uOTk4NTk5OCwyLjE3MjMzMDgtMS40ODYxMDUyLDMuNTQ0Nzk3Ni0xLjQ4NjEwNTIsMS4zOTMwMDI0LDAsMi41NzIxMjA0LjQ4NzUwNTQsMy41NTE2NDI4LDEuNDg2MTA1MlpNMTQ5LjQ2MjEyMTgsMTQ4LjMyNzU5MjljLTEuMTQ1NTQ3Ny0xLjEzMDU2MTMtMi41MTgwMTQ1LTEuNjkyNTk0Mi00LjE0MTM1ODYtMS42OTI1OTQyLTEuNTg5NDYwMywwLTIuOTY4NDMuNTYyMDMyOS00LjA5Mzc4NDMsMS42OTI1OTQyLTEuMTQ1MjA1NCwxLjEzMzk4LTEuNzAxMzc5NiwyLjUwODI5NC0xLjcwMTM3OTYsNC4xMTk1MjM0LDAsMS42MDc4MTA3LjU0ODk4NjcsMi45ODg5NjIxLDEuNjgxMTg2Miw0LjExNjEwNDcsMS4xMjUwMTIsMS4xNDc2NTQ4LDIuNTExMTY5MywxLjcxNjUyNTEsNC4xMTM5Nzc3LDEuNzE2NTI1MSwxLjYyMzM0NDEsMCwyLjk5NTgxMDktLjU2ODg3MDMsNC4xNDEzNTg2LTEuNzE2NTI1MSwxLjEyODQzNDctMS4xMzM5OCwxLjcwODIyNDktMi41MTgyNDEzLDEuNzA4MjI0OS00LjExNjEwNDcsMC0xLjYyMTQ4NTQtLjU3OTc5MDItMi45ODU1NDM0LTEuNzA4MjI0OS00LjExOTUyMzRaTTE0Ni4xODg0MjM2LDE1Mi4xNjYwOTk4Yy0uMjI2OTQ3Ny4wOTgxMTY0LS41ODk3NDQ0LjE0MjE4NDUtMS4wNzA5NjM0LjE0MjE4NDVoLTEuMDA5OTgzOHYtMi4zMjE5NDIzaC45NjI3NTE4Yy42MjMyNTc0LDAsMS4wNzc0Mzc4LjA4Nzg2MDQsMS4zNTUzNTM3LjI0MzM3NzcuMjg4MTgzOC4xNjI3NjI5LjQyNjgyODEuNDc0MjA1Ny40MjY4MjgxLjkzNDM2MTYsMCwuNDk0MzQyOC0uMjE2Njc5OC44MTkxMTg1LS42NjM5ODY0LDEuMDAyMDE4NVpNMTQyLjk4MjQzNTgsMTU1LjYwNTMwMzZoMS4xMjUwNDA2di0yLjUxMTM3MDloLjg5MTU2MTVjLjU4OTcxNTgsMCwxLjAxMzA5MjcuMDYwNTEwOCwxLjI1MzcwMjIuMjA5NTY1OC4zOTYzMzgzLjIzNjkxNTMuNTk5NjY5OS43Mjc4MDY0LjU5OTY2OTksMS40NjI1MTYzdi41MTQxNzEybC4wMjA1MzU3LjE5MzE1NjFjLjAxMzY5MDQuMDM3MjYzNy4wMTM2OTA0LjA1NDAxNTMuMDE3MTEzMS4wNzc2MDQzLjAwNjQ3NDQuMDMwNzY4Mi4wMDk4OTcuMDQxMDI0My4wMzA0MzI2LjA1NDM1NzJoMS4wNDM1NTM5bC0uMDM3MzA2NS0uMDc0MTg1NmMtLjAzMzg1NTItLjA0NzUxOTgtLjA1MDY1NDYtLjE1NTg5MjMtLjA1NDA3NzItLjMyNTQ1OTQtLjAxMzM0ODItLjE3NTcyMDctLjAxMzM0ODItLjMzMTYxMzEtLjAxMzM0ODItLjQ3MzgzMDd2LS40NzM4MzA3YzAtLjMyNTExNzYtLjExODc2NDYtLjY0OTg5MzMtLjM0OTEwNjMtLjk5MTc2MjQtLjIzNzUyOTItLjM0MTg2OTItLjYxMDI1MTQtLjU0MTUyMDgtMS4xMTE2NjM5LS42Mjk3NTYxLjM5OTc2MDktLjA2Mzg5NjUuNzExOTAzLS4xNzI2MTA4LjkyNTEzMTYtLjMwMTE1MzcuNDI2Nzk5NS0uMjcwNzYwNC42MjY2OC0uNzAzOTQxNy42MjY2OC0xLjI2NTk0MTUsMC0uNzk4OTQ4Mi0uMzE4MzAyOC0xLjM0NzMwNjQtLjk4OTEzNDQtMS42MTgwNjY3LS4zNjk2NDE5LS4xNDkwNTUtLjk0OTA4OTktLjIzMDExMTEtMS43NDUxODktLjIzMDExMTFoLTIuMjMzNTk1NnY2LjM4NDA5NzlaIiBzdHlsZT0iZmlsbDogIzAwOTYzOTsiLz4KPC9zdmc+
