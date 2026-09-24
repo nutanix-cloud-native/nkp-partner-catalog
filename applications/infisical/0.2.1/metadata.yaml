@@ -13,6 +13,10 @@ scope:
 allowMultipleInstances: false
 dependencies:
   - cloudnative-pg
+dependsOn:
+  - type: Application
+    name: cloudnative-pg
+    optional: true
 # Validated on NKP 2.18; widen once older releases are verified with the
 # CloudNativePG platform application.
 nkpVersionSupport: ">=2.18"
