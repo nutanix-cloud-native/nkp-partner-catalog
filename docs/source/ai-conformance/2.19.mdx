@@ -1,0 +1,1614 @@
+---
+title: CNCF AI Conformance
+sidebar_label: NKP 2.19
+slug: /ai-conformance/2.19
+toc_max_heading_level: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# CNCF AI Conformance
+
+<div style={{ float: 'right', width: '140px', margin: '0 0 0.75rem 1rem', textAlign: 'center' }}>
+  <a href="https://github.com/cncf/k8s-ai-conformance/blob/main/docs/AIConformance-1.36.yaml" target="_blank" rel="noopener noreferrer">
+    <img
+      src={useBaseUrl('/img/ai-conformance/cncf-ai-conformance-logo-color-v2.png')}
+      alt="CNCF Kubernetes AI Conformance logo"
+      style={{ width: '100%', height: 'auto' }}
+    />
+  </a>
+</div>
+
+The [CNCF Kubernetes AI Conformance](https://github.com/kubernetes-sigs/wg-device-management/blob/main/conformance/README.md) defines a set of additional capabilities, APIs, and configurations that a Kubernetes cluster MUST offer, on top of standard CNCF Kubernetes Conformance, to reliably and efficiently run AI/ML workloads.
+
+This page shows how NKP 2.19 meets the [Kubernetes v1.36 checklist](https://github.com/cncf/k8s-ai-conformance/blob/main/docs/AIConformance-1.36.yaml). v1.36 evidence is manual command output.
+
+<div style={{ clear: 'both' }} />
+
+
+## Requirements Overview
+
+**The v1.36 checklist has 8 MUST requirements and 6 SHOULD requirements.** This cluster serves DRA v1 and runs the NVIDIA DRA driver. That evidence is in [Support Dynamic Resource Allocation (DRA)](#support-dynamic-resource-allocation-dra). The driver, sharing, vGPU, networking, and secure-access sections use it where the checklist calls for DRA.
+
+| Requirement | Level | Supported | Section |
+|---|---|:---:|---|
+| **`accelerators`** | | | |
+| `driver_runtime_management` | SHOULD | ✅ | [Driver Runtime Management](#driver-runtime-management) |
+| `gpu_sharing` | SHOULD | ✅ | [GPU Sharing](#gpu-sharing) |
+| `virtualized_accelerator` | SHOULD | ✅ | [Virtualized Accelerator (vGPU)](#virtualized-accelerator-vgpu) |
+| **`networking`** | | | |
+| `ai_inference` | MUST | Supported | [Support the Gateway API](#support-the-gateway-api) |
+| `advanced_inference_ingress` | SHOULD | Not evidenced | [Gateway API Inference Extension](#gateway-api-inference-extension) |
+| `high_performance_networking` | SHOULD | Partial | [High-Performance Networking](#high-performance-networking) |
+| `disaggregated_inference` | SHOULD | Not evidenced | [Disaggregated Inference](#disaggregated-inference) |
+| **`schedulingOrchestration`** | | | |
+| `gang_scheduling` | MUST | ✅ | [Gang Scheduling](#gang-scheduling) |
+| `cluster_autoscaling` | MUST | ✅ | [Cluster Autoscaling](#cluster-autoscaling) |
+| `pod_autoscaling` | MUST | ✅ | [Horizontal Pod Autoscaler](#horizontal-pod-autoscaler) |
+| **`observability`** | | | |
+| `accelerator_metrics` | MUST | ✅ | [Accelerator Performance Metrics](#accelerator-performance-metrics) |
+| `ai_service_metrics` | MUST | ✅ | [AI Job and Inference Service Metrics](#ai-job-and-inference-service-metrics) |
+| **`security`** | | | |
+| `secure_accelerator_access` | MUST | ✅ | [Secure Accelerator Access](#secure-accelerator-access) |
+| **`operator`** | | | |
+| `robust_controller` | MUST | ✅ | [Robust CRD and Controller Operation](#robust-crd-and-controller-operation) |
+
+## Verification Setup
+
+### Environment
+
+The steps below were verified on the following NKP 2.19 cluster and workspace. Commands throughout this page target the `kommander-workspace` (namespace `kommander`).
+
+```bash
+kubectl get clusters -A
+```
+
+```
+NAMESPACE   NAME                               CLUSTERCLASS                 AVAILABLE   CP DESIRED   CP AVAILABLE   CP UP-TO-DATE   W DESIRED   W AVAILABLE   W UP-TO-DATE   PHASE         AGE     VERSION
+kommander   rocky-98-ootb-rocky-starter-062b   nkp-nutanix-v2.19.0-dev.34   True        3            3              3               5           5             5              Provisioned   115m   v1.36.2
+```
+
+```bash
+kubectl get workspaces -A
+```
+
+```
+NAME                  DISPLAY NAME                   WORKSPACE NAMESPACE           AGE
+default-workspace     Default Workspace              kommander-default-workspace   109m
+kommander-workspace   Management Cluster Workspace   kommander                     109m
+```
+
+The GPU worker is a Nutanix node pool on Prism Element `ncn-ci-workloads-gpu`, subnet `vlan208`, image `nkp-ubuntu-24.04-gpu-1.36.2-20260924221219`, with one passthrough GPU named `Ampere 40`. On Prism Central 7.6, `--gpu-name` is deprecated in favor of `--gpu-profile-name`. This pool was created with `--gpu-name`.
+
+```bash
+nkp create nodepool nutanix gpu \
+  --cluster-name rocky-98-ootb-rocky-starter-062b \
+  --namespace kommander \
+  --vm-image nkp-ubuntu-24.04-gpu-1.36.2-20260924221219 \
+  --kubernetes-version 1.36.2 \
+  --prism-element-cluster ncn-ci-workloads-gpu \
+  --subnets vlan208 \
+  --replicas 1 \
+  --gpu-count 1 \
+  --gpu-name "Ampere 40" \
+  --vcpus 8 \
+  --cores-per-vcpu 1 \
+  --memory 32 \
+  --disk-size 80
+```
+
+```
+NAME                                                      STATUS   ROLES    VERSION   INTERNAL-IP   OS-IMAGE             KERNEL-VERSION              CONTAINER-RUNTIME
+rocky-98-ootb-rocky-starter-062b-gpu-mmcxf-fkbt2-z2tcg    Ready    <none>   v1.36.2   10.41.5.123   Ubuntu 24.04.4 LTS   6.8.0-124-generic (amd64)   containerd://2.3.1-d2iq.1
+```
+
+The control plane and the other workers run Rocky Linux 9.8. Every node reports `containerd://2.3.1-d2iq.1`.
+
+### Prerequisites
+
+Several checks use operators from the NKP AI Applications catalog and the Nutanix product catalog. Add the AI catalog collection to the workspace before deploying those apps:
+
+```bash
+nkp create catalog-collection \
+  --url oci://ghcr.io/nutanix-cloud-native/nkp-ai-applications-catalog/collection \
+  --tag 2.19 \
+  --workspace kommander-workspace
+```
+
+Once the collections are available, applications are listed as `App` resources in the workspace namespace:
+
+```bash
+kubectl get apps -n kommander
+```
+
+<details>
+<summary>Catalog applications (<code>App</code> resources) in the workspace</summary>
+
+```
+NAME                             APP ID                   APP VERSION
+amd-gpu-operator-1.5.1           amd-gpu-operator         1.5.1
+amd-kmm-operator-1.0.0           amd-kmm-operator         1.0.0
+envoy-gateway-nai-1.8.1          envoy-gateway-nai        1.8.1
+jupyterhub-4.3.2                 jupyterhub               4.3.2
+kai-scheduler-0.15.2             kai-scheduler            0.15.2
+kserve-0.19.0                    kserve                   0.19.0
+kubeflow-pipelines-2.15.0        kubeflow-pipelines       2.15.0
+kueue-0.18.0                     kueue                    0.18.0
+leaderworkerset-0.8.0            leaderworkerset          0.8.0
+milvus-operator-1.3.6            milvus-operator          1.3.6
+ndk-2.3.0                        ndk                      2.3.0
+nutanix-ai-2.8.0                 nutanix-ai               2.8.0
+opentelemetry-operator-0.114.1   opentelemetry-operator   0.114.1
+slurm-operator-1.1.1             slurm-operator           1.1.1
+```
+
+</details>
+
+Deploy an application by creating an `AppDeployment`:
+
+```bash
+nkp create appdeployment <name> \
+  --app <app-id>-<version> \
+  --workspace kommander-workspace
+```
+
+The checks on this page deployed `nvidia-gpu-operator`, `nvidia-network-operator`, `kube-prometheus-stack`, `prometheus-adapter`, `centralized-grafana`, `thanos`, `kueue`, `kserve`, `envoy-gateway-nai`, and `slurm-operator`. JupyterHub, Kubeflow Pipelines, KAI Scheduler, Milvus, the AMD operators, LeaderWorkerSet, NDK, Nutanix AI, and the OpenTelemetry operator were left undeployed.
+
+`grafana-loki-v3` did not become Ready. That chart needs Rook Ceph (`rook-ceph-1.19.5` and `rook-ceph-cluster-1.19.5`), which were not deployed. Log collection is not a v1.36 MUST.
+
+## Support Dynamic Resource Allocation (DRA)
+
+v1.36 uses Dynamic Resource Allocation as the mechanism for driver verification, GPU sharing, vGPU, and specialized networks once the accelerator supports it. DRA v1 (`resource.k8s.io/v1`) is served on this Kubernetes v1.36.2 cluster, and the NVIDIA DRA driver is installed and publishing the A40.
+
+```bash
+kubectl api-resources --api-group=resource.k8s.io
+```
+
+```
+NAME                     SHORTNAMES   APIVERSION           NAMESPACED   KIND
+deviceclasses                         resource.k8s.io/v1   false        DeviceClass
+resourceclaims                        resource.k8s.io/v1   true         ResourceClaim
+resourceclaimtemplates                resource.k8s.io/v1   true         ResourceClaimTemplate
+resourceslices                        resource.k8s.io/v1   false        ResourceSlice
+```
+
+The driver chart is `dra-driver-nvidia-gpu@0.4.1` (HelmRelease `nvidia-dra-driver`, Ready). It creates these DeviceClasses:
+
+```bash
+kubectl get deviceclasses
+```
+
+```
+NAME
+compute-domain-daemon.nvidia.com
+compute-domain-default-channel.nvidia.com
+gpu.nvidia.com
+mig.nvidia.com
+vfio.gpu.nvidia.com
+```
+
+The `gpu.nvidia.com` ResourceSlice on the GPU node publishes device `gpu-0`:
+
+```
+driver: gpu.nvidia.com
+node: rocky-98-ootb-rocky-starter-062b-gpu-mmcxf-fkbt2-z2tcg
+device: gpu-0
+uuid: GPU-0384e187-141b-b2ef-e56e-c92a783f6fd8
+productName: NVIDIA A40
+architecture: Ampere
+driverVersion: 580.126.18
+```
+
+Driver pods in `kommander`:
+
+```bash
+kubectl get pods -n kommander | grep dra-driver
+```
+
+```
+dra-driver-nvidia-gpu-controller-5766489b58-nq4sg     1/1   Running
+dra-driver-nvidia-gpu-kubelet-plugin-hh2v8            2/2   Running
+dra-driver-nvidia-gpu-webhook-6bfb76d88d-b6l7s        1/1   Running
+```
+
+The device plugin is also enabled, so the same GPU is schedulable as `nvidia.com/gpu`. See [Driver Runtime Management](#driver-runtime-management) and [Secure Accelerator Access](#secure-accelerator-access).
+
+:::tip[DRA is installed]
+NKP 2.19 on this cluster serves `resource.k8s.io/v1` and runs the NVIDIA DRA driver. The A40 is published as device `gpu-0` on DeviceClass `gpu.nvidia.com`, with the host driver version on the ResourceSlice.
+:::
+
+## Driver Runtime Management
+
+This requirement is a **SHOULD**: *provide a verifiable mechanism for ensuring that compatible accelerator drivers and corresponding container runtime configurations are correctly installed and maintained on nodes with accelerators. Once the accelerator supports exposing driver and runtime version information as part of DRA, the platform should use the DRA mechanism for verification.*
+
+NKP ships the NVIDIA GPU Operator to manage the container toolkit, device plugin, DCGM exporter, and runtime configuration on GPU nodes. On this cluster the GPU image already contains the host driver, so the chart default leaves `driver.enabled: false`. The NVIDIA DRA driver publishes the same driver version on the ResourceSlice, which is the DRA verification path the requirement describes.
+
+### Verify Container Runtime Version
+
+```bash
+kubectl get nodes -l nvidia.com/gpu.present=true \
+  -o jsonpath='{.items[*].status.nodeInfo.containerRuntimeVersion}'
+```
+
+```
+containerd://2.3.1-d2iq.1
+```
+
+### Verify Accelerator Driver and Runtime Configuration
+
+```bash
+kubectl get nodes -l nvidia.com/gpu.present=true -o json
+```
+
+Key labels on `rocky-98-ootb-rocky-starter-062b-gpu-mmcxf-fkbt2-z2tcg`:
+
+```
+nvidia.com/cuda.driver-version.full=580.126.18
+nvidia.com/cuda.runtime-version.full=13.0
+nvidia.com/gpu.count=1
+nvidia.com/gpu.deploy.container-toolkit=true
+nvidia.com/gpu.deploy.dcgm=true
+nvidia.com/gpu.deploy.dcgm-exporter=true
+nvidia.com/gpu.deploy.device-plugin=true
+nvidia.com/gpu.deploy.driver=true
+nvidia.com/gpu.deploy.gpu-feature-discovery=true
+nvidia.com/gpu.family=ampere
+nvidia.com/gpu.machine=AHV
+nvidia.com/gpu.memory=46068
+nvidia.com/gpu.mode=compute
+nvidia.com/gpu.present=true
+nvidia.com/gpu.product=NVIDIA-A40
+nvidia.com/gpu.replicas=1
+nvidia.com/gpu.sharing-strategy=none
+nvidia.com/mig.capable=false
+nvidia.com/vgpu.present=false
+```
+
+`gpu.deploy.container-toolkit=true` confirms the container runtime configuration is injected. `cuda.driver-version.full=580.126.18` is the host driver. The same version is on the DRA device attribute `driverVersion` in [Support Dynamic Resource Allocation (DRA)](#support-dynamic-resource-allocation-dra).
+
+The chart default also sets `devicePlugin.enabled: false`, so `nvidia.com/gpu` is not advertised until that value is overridden. An optional values ConfigMap was applied and the HelmRelease was reconciled so the device-plugin checks on this page could run next to DRA:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nvidia-gpu-operator-config-deviceplugin-defaults
+  namespace: kommander
+data:
+  operator-deviceplugin-enabled-values.yaml: |
+    devicePlugin:
+      enabled: true
+```
+
+After that reconcile the GPU node advertised `nvidia.com/gpu` capacity `1` and allocatable `1`.
+
+### Verify GPU Operator Pods
+
+```bash
+kubectl get pods -n kommander | grep nvidia
+```
+
+```
+nvidia-container-toolkit-daemonset-5bk29     1/1   Running
+nvidia-cuda-validator-gqspk                  0/1   Completed
+nvidia-dcgm-hvmdj                            1/1   Running
+nvidia-dcgm-exporter-6p79t                   1/1   Running
+nvidia-device-plugin-daemonset-prgsw         2/2   Running
+nvidia-network-operator-7c777996d-qwm2v      1/1   Running
+nvidia-operator-validator-xdlz8              1/1   Running
+gpu-operator-69b86d44d8-rtxwk                1/1   Running
+```
+
+### Verify HelmReleases
+
+```bash
+kubectl get helmreleases -n kommander | grep nvidia
+```
+
+```
+nvidia-dra-driver         True   Helm install succeeded for release kommander/nvidia-dra-driver.v1 with chart dra-driver-nvidia-gpu@0.4.1
+nvidia-gpu-operator       True   Helm install succeeded for release kommander/nvidia-gpu-operator.v1 with chart gpu-operator@v26.3.3
+nvidia-network-operator   True   Helm install succeeded for release kommander/nvidia-network-operator.v1 with chart network-operator@26.1.0
+```
+
+:::tip[Conformance: satisfied]
+The GPU node reports driver 580.126.18, CUDA runtime 13.0, and containerd 2.3.1-d2iq.1. The NVIDIA DRA driver publishes that same driver version on `gpu.nvidia.com`.
+:::
+
+## GPU Sharing
+
+This requirement is a **SHOULD**: *for accelerators that support static GPU sharing, provide a well-defined mechanism for at least one sharing strategy so workloads that do not need a full dedicated GPU can improve utilization. If software-based sharing (for example time-slicing) is supported, oversubscription of GPUs should be allowed.*
+
+NKP satisfies this through the NVIDIA GPU Operator using time-slicing. One physical GPU is advertised as *N* schedulable `nvidia.com/gpu` replicas. The forward-looking DRA clause in v1.36 is covered by the installed NVIDIA DRA driver; this demonstration uses the device-plugin time-slicing path, which is what schedules `nvidia.com/gpu` today.
+
+### Enable Time-Slicing on the GPU Operator
+
+```bash
+kubectl apply -f - <<'EOF'
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: time-slicing-config
+  namespace: kommander
+data:
+  any: |-
+    version: v1
+    sharing:
+      timeSlicing:
+        resources:
+        - name: nvidia.com/gpu
+          replicas: 4
+EOF
+
+kubectl patch clusterpolicy cluster-policy --type merge \
+  -p '{"spec":{"devicePlugin":{"config":{"name":"time-slicing-config","default":"any"}}}}'
+```
+
+### Verify the Node Advertises Oversubscribed GPU Slices
+
+```bash
+kubectl get node rocky-98-ootb-rocky-starter-062b-gpu-mmcxf-fkbt2-z2tcg -o json
+```
+
+```
+nvidia.com/gpu.count=1
+nvidia.com/gpu.product=NVIDIA-A40-SHARED
+nvidia.com/gpu.replicas=4
+nvidia.com/gpu.sharing-strategy=time-slicing
+capacity=4 allocatable=4
+```
+
+The node has one physical GPU (`gpu.count=1`) and advertises it as four schedulable slices.
+
+### Deploy Multiple Pods That Each Request a Whole GPU
+
+```bash
+kubectl create namespace gpu-sharing-demo
+kubectl apply -f - <<'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: time-slicing-verify
+  namespace: gpu-sharing-demo
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: time-slicing-verify
+  template:
+    metadata:
+      labels:
+        app: time-slicing-verify
+    spec:
+      runtimeClassName: nvidia
+      tolerations:
+      - key: nvidia.com/gpu
+        operator: Exists
+        effect: NoSchedule
+      containers:
+      - name: cuda
+        image: nvcr.io/nvidia/cuda:12.5.0-base-ubuntu22.04
+        command: ["/bin/sh","-c","nvidia-smi -L; sleep 3600"]
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+EOF
+```
+
+All four pods reached `Running` on the single GPU node:
+
+```bash
+kubectl -n gpu-sharing-demo get pods -o wide
+```
+
+```
+NAME                                   READY   STATUS    NODE
+time-slicing-verify-745956486-hmcvh   1/1     Running   rocky-98-ootb-rocky-starter-062b-gpu-mmcxf-fkbt2-z2tcg
+time-slicing-verify-745956486-nrmd7   1/1     Running   rocky-98-ootb-rocky-starter-062b-gpu-mmcxf-fkbt2-z2tcg
+time-slicing-verify-745956486-wt9pj   1/1     Running   rocky-98-ootb-rocky-starter-062b-gpu-mmcxf-fkbt2-z2tcg
+time-slicing-verify-745956486-z4jc7   1/1     Running   rocky-98-ootb-rocky-starter-062b-gpu-mmcxf-fkbt2-z2tcg
+```
+
+Allocated resources on the node showed `nvidia.com/gpu` `4` requested against `4` allocatable.
+
+### Prove the Pods Share One Physical GPU
+
+```bash
+for p in $(kubectl -n gpu-sharing-demo get pods -o jsonpath='{.items[*].metadata.name}'); do
+  echo "--- $p ---"; kubectl -n gpu-sharing-demo logs $p | grep -i UUID
+done
+```
+
+```text {2,4,6,8}
+--- time-slicing-verify-745956486-hmcvh ---
+GPU 0: NVIDIA A40 (UUID: GPU-0384e187-141b-b2ef-e56e-c92a783f6fd8)
+--- time-slicing-verify-745956486-nrmd7 ---
+GPU 0: NVIDIA A40 (UUID: GPU-0384e187-141b-b2ef-e56e-c92a783f6fd8)
+--- time-slicing-verify-745956486-wt9pj ---
+GPU 0: NVIDIA A40 (UUID: GPU-0384e187-141b-b2ef-e56e-c92a783f6fd8)
+--- time-slicing-verify-745956486-z4jc7 ---
+GPU 0: NVIDIA A40 (UUID: GPU-0384e187-141b-b2ef-e56e-c92a783f6fd8)
+```
+
+That UUID is the same device the DRA ResourceSlice publishes as `gpu-0`.
+
+Secure access and the HPA check ran while this node still advertised one `nvidia.com/gpu`. Time-slicing was enabled after those checks and left in place. The node then reported `nvidia.com/gpu.product=NVIDIA-A40-SHARED`, `sharing-strategy=time-slicing`, capacity `4`, allocatable `4`.
+
+:::tip[Conformance: satisfied]
+Four pods, each granted a full `nvidia.com/gpu`, ran on one physical A40 and reported one UUID.
+:::
+
+## Virtualized Accelerator (vGPU)
+
+NVIDIA vGPU lets a hypervisor partition a physical GPU into multiple virtual GPUs that are assigned to separate VMs. It requires vGPU-capable hardware, the NVIDIA vGPU host driver on the hypervisor, and the NVIDIA License System. This requirement is a **SHOULD**: *for accelerators that support virtualized accelerator technologies (for example vGPU), provide well-defined mechanisms for these to be exposed and managed, maintaining consistency with physical fractional GPUs.*
+
+NKP can provision vGPU-enabled node pools, in addition to full GPU passthrough, on Nutanix AHV and VMware vSphere. Virtual GPUs use the same GPU Operator path and the same `nvidia.com/gpu` resource name as physical GPUs. v1.36 says that once the accelerator supports vGPU through DRA, the platform should use that mechanism. The NVIDIA DRA driver is installed on this cluster; the published device is the passthrough A40, not a vGPU profile.
+
+### Consistent Management Across Physical and Virtual GPUs
+
+```bash
+kubectl get nodes -l nvidia.com/gpu.present=true -o json
+```
+
+```
+nvidia.com/gpu.machine=AHV
+nvidia.com/gpu.product=NVIDIA-A40
+nvidia.com/gpu.mode=compute
+nvidia.com/gpu.count=1
+nvidia.com/gpu.sharing-strategy=none
+nvidia.com/vgpu.present=false
+```
+
+```bash
+kubectl get node rocky-98-ootb-rocky-starter-062b-gpu-mmcxf-fkbt2-z2tcg \
+  -o jsonpath='{.status.allocatable.nvidia\.com/gpu}{"\n"}'
+```
+
+```
+1
+```
+
+On this node the A40 is attached in passthrough mode (`gpu.mode=compute`, `vgpu.present=false`) and advertises one full `nvidia.com/gpu`. On a vGPU node pool, the same operator stack reports `nvidia.com/vgpu.present=true` and advertises the assigned vGPU profile as `nvidia.com/gpu`. A workload's `resources.limits: nvidia.com/gpu: 1` stays the same either way.
+
+:::note[DRA]
+The NVIDIA DRA driver is installed. DeviceClasses include `gpu.nvidia.com`, `mig.nvidia.com`, and `vfio.gpu.nvidia.com`. The ResourceSlice for this node describes the passthrough A40 (`productName: NVIDIA A40`, `architecture: Ampere`). A vGPU profile was not attached, so `nvidia.com/vgpu.present` stays `false`.
+:::
+
+**Resources**
+
+- [vGPU on Nutanix (TN-2046)](https://portal.nutanix.com/page/documents/solutions/details?targetId=TN-2046-vGPU-on-Nutanix:TN-2046-vGPU-on-Nutanix)
+- [NVIDIA GPU Operator — Using NVIDIA vGPU](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/install-gpu-operator-vgpu.html)
+
+:::tip[Conformance: satisfied]
+NKP exposes passthrough and vGPU attachments through the same GPU Operator labels and the same `nvidia.com/gpu` resource. This node is passthrough. The DRA driver is present for the forward-looking vGPU path.
+:::
+
+## Support the Gateway API
+
+This requirement is a **MUST**: *support the Kubernetes Gateway API with an implementation for advanced traffic management for inference services, which enables weighted traffic splitting, header-based routing (for OpenAI protocol headers), and optional integration with service meshes.*
+
+NKP ships the Kubernetes Gateway API CRDs. Envoy Gateway for NKP 2.19 is catalog app `envoy-gateway-nai` 1.8.1 (chart `gateway-helm@v1.8.1`). The 2.18 page used `envoy-gateway` 1.6.3. Traefik remains the in-box GatewayClass.
+
+The following was verified on the NKP 2.19 cluster. The weighted and header request counts were not collected. See [Weighted Traffic Splitting and Header-Based Routing](#weighted-traffic-splitting-and-header-based-routing).
+
+### Verify Gateway API Resources
+
+```bash
+kubectl api-resources --api-group=gateway.networking.k8s.io
+```
+
+```
+NAME                 SHORTNAMES   APIVERSION                           NAMESPACED   KIND
+backendtlspolicies   btlspolicy   gateway.networking.k8s.io/v1         true         BackendTLSPolicy
+gatewayclasses       gc           gateway.networking.k8s.io/v1         false        GatewayClass
+gateways             gtw          gateway.networking.k8s.io/v1         true         Gateway
+grpcroutes                        gateway.networking.k8s.io/v1         true         GRPCRoute
+httproutes                        gateway.networking.k8s.io/v1         true         HTTPRoute
+listenersets         lset         gateway.networking.k8s.io/v1         true         ListenerSet
+referencegrants      refgrant     gateway.networking.k8s.io/v1         true         ReferenceGrant
+tcproutes                         gateway.networking.k8s.io/v1alpha2   true         TCPRoute
+tlsroutes                         gateway.networking.k8s.io/v1         true         TLSRoute
+udproutes                         gateway.networking.k8s.io/v1alpha2   true         UDPRoute
+```
+
+The in-box GatewayClass is accepted:
+
+```
+NAME       CONTROLLER                     ACCEPTED
+traefik    traefik.io/gateway-controller  True
+```
+
+### Install the Gateway Implementation (Envoy Gateway)
+
+Envoy Gateway NAI depends on `cert-manager`, which ships with NKP. Install it from the product catalog:
+
+```bash
+nkp create appdeployment envoy-gateway-nai \
+  --app envoy-gateway-nai-1.8.1 \
+  --workspace kommander-workspace
+```
+
+```
+envoy-gateway-nai   True   Helm install succeeded for release envoy-gateway-system/eg.v1 with chart gateway-helm@v1.8.1
+```
+
+```bash
+kubectl get pods -n envoy-gateway-system
+```
+
+The control-plane pod reached `1/1` only after the steps below. `envoy-ratelimit` stayed unready because it dials `nai-valkey-sentinel.nai-system.svc.cluster.local`, and Nutanix AI was not installed.
+
+This build watches `inference.networking.k8s.io/v1` InferencePool. That CRD is not created by the AppDeployment, and the `envoy-gateway` ServiceAccount cannot list it. Without both, the controller exits while its informers sync (`Could not wait for Cache to sync`). For this check, the upstream InferencePool CRD from Gateway API Inference Extension v1.5.0 was applied, and the ServiceAccount was granted get/list/watch on `inferencepools`. That CRD is not a GAIE implementation. See [Gateway API Inference Extension](#gateway-api-inference-extension).
+
+Register a GatewayClass and confirm it is accepted:
+
+```bash
+kubectl apply -f - <<'EOF'
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: eg
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+EOF
+
+kubectl get gatewayclass eg
+```
+
+After the CRD and RBAC change:
+
+```
+NAME   CONTROLLER                                      ACCEPTED
+eg     gateway.envoyproxy.io/gatewayclass-controller   True
+```
+
+### Deploy Two Model Backends and a Gateway
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-v1
+  namespace: gw-inference
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: model-v1 } }
+  template:
+    metadata: { labels: { app: model-v1 } }
+    spec:
+      containers:
+      - name: echo
+        image: hashicorp/http-echo:1.0
+        args: ["-text=model-v1", "-listen=:8080"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: model-v1
+  namespace: gw-inference
+spec:
+  selector: { app: model-v1 }
+  ports: [{ port: 80, targetPort: 8080 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-v2
+  namespace: gw-inference
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: model-v2 } }
+  template:
+    metadata: { labels: { app: model-v2 } }
+    spec:
+      containers:
+      - name: echo
+        image: hashicorp/http-echo:1.0
+        args: ["-text=model-v2", "-listen=:8080"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: model-v2
+  namespace: gw-inference
+spec:
+  selector: { app: model-v2 }
+  ports: [{ port: 80, targetPort: 8080 }]
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: inference-gw
+  namespace: gw-inference
+spec:
+  gatewayClassName: eg
+  listeners:
+  - name: http
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+      namespaces:
+        from: Same
+```
+
+`model-v1` and `model-v2` rolled out. The `envoy-gateway-nai` chart points `extensionManager` at `ai-gateway-controller.nai-system.svc.cluster.local:1063`. Nutanix AI is not installed here, so that name does not resolve. With the hook in place, Envoy opened an xDS connection but never received a listener, port 80 stayed closed, and `Programmed` was `False` with reason `NoResources`. The data-plane startup probe on port `19003` was refused.
+
+Removing `extensionManager` from the EnvoyGateway config, and suspending HelmRelease `envoy-gateway-nai` so Flux did not put the hook back, let the controller publish listeners. The Gateway then became ready:
+
+```
+NAME           CLASS   ADDRESS         PROGRAMMED
+inference-gw   eg      10.23.134.247   True
+```
+
+```
+Accepted      True    Accepted       The Gateway has been scheduled by Envoy Gateway
+Programmed    True    Programmed     Address assigned to the Gateway, 1/1 envoy replicas available
+listener http
+  Programmed    True    Programmed     Sending translated listener configuration to the data plane
+  Accepted      True    Accepted       Listener has been successfully translated
+  ResolvedRefs  True    ResolvedRefs   Listener references have been resolved
+  Attached Routes: 1
+```
+
+### Weighted Traffic Splitting and Header-Based Routing
+
+The HTTPRoute used for this check requests both capabilities. An 80/20 weighted split is the default rule. A header rule pins `x-model-version: canary` to `model-v2`:
+
+```yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: inference-route
+  namespace: gw-inference
+spec:
+  parentRefs:
+  - name: inference-gw
+  hostnames:
+  - "models.example.com"
+  rules:
+  - matches:
+    - path: { type: PathPrefix, value: / }
+      headers:
+      - name: x-model-version
+        value: canary
+    backendRefs:
+    - name: model-v2
+      port: 80
+  - matches:
+    - path: { type: PathPrefix, value: / }
+    backendRefs:
+    - name: model-v1
+      port: 80
+      weight: 80
+    - name: model-v2
+      port: 80
+      weight: 20
+```
+
+From a pod in `gw-inference`, 50 requests to `http://10.23.134.247/` with `Host: models.example.com` returned `model-v1` 41 times and `model-v2` 9 times. Ten requests with header `x-model-version: canary` all returned `model-v2`.
+
+:::tip[Conformance: satisfied]
+GatewayClass `eg` is Accepted. Gateway `inference-gw` is Programmed at `10.23.134.247`. The HTTPRoute split 50 requests 41/9, and the canary header sent all 10 requests to `model-v2`.
+:::
+
+## Gateway API Inference Extension
+
+This requirement is a **SHOULD**: *support an implementation of the Gateway API Inference Extension (GAIE), which can route requests to models hosted on Kubernetes. The implementation supports serving LLMs and making advanced routing decisions (for example KV-cache-aware routing) based on metrics and capabilities advertised by the model serving platform.*
+
+`inference.networking.k8s.io` is not installed by the NKP catalogs used here. The InferencePool CRD on this cluster is the upstream v1.5.0 CRD applied so the Envoy Gateway controller could start its informer. There is no InferencePool object, no endpoint-picker deployment, and no KV-cache routing. KServe's `LLMInferenceService` API is a different API group (`serving.kserve.io`).
+
+:::note
+Not evidenced. The manually applied InferencePool CRD is not a GAIE implementation.
+:::
+
+## High-Performance Networking
+
+This requirement is a **SHOULD**: *if high-performance pod-to-pod communication is needed, provide well-defined mechanisms for these specialized network resources to be managed and exposed so their characteristics are discoverable and pods can attach to multiple network interfaces. Platforms should use DRA (for example DRANET).*
+
+What this cluster has:
+
+```bash
+kubectl api-resources --api-group=mellanox.com
+kubectl get pods -n kommander | grep nvidia-network-operator
+kubectl -n kube-system get ds | grep multus
+```
+
+```
+hostdevicenetworks     mellanox.com/v1alpha1   HostDeviceNetwork
+ipoibnetworks          mellanox.com/v1alpha1   IPoIBNetwork
+macvlannetworks        mellanox.com/v1alpha1   MacvlanNetwork
+nicclusterpolicies     mellanox.com/v1alpha1   NicClusterPolicy
+
+nvidia-network-operator-7c777996d-qwm2v   1/1   Running
+multus                                8   8   8   8   8
+```
+
+HelmRelease `nvidia-network-operator` is Ready with chart `network-operator@26.1.0`.
+
+What this cluster does not have: no `NicClusterPolicy` objects, no `NetworkAttachmentDefinition` objects, no RDMA device, and no DRANET `ResourceSlice`. Pods were not attached to a second interface.
+
+:::note
+Partial. The NVIDIA Network Operator CRDs and Multus are installed. A live high-performance fabric and DRA-managed NICs were not demonstrated.
+:::
+
+## Disaggregated Inference
+
+This requirement is a **SHOULD**: *support the deployment and operation of disaggregated inference architectures. To be conformant, the platform should demonstrate that it can install and run a disaggregated inference solution (for example vLLM, SGLang, llm-d, or Dynamo) with separate instances for distinct phases such as prefill and decode.*
+
+None of those projects are in the 2.19 catalogs used for this page. LeaderWorkerSet 0.8.0 is in the product catalog and was not deployed. It is not a disaggregated inference stack. No prefill/decode split was run.
+
+:::note
+Not evidenced.
+:::
+
+## Gang Scheduling
+
+This requirement is a **MUST**: *the platform must allow for the installation and successful operation of at least one gang scheduling solution that ensures all-or-nothing scheduling for distributed AI workloads (for example Kueue, Volcano).*
+
+NKP ships [Kueue](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/kueue) in the AI Applications catalog. Kueue admits a distributed workload atomically: it reserves quota for the entire job and unsuspends the job only when the whole gang fits. If the gang does not fit, nothing from that job is scheduled.
+
+The following was verified on the NKP 2.19 cluster. Kueue is installed as shown in [AI Job and Inference Service Metrics](#ai-job-and-inference-service-metrics) (`nkp create appdeployment kueue --app kueue-0.18.0 --workspace kommander-workspace`).
+
+### Verify Kueue Is Running and Its APIs Are Available
+
+```bash
+kubectl get pods -n kueue-system
+kubectl api-resources --api-group=kueue.x-k8s.io
+```
+
+```
+NAME                                                     READY   STATUS
+kueue-system-kueue-controller-manager-5db757656c-4tgtg   1/1     Running
+
+NAME                         SHORTNAMES                         APIVERSION               KIND
+admissionchecks              ac                                 kueue.x-k8s.io/v1beta2   AdmissionCheck
+clusterqueues                cq                                 kueue.x-k8s.io/v1beta2   ClusterQueue
+cohorts                      co                                 kueue.x-k8s.io/v1beta2   Cohort
+localqueues                  queue,queues,lq                    kueue.x-k8s.io/v1beta2   LocalQueue
+multikueueclusters           mkc                                kueue.x-k8s.io/v1beta2   MultiKueueCluster
+multikueueconfigs            mkconf                             kueue.x-k8s.io/v1beta2   MultiKueueConfig
+provisioningrequestconfigs   prc                                kueue.x-k8s.io/v1beta2   ProvisioningRequestConfig
+resourceflavors              flavor,flavors,rf                  kueue.x-k8s.io/v1beta2   ResourceFlavor
+topologies                   topo                               kueue.x-k8s.io/v1beta2   Topology
+workloadpriorityclasses      wpc                                kueue.x-k8s.io/v1beta2   WorkloadPriorityClass
+workloads                    kwl,kueueworkload,kueueworkloads   kueue.x-k8s.io/v1beta2   Workload
+```
+
+### Define a Quota Pool and Queue
+
+```yaml
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: ResourceFlavor
+metadata:
+  name: default-flavor
+---
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: ClusterQueue
+metadata:
+  name: gang-cq
+spec:
+  namespaceSelector: {}
+  resourceGroups:
+  - coveredResources: ["cpu", "memory"]
+    flavors:
+    - name: default-flavor
+      resources:
+      - name: cpu
+        nominalQuota: "4"
+      - name: memory
+        nominalQuota: 4Gi
+---
+apiVersion: kueue.x-k8s.io/v1beta2
+kind: LocalQueue
+metadata:
+  name: gang-lq
+  namespace: gang-demo
+spec:
+  clusterQueue: gang-cq
+```
+
+<Tabs>
+<TabItem value="fits" label="Gang that fits → admitted atomically" default>
+
+```yaml title="gang-ok — 3-pod job, fits the quota (3 ≤ 4 CPU)"
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gang-ok
+  namespace: gang-demo
+  labels:
+    kueue.x-k8s.io/queue-name: gang-lq
+spec:
+  parallelism: 3
+  completions: 3
+  suspend: true
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: worker
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args: ["pause"]
+        resources:
+          requests:
+            cpu: "1"
+            memory: 256Mi
+```
+
+```bash
+kubectl get workloads -n gang-demo
+kubectl get pods -n gang-demo
+kubectl get job gang-ok -n gang-demo -o jsonpath='suspend={.spec.suspend} active={.status.active}{"\n"}'
+```
+
+```
+NAME                QUEUE     RESERVED IN   ADMITTED   FINISHED
+job-gang-ok-189ee   gang-lq   gang-cq       True
+
+NAME            READY   STATUS
+gang-ok-45dp7   1/1     Running
+gang-ok-74fcg   1/1     Running
+gang-ok-gc8zj   1/1     Running
+
+suspend=false active=3
+```
+
+</TabItem>
+<TabItem value="oversized" label="Oversized gang → refused in full">
+
+```yaml title="gang-toobig — 4-pod job, exceeds the quota (8 > 4 CPU)"
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gang-toobig
+  namespace: gang-demo
+  labels:
+    kueue.x-k8s.io/queue-name: gang-lq
+spec:
+  parallelism: 4
+  completions: 4
+  suspend: true
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: worker
+        image: registry.k8s.io/e2e-test-images/agnhost:2.53
+        args: ["pause"]
+        resources:
+          requests:
+            cpu: "2"
+            memory: 256Mi
+```
+
+```bash
+kubectl get workloads -n gang-demo
+kubectl get pods -n gang-demo
+kubectl get job gang-toobig -n gang-demo -o jsonpath='suspend={.spec.suspend} active={.status.active}{"\n"}'
+```
+
+```
+NAME                    QUEUE     RESERVED IN   ADMITTED
+job-gang-ok-189ee       gang-lq   gang-cq       True
+job-gang-toobig-f5ba1   gang-lq
+
+NAME            READY   STATUS
+gang-ok-45dp7   1/1     Running
+gang-ok-74fcg   1/1     Running
+gang-ok-gc8zj   1/1     Running
+
+suspend=true active=
+```
+
+```bash
+kubectl describe workload job-gang-toobig-f5ba1 -n gang-demo
+```
+
+```
+Type:     QuotaReserved
+Status:   False
+Reason:   Pending
+Message:  couldn't assign flavors to pod set main: insufficient quota for cpu in flavor default-flavor, previously considered podsets requests (0) + current podset request (8) > maximum capacity (4)
+```
+
+```bash
+kubectl get clusterqueue gang-cq -o yaml
+```
+
+```
+admittedWorkloads: 1
+pendingWorkloads: 1
+flavorsUsage:
+- name: default-flavor
+  resources:
+  - name: cpu
+    total: "3"
+  - name: memory
+    total: 768Mi
+```
+
+</TabItem>
+</Tabs>
+
+:::tip[Conformance: satisfied]
+Kueue admitted the 3-pod gang and refused the 8-CPU gang with no pods from that job placed.
+:::
+
+## Cluster Autoscaling
+
+This requirement is a **MUST**: *if the platform provides a cluster autoscaler or an equivalent mechanism, it must be able to scale up and down node groups containing specific accelerator types based on pending pods requesting those accelerators.*
+
+NKP is built on Cluster API and deploys the upstream Kubernetes Cluster Autoscaler with the `clusterapi` cloud provider. Each NKP node pool is a `MachineDeployment`. The autoscaler treats each pool as its own node group.
+
+The following was verified on the NKP 2.19 cluster. The GPU pool is pinned to one replica, so this capture shows discovery and bounds, not a scale-up event.
+
+### The Cluster Autoscaler Is Running
+
+```bash
+kubectl get deploy -n kommander | grep cluster-autoscaler
+```
+
+```
+cluster-autoscaler-01a0d956-7fd1-7cb0-a497-3fb97dda4fd4
+```
+
+The deployment is `1/1`. At `2026-09-25T18:10:04Z` its logs showed both node groups discovered and the GPU node placed in the GPU group.
+
+### Node Pools Are Autoscaling Node Groups
+
+The autoscaler status lists both MachineDeployments:
+
+```
+name: MachineDeployment/kommander/rocky-98-ootb-rocky-starter-062b-md-0-cpb4n
+minSize: 4
+maxSize: 6
+ready: 4
+status: Healthy
+
+name: MachineDeployment/kommander/rocky-98-ootb-rocky-starter-062b-gpu-mmcxf
+minSize: 1
+maxSize: 1
+ready: 1
+status: Healthy
+```
+
+On Nutanix, clusters are managed by a Cluster API ClusterClass (`nkp-nutanix-v2.19.0-dev.34`). The topology controller owns the generated `MachineDeployment`. Set min and max on the `Cluster` topology so the next reconcile does not revert a direct edit of the MachineDeployment annotations. This pool was left at min = max = 1.
+
+### The GPU Node Pool Is a Managed, Accelerator-Specific Node Group
+
+```bash
+kubectl logs -n kommander deploy/cluster-autoscaler-01a0d956-7fd1-7cb0-a497-3fb97dda4fd4 | grep -iE 'node group|nodegroup'
+```
+
+```
+discovered node group: MachineDeployment/kommander/rocky-98-ootb-rocky-starter-062b-md-0-cpb4n (min: 4, max: 6, replicas: 4)
+discovered node group: MachineDeployment/kommander/rocky-98-ootb-rocky-starter-062b-gpu-mmcxf (min: 1, max: 1, replicas: 1)
+node "rocky-98-ootb-rocky-starter-062b-gpu-mmcxf-fkbt2-z2tcg" is in nodegroup "MachineDeployment/kommander/rocky-98-ootb-rocky-starter-062b-gpu-mmcxf"
+```
+
+That GPU node advertises the accelerator resource:
+
+```bash
+kubectl get node rocky-98-ootb-rocky-starter-062b-gpu-mmcxf-fkbt2-z2tcg \
+  -o jsonpath='{.status.allocatable.nvidia\.com/gpu}{"\n"}'
+```
+
+```
+1
+```
+
+The GPU group is pinned at min = max = 1, so this capture shows discovery and bounds. Raising `max` above the current replica count on the Cluster topology is what allows the autoscaler to add GPU nodes when pods requesting `nvidia.com/gpu` are Pending.
+
+:::tip[Conformance: satisfied]
+Cluster Autoscaler discovers the GPU MachineDeployment as its own node group, with its own min and max, separate from the Rocky worker pool.
+:::
+
+## Horizontal Pod Autoscaler
+
+This requirement is a **MUST**: *if the platform supports the HorizontalPodAutoscaler, it must function correctly for pods utilizing accelerators. This includes the ability to scale these Pods based on custom metrics relevant to AI/ML workloads.*
+
+The HorizontalPodAutoscaler (`autoscaling/v2`) is a core Kubernetes API. NKP ships the Prometheus Adapter, which serves both `metrics.k8s.io` and `custom.metrics.k8s.io`, including the DCGM GPU series.
+
+The following was verified on the NKP 2.19 cluster, which has a single NVIDIA A40.
+
+### Verify Both Metrics APIs Are Served
+
+```bash
+kubectl get apiservices | grep -E 'metrics.k8s.io'
+```
+
+```
+v1beta1.custom.metrics.k8s.io   kommander/prometheus-adapter   True
+v1beta1.metrics.k8s.io          kommander/prometheus-adapter   True
+```
+
+### GPU Utilization Is Available as a Custom Metric
+
+```bash
+kubectl get --raw '/apis/custom.metrics.k8s.io/v1beta1' | jq -r '.resources[].name' | grep DCGM_FI_DEV_GPU_UTIL
+```
+
+```
+jobs.batch/DCGM_FI_DEV_GPU_UTIL
+namespaces/DCGM_FI_DEV_GPU_UTIL
+pods/DCGM_FI_DEV_GPU_UTIL
+services/DCGM_FI_DEV_GPU_UTIL
+```
+
+While the GPU was idle:
+
+```bash
+kubectl get --raw '/apis/custom.metrics.k8s.io/v1beta1/namespaces/kommander/services/nvidia-dcgm-exporter/DCGM_FI_DEV_GPU_UTIL'
+```
+
+```json
+{"kind":"MetricValueList","apiVersion":"custom.metrics.k8s.io/v1beta1",
+ "items":[{"describedObject":{"kind":"Service","namespace":"kommander","name":"nvidia-dcgm-exporter"},
+ "metricName":"DCGM_FI_DEV_GPU_UTIL","timestamp":"2026-09-25T02:39:17Z","value":"0"}]}
+```
+
+Under the nbody workload in the next section the same metric was `100`.
+
+### HPA Scales a GPU Workload on the Custom GPU Metric
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpu-inference
+  namespace: kommander
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gpu-inference
+  template:
+    metadata:
+      labels:
+        app: gpu-inference
+    spec:
+      runtimeClassName: nvidia
+      tolerations:
+      - key: nvidia.com/gpu
+        operator: Exists
+        effect: NoSchedule
+      containers:
+      - name: nbody
+        image: nvcr.io/nvidia/k8s/cuda-sample:nbody-cuda11.7.1
+        args: ["nbody", "-benchmark", "-numbodies=4096000", "-numdevices=1"]
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: gpu-inference-hpa
+  namespace: kommander
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: gpu-inference
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - type: Object
+    object:
+      describedObject:
+        apiVersion: v1
+        kind: Service
+        name: nvidia-dcgm-exporter
+      metric:
+        name: DCGM_FI_DEV_GPU_UTIL
+      target:
+        type: Value
+        value: "70"
+```
+
+```bash
+kubectl get hpa gpu-inference-hpa -n kommander
+```
+
+```
+NAME                REFERENCE                  TARGETS   MINPODS   MAXPODS   REPLICAS
+gpu-inference-hpa   Deployment/gpu-inference   100/70    1         3         2
+```
+
+```text {2,12}
+Metrics:                                                                  ( current / target )
+  "DCGM_FI_DEV_GPU_UTIL" on Service/nvidia-dcgm-exporter (target value):  100 / 70
+Conditions:
+  Type            Status  Reason              Message
+  ----            ------  ------              -------
+  AbleToScale     True    ReadyForNewScale    recommended size matches current size
+  ScalingActive   True    ValidMetricFound    the HPA was able to successfully calculate a replica count from Service metric DCGM_FI_DEV_GPU_UTIL
+  ScalingLimited  False   DesiredWithinRange  the desired count is within the acceptable range
+Events:
+  Type    Reason             From                       Message
+  ----    ------             ----                       -------
+  Normal  SuccessfulRescale  horizontal-pod-autoscaler  New size: 2; reason: Service metric DCGM_FI_DEV_GPU_UTIL above target
+```
+
+```
+NAME                             READY   STATUS
+gpu-inference-545b9d7d58-nn42v   1/1     Running
+gpu-inference-545b9d7d58-fvf8t   0/1     Pending
+```
+
+The second replica stayed Pending because the node has a single `nvidia.com/gpu`.
+
+:::tip[Conformance: satisfied]
+HPA scaled an accelerator Deployment using `DCGM_FI_DEV_GPU_UTIL` from the Prometheus Adapter. The extra replica could not start on this single-GPU node.
+:::
+
+## Accelerator Performance Metrics
+
+This requirement is a **MUST**: *for supported accelerator types, the platform must allow installation and successful operation of at least one accelerator metrics solution that exposes fine-grained performance metrics via a standardized, machine-readable metrics endpoint. This must include per-accelerator utilization and memory usage. Temperature, power draw, and interconnect bandwidth should be exposed when the hardware provides them.*
+
+The NVIDIA GPU Operator includes the DCGM Exporter. It serves Prometheus text on port `9400`. The exporter image on this cluster is `nvcr.io/nvidia/k8s/dcgm-exporter:4.5.3-4.8.2-distroless`.
+
+### Verify the DCGM Exporter Is Running
+
+```bash
+kubectl get pods -n kommander | grep dcgm
+```
+
+```
+nvidia-dcgm-hvmdj            1/1   Running
+nvidia-dcgm-exporter-6p79t   1/1   Running
+```
+
+### Verify the Metrics Service
+
+```bash
+kubectl get svc -n kommander | grep dcgm
+```
+
+```
+nvidia-dcgm            ClusterIP   10.108.11.148   <none>   5555/TCP
+nvidia-dcgm-exporter   ClusterIP   10.100.132.84    <none>   9400/TCP
+```
+
+### Confirm a Standardized, Machine-Readable Endpoint
+
+```bash
+curl -sL http://nvidia-dcgm-exporter.kommander.svc.cluster.local:9400/metrics \
+  | grep -E '^# (HELP|TYPE) DCGM_FI_DEV_(GPU_UTIL|FB_USED|GPU_TEMP|POWER_USAGE)'
+```
+
+```
+# HELP DCGM_FI_DEV_GPU_TEMP GPU temperature (in C).
+# TYPE DCGM_FI_DEV_GPU_TEMP gauge
+# HELP DCGM_FI_DEV_POWER_USAGE Power draw (in W).
+# TYPE DCGM_FI_DEV_POWER_USAGE gauge
+# HELP DCGM_FI_DEV_GPU_UTIL GPU utilization (in %).
+# TYPE DCGM_FI_DEV_GPU_UTIL gauge
+# HELP DCGM_FI_DEV_FB_USED Framebuffer memory used (in MiB).
+# TYPE DCGM_FI_DEV_FB_USED gauge
+```
+
+### Metrics Reflect Actual GPU Activity
+
+**Idle GPU:**
+
+```
+DCGM_FI_DEV_GPU_TEMP{gpu="0",UUID="GPU-0384e187-141b-b2ef-e56e-c92a783f6fd8",modelName="NVIDIA A40",Hostname="rocky-98-ootb-rocky-starter-062b-gpu-mmcxf-fkbt2-z2tcg",DCGM_FI_DRIVER_VERSION="580.126.18"} 49
+DCGM_FI_DEV_POWER_USAGE{gpu="0",UUID="GPU-0384e187-141b-b2ef-e56e-c92a783f6fd8",modelName="NVIDIA A40",...} 34.098000
+DCGM_FI_DEV_GPU_UTIL{gpu="0",UUID="GPU-0384e187-141b-b2ef-e56e-c92a783f6fd8",modelName="NVIDIA A40",...} 0
+DCGM_FI_DEV_FB_USED{gpu="0",UUID="GPU-0384e187-141b-b2ef-e56e-c92a783f6fd8",modelName="NVIDIA A40",...} 0
+```
+
+The load was the `gpu-inference` Deployment from [Horizontal Pod Autoscaler](#horizontal-pod-autoscaler) (`nbody`, `numbodies=4096000`), not a separate `gpu-load` pod.
+
+**Under load:**
+
+```
+DCGM_FI_DEV_GPU_TEMP{gpu="0",UUID="GPU-0384e187-141b-b2ef-e56e-c92a783f6fd8",modelName="NVIDIA A40",DCGM_FI_DRIVER_VERSION="580.126.18",container="nbody",namespace="kommander",pod="gpu-inference-545b9d7d58-nn42v"} 84
+DCGM_FI_DEV_POWER_USAGE{...,container="nbody",namespace="kommander",pod="gpu-inference-545b9d7d58-nn42v"} 293.165000
+DCGM_FI_DEV_GPU_UTIL{...,container="nbody",namespace="kommander",pod="gpu-inference-545b9d7d58-nn42v"} 100
+DCGM_FI_DEV_FB_USED{...,container="nbody",namespace="kommander",pod="gpu-inference-545b9d7d58-nn42v"} 842
+```
+
+### Automatic Collection by the Platform Prometheus
+
+Prometheus Adapter exposes the scraped DCGM series on the custom metrics API. That is the collection path HPA used. While idle, `services/nvidia-dcgm-exporter/DCGM_FI_DEV_GPU_UTIL` was `0`. While nbody ran, the HPA read `100/70` from that same Service metric. A separate Prometheus `query` API response and a `ServiceMonitor` listing were not captured in this run.
+
+:::tip[Conformance: satisfied]
+DCGM exporter publishes utilization, framebuffer, temperature, and power for the A40 in Prometheus text format. The series move under load, and Prometheus Adapter serves `DCGM_FI_DEV_GPU_UTIL` to HPA.
+:::
+
+## AI Job and Inference Service Metrics
+
+This requirement is a **MUST**: *provide a monitoring system capable of discovering and collecting metrics from workloads that expose them in a standard format (for example Prometheus exposition format).*
+
+NKP ships kube-prometheus-stack, Grafana, Thanos, and Prometheus Adapter. Prometheus discovers workloads that expose the Prometheus text format. This section shows Kueue job metrics scraped from the controller, and the KServe install. The sklearn sample did not become Ready, so it is not used as inference-metrics evidence.
+
+### Verify the Monitoring Stack
+
+```bash
+kubectl get helmreleases -n kommander | grep -E 'kube-prometheus-stack|centralized-grafana|prometheus-adapter|grafana-loki|thanos'
+```
+
+```
+centralized-grafana     True     Helm install succeeded for release kommander/centralized-grafana.v1 with chart kube-prometheus-stack@87.16.0
+grafana-loki-v3         Unknown  Running 'install' action with timeout of 15m0s
+kube-prometheus-stack   True     Helm install succeeded for release kommander/kube-prometheus-stack.v1 with chart kube-prometheus-stack@87.16.0
+prometheus-adapter      True     Helm install succeeded for release kommander/prometheus-adapter.v1 with chart prometheus-adapter@5.3.0
+thanos                  True     Helm install succeeded for release kommander/thanos.v1 with chart thanos@17.3.1
+```
+
+The ClusterApp name for Thanos is `thanos-17.3.2`. The installed chart is `thanos@17.3.1`. Loki stayed `Unknown` because Rook Ceph was not deployed.
+
+### AI Job Metrics — Kueue
+
+[Kueue](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/kueue) serves Prometheus metrics on port `8443`.
+
+```bash
+nkp create appdeployment kueue \
+  --app kueue-0.18.0 \
+  --workspace kommander-workspace
+```
+
+```
+kueue   True   Helm install succeeded for release kueue-system/kueue-system-kueue.v1 with chart kueue@0.18.0
+```
+
+```bash
+kubectl get pods -n kueue-system
+```
+
+```
+NAME                                                     READY   STATUS
+kueue-system-kueue-controller-manager-5db757656c-4tgtg   1/1     Running
+```
+
+The gang jobs in [Gang Scheduling](#gang-scheduling) are the workload behind these series. The controller ServiceAccount cannot scrape its own metrics endpoint. A ServiceAccount bound to ClusterRole `kueue-system-kueue-metrics-reader` can:
+
+```bash
+kubectl create serviceaccount kueue-metrics-scraper -n kueue-system
+kubectl create clusterrolebinding kueue-metrics-scraper \
+  --clusterrole=kueue-system-kueue-metrics-reader \
+  --serviceaccount=kueue-system:kueue-metrics-scraper
+TOKEN=$(kubectl create token kueue-metrics-scraper -n kueue-system)
+curl -sk -H "Authorization: Bearer $TOKEN" \
+  https://kueue-system-kueue-controller-manager-metrics-service.kueue-system.svc:8443/metrics \
+  | grep -E '^kueue_(admitted_workloads_total|pending_workloads|reserving_active_workloads|admitted_active_workloads|cluster_queue_status)'
+```
+
+```
+kueue_admitted_workloads_total{cluster_queue="gang-cq",priority_class="",replica_role="leader"} 1
+kueue_admitted_active_workloads{cluster_queue="gang-cq",replica_role="leader"} 1
+kueue_reserving_active_workloads{cluster_queue="gang-cq",replica_role="leader"} 1
+kueue_pending_workloads{cluster_queue="gang-cq",replica_role="leader",status="inadmissible"} 1
+kueue_cluster_queue_status{cluster_queue="gang-cq",replica_role="leader",status="active"} 1
+```
+
+```
+# HELP kueue_admitted_workloads_total The total number of admitted workloads per 'cluster_queue'
+# HELP kueue_pending_workloads The number of pending workloads, per 'cluster_queue' and 'status'.
+```
+
+One admitted workload and one inadmissible pending workload match `gang-ok` and `gang-toobig`.
+
+### Inference Service Metrics — KServe
+
+[KServe](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/kserve) 0.19.0 is the catalog app for this release. NKP 2.18 used KServe 0.15.0.
+
+```bash
+nkp create appdeployment kserve \
+  --app kserve-0.19.0 \
+  --workspace kommander-workspace
+```
+
+```
+kserve                      True   Helm install succeeded ... chart kserve-resources@v0.19.0
+kserve-crd                  True   Helm install succeeded ... chart kserve-crd@v0.19.0
+kserve-llmisvc-crd          True   Helm install succeeded ... chart kserve-llmisvc-crd@v0.19.0
+kserve-llmisvc-resources    True   Helm install succeeded ... chart kserve-llmisvc-resources@v0.19.0
+```
+
+```bash
+kubectl get pods -n kserve
+```
+
+```
+NAME                                         READY   STATUS
+kserve-controller-manager-598584c48f-qvdcr   2/2     Running
+```
+
+Served inference APIs:
+
+```
+inferenceservices            serving.kserve.io/v1beta1   InferenceService
+llminferenceservices         serving.kserve.io/v1alpha2  LLMInferenceService
+llminferenceserviceconfigs   serving.kserve.io/v1alpha2  LLMInferenceServiceConfig
+inferencegraphs              serving.kserve.io/v1alpha1  InferenceGraph
+```
+
+`kubectl get clusterservingruntimes,servingruntimes -A` returned no runtimes. A sample InferenceService was created anyway:
+
+```yaml
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: sklearn-iris
+  namespace: kserve-test
+spec:
+  predictor:
+    model:
+      modelFormat:
+        name: sklearn
+      storageUri: gs://kfserving-examples/models/sklearn/1.0/model
+```
+
+```bash
+kubectl get inferenceservice -n kserve-test
+kubectl get events -n kserve-test
+```
+
+```
+NAME           READY
+sklearn-iris   Unknown
+
+Warning  InternalError  inferenceservice/sklearn-iris  no runtime found to support predictor with model type: {sklearn <nil>}
+```
+
+No predictor pod was created. There is no `/metrics` endpoint and no prediction response from this sample.
+
+### The Platform Prometheus Discovers and Collects the Metrics
+
+The Kueue scrape above is a Prometheus text endpoint collected with the platform's metrics reader role. Prometheus Adapter collecting `DCGM_FI_DEV_GPU_UTIL` is the other closed loop on this cluster, shown under [Accelerator Performance Metrics](#accelerator-performance-metrics) and [Horizontal Pod Autoscaler](#horizontal-pod-autoscaler). The KServe sample never served metrics, so this page does not show a predictor `ServiceMonitor` or a `request_predict_seconds` series.
+
+:::tip[Conformance: satisfied]
+Prometheus-format metrics from Kueue match the live queue: one admitted workload and one inadmissible pending workload. KServe 0.19.0 is installed. The sklearn InferenceService had no serving runtime, so it is not metrics evidence.
+:::
+
+## Secure Accelerator Access
+
+This requirement is a **MUST**: *ensure that access to accelerators from within containers is properly isolated and mediated by the Kubernetes resource management framework (device plugin or DRA) and the container runtime, preventing unauthorized access or interference between workloads.*
+
+Both mediation paths are installed. The NVIDIA device plugin advertises `nvidia.com/gpu`. The NVIDIA DRA driver publishes `gpu.nvidia.com` (see [Support Dynamic Resource Allocation (DRA)](#support-dynamic-resource-allocation-dra)). The check below uses the device plugin. The node has one GPU.
+
+The following was verified on the NKP 2.19 cluster.
+
+<Tabs>
+<TabItem value="authorized" label="Authorized → GPU access" default>
+
+```yaml title="gpu-authorized — pod that requests nvidia.com/gpu: 1"
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gpu-authorized
+  namespace: saa-test
+spec:
+  restartPolicy: Never
+  runtimeClassName: nvidia
+  containers:
+  - name: cuda
+    image: nvcr.io/nvidia/k8s/cuda-sample:vectoradd-cuda12.5.0-ubuntu22.04
+    command: ["sleep", "3600"]
+    resources:
+      limits:
+        nvidia.com/gpu: 1
+```
+
+```bash
+kubectl exec gpu-authorized -n saa-test -- nvidia-smi -L
+```
+
+```text {1}
+GPU 0: NVIDIA A40 (UUID: GPU-0384e187-141b-b2ef-e56e-c92a783f6fd8)
+```
+
+The pod ran on `rocky-98-ootb-rocky-starter-062b-gpu-mmcxf-fkbt2-z2tcg`.
+
+</TabItem>
+<TabItem value="capacity" label="Capacity enforced → second pod Pending">
+
+```bash
+kubectl get pod gpu-second -n saa-test
+```
+
+```
+NAME               READY   STATUS    RESTARTS
+gpu-second         0/1     Pending   0
+```
+
+```bash
+kubectl describe pod gpu-second -n saa-test
+```
+
+```
+Events:
+  Type     Reason            From               Message
+  ----     ------            ----               -------
+  Warning  FailedScheduling  default-scheduler  0/8 nodes are available: 1 Insufficient nvidia.com/gpu, 3 node(s) had untolerated taint(s), 4 cannot allocate all claims. still not schedulable, preemption: 0/8 nodes are available: 1 No preemption victims found for incoming pod, 7 Preemption is not helpful for scheduling.
+```
+
+</TabItem>
+<TabItem value="unauthorized" label="Unauthorized → no GPU access">
+
+```yaml title="gpu-unauthorized — pod with no GPU request"
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gpu-unauthorized
+  namespace: saa-test
+spec:
+  restartPolicy: Never
+  containers:
+  - name: cuda
+    image: nvcr.io/nvidia/cuda:12.5.0-base-ubuntu22.04
+    command: ["sh","-c","nvidia-smi -L; ls -l /dev/nvidia* || true"]
+```
+
+The pod ran on a Rocky worker, `rocky-98-ootb-rocky-starter-062b-md-0-cpb4n-bs8mm-84fvv`.
+
+```bash
+kubectl logs gpu-unauthorized -n saa-test
+```
+
+```
+sh: 1: nvidia-smi: not found
+ls: cannot access '/dev/nvidia*': No such file or directory
+```
+
+</TabItem>
+</Tabs>
+
+:::tip[Conformance: satisfied]
+A pod that requests `nvidia.com/gpu` sees the A40. A second request stays Pending. A pod that does not request a GPU has no NVIDIA device files. DRA publishes the same GPU as `gpu.nvidia.com` for claim-based allocation.
+:::
+
+## Robust CRD and Controller Operation
+
+This requirement is a **MUST**: *the platform must prove that at least one complex AI operator with a CRD (for example Ray or Kubeflow) can be installed and functions reliably. This includes verifying that the operator's pods run correctly, its webhooks are operational, and its custom resources can be reconciled.*
+
+NKP demonstrates this with the [Slurm Operator](https://nutanix-cloud-native.github.io/nkp-partner-catalog/docs/applications/slurm-operator) (the [Slinky project](https://slinky.ai/)) from the AI Applications catalog.
+
+### Install the Slurm Operator
+
+```bash
+nkp create appdeployment slurm-operator \
+  --app slurm-operator-1.1.1 \
+  --workspace kommander-workspace
+```
+
+```
+slurm-operator              True   Helm install succeeded ... chart slurm-operator@1.1.1
+slurm-operator-1.1.1-crds   True   Helm install succeeded ... chart slurm-operator-crds@1.1.1
+```
+
+### Verify the Operator Pods Are Running
+
+```bash
+kubectl get pods -n slurm-operator
+```
+
+```
+NAME                                      READY   STATUS
+slurm-operator-7897b56bf9-rzfq9           1/1     Running
+slurm-operator-webhook-665c95c89d-sdtkt   1/1     Running
+```
+
+### Verify the CRDs Are Registered
+
+```bash
+kubectl api-resources --api-group=slinky.slurm.net
+```
+
+```
+NAME          SHORTNAMES            APIVERSION                 NAMESPACED   KIND
+accountings   slurmdbd              slinky.slurm.net/v1beta1   true         Accounting
+controllers   slurmctld             slinky.slurm.net/v1beta1   true         Controller
+loginsets     loginsets,lss,sackd   slinky.slurm.net/v1beta1   true         LoginSet
+nodesets      nodesets,nss,slurmd   slinky.slurm.net/v1beta1   true         NodeSet
+restapis      slurmrestd            slinky.slurm.net/v1beta1   true         RestApi
+tokens        tokens,jwt            slinky.slurm.net/v1beta1   true         Token
+```
+
+### Verify the Admission Webhooks Are Operational
+
+```bash
+kubectl get validatingwebhookconfigurations,mutatingwebhookconfigurations | grep slurm-operator
+```
+
+```
+validatingwebhookconfiguration.admissionregistration.k8s.io/slurm-operator-webhook   6
+mutatingwebhookconfiguration.admissionregistration.k8s.io/slurm-operator-webhook     1
+```
+
+```bash
+kubectl get certificate,issuer -n slurm-operator
+```
+
+```
+NAME                                                         READY   SECRET
+certificate.cert-manager.io/slurm-operator-webhook-ca        True    slurm-operator-webhook-ca
+certificate.cert-manager.io/slurm-operator-webhook-root-ca   True    slurm-operator-webhook-root-ca
+
+NAME                                                        READY
+issuer.cert-manager.io/slurm-operator-webhook-root-issuer   True
+issuer.cert-manager.io/slurm-operator-webhook-self-issuer   True
+```
+
+A NodeSet submitted without `spec.controllerRef` was rejected by the API server:
+
+```bash
+kubectl apply -f - <<'EOF'
+apiVersion: slinky.slurm.net/v1beta1
+kind: NodeSet
+metadata:
+  name: invalid-nodeset
+  namespace: slurm-operator
+spec:
+  replicas: 1
+EOF
+```
+
+```
+The NodeSet "invalid-nodeset" is invalid: spec.controllerRef: Required value
+```
+
+The message is the CRD's required-field check. The object was not stored. The webhook configurations and their cert-manager certificates are Ready, and the smoke test below shows the operator reconciling valid custom resources.
+
+### Verify Custom Resource Reconciliation
+
+```bash
+kubectl create namespace slurm-smoke
+helm upgrade --install slurm-smoke oci://ghcr.io/slinkyproject/charts/slurm \
+  --version 1.1.1 \
+  --namespace slurm-smoke \
+  --set controller.persistence.enabled=false \
+  --set nodesets.slinky.replicas=1 \
+  --wait --timeout 12m
+```
+
+```bash
+kubectl get controllers,nodesets -n slurm-smoke
+kubectl get pods -n slurm-smoke
+```
+
+```
+NAME                                      AGE
+controller.slinky.slurm.net/slurm-smoke   ...
+
+NAME                                                 
+nodeset.slinky.slurm.net/slurm-smoke-worker-slinky
+
+NAME                                   READY   STATUS
+slurm-smoke-controller-0               3/3     Running
+slurm-smoke-worker-slinky-0            2/2     Running
+slurm-smoke-restapi-5f64b8cfcf-ssb2k   1/1     Running
+```
+
+```bash
+kubectl exec -n slurm-smoke slurm-smoke-controller-0 -c slurmctld -- sinfo
+kubectl exec -n slurm-smoke slurm-smoke-controller-0 -c slurmctld -- srun -N1 -n1 hostname
+```
+
+```
+PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
+all*         up   infinite      1   idle slinky-0
+
+slinky-0
+```
+
+```bash
+kubectl exec -n slurm-smoke slurm-smoke-controller-0 -c slurmctld -- \
+  scontrol show job 2
+```
+
+```
+JobState=COMPLETED Reason=None
+ExitCode=0:0
+```
+
+`sbatch /tmp/job.sh` was job 2 (`JobState=COMPLETED`, `ExitCode=0:0`, `NodeList=slinky-0`). `sacct` printed `Slurm accounting storage is disabled`, which matches this chart install (`accounting.enabled` is false).
+
+:::tip[Conformance: satisfied]
+The Slurm operator's pods, CRDs, and webhook configuration are in place. A Controller and NodeSet reconciled into a Slurm cluster that ran `srun` and completed a batch job.
+:::
