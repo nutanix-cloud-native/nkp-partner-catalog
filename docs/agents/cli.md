@@ -6,32 +6,32 @@
 | --- | --- |
 | `source/cli/index.mdx` | `source/cli/<minor>/**` (MD pages) |
 | `source/cli/_category_.json` | `site/static/cli/<minor>/commands.json` |
-| `source/config.yaml` → `cliDocs` | `site/src/data/cli-versions.json` (prepare / sync-docs-data) |
+| `source/config.yaml` → `cliDocs` | `site/src/data/cli-versions.json` (prepare / sync) |
 
 ## Generator
 
-`just generate-cli-docs` → `scripts/generate-cli-docs.mjs`
+`just resolve-nkp-releases` then `just generate-cli-docs`
 
-- Downloads `https://downloads.d2iq.com/dkp/v<tag>/nkp_v<tag>_<os>_amd64.tar.gz`
-- Runs `nkp help --output markdown --tree`
-- Writes versioned pages under `source/cli/<minor>/` and `commands.json` under
-  `site/static/cli/<minor>/` (both gitignored; produced before every docs build).
-- Refreshes `site/src/data/*` via `sync-docs-data.mjs` (same as prepare).
+- Resolves minors/patches from `cliDocs.nkpVersionFloor` (default `2.12`) upward
+  via shared `.cache/nkp-releases.json` (Platform/catalog still start at
+  `applications.nkpVersionFloor`, currently `2.16`).
+- Downloads each resolved `latest` via `cliDocs.downloadUrl`.
+- Minors above `maxGaNkpVersion` or with `-dev` tags are `unlisted` by default
+  (label `{minor} (dev)`). Optional `cliDocs.minors[]` overlays for exceptions.
+- Writes versioned pages under `source/cli/<minor>/` and `commands.json`
+  (gitignored).
 
-`just update-docs-config` probes downloads and rewrites `cliDocs.minors[].latest`
-(best-effort). Prefers GA over `-dev`. Does not add minors or bump `maxGaNkpVersion`.
+`just update-docs-config` is an alias of `resolve-nkp-releases` (does **not**
+rewrite `config.yaml`).
 
-## UX (locked preferences)
+## UX
 
 - Shared left nav: single **CLI** doc link; generated pages use `displayed_sidebar`.
-- Landing: `CliLanding` + tree (`CliCommandBrowser`); expand/collapse preference in sessionStorage.
-- Version: shared `NkpVersionSwitch` (pills + Older). Applications may include “All”; CLI does not.
-- Breadcrumbs on generated pages: **CLI** → `/docs/cli/` then `nkp › …` command path.
-- Parent hubs: description + Available commands only.
-- Leaves: Options (`dl.cli-opts`) → Usage → Examples → Parent command.
-- Public pills ≈ current GA + ~2 prior; older minors `unlisted: true` (Older menu).
+- Landing: `CliLanding` + tree; version pills via `NkpVersionSwitch`.
+- Public pills ≈ GA minors ≤ `maxGaNkpVersion`; Older menu / URL for unlisted.
 
 ## Support window
 
-Edit `cliDocs` in `source/config.yaml`. Mark pre-GA with `unlisted` / `label`.
-Default minor should be the public default GA (or labeled `(dev)` while on `*-dev`).
+Edit `cliDocs.nkpVersionFloor`, `applications.nkpVersionFloor`, `maxGaNkpVersion`,
+and `cliDocs.defaultMinor` in `source/config.yaml`. Do not commit per-minor
+`latest` tags.

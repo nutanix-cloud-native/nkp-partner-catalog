@@ -7,7 +7,7 @@ Live: https://nutanix-cloud-native.github.io/nkp-partner-catalog/
 
 ## Layout
 
-- `source/` — authored MD/MDX and `config.yaml` (`applications` + `cliDocs`)
+- `source/` — authored MD/MDX and `config.yaml` (`catalogs` + `applications` + `cliDocs`)
 - `source/cli/` — authored landing; `source/cli/<minor>/` is **generated** (gitignored)
 - `source/schemas/v1/` — authored JSON Schemas (canonical; prepare copies to `site/static/schemas/v1/`)
 - `source/applications/`, `catalog-data.json`, `site/static/catalog-icons/` — **generated** (gitignored)
@@ -22,14 +22,16 @@ From `docs/`:
 
 - `just clean` — remove generated/build artifacts
 - `just generate-catalog` — crawl public sibling catalog repos → applications + icons + catalog-data
-- `just update-docs-config` — best-effort refresh of CLI `latest` tags in `config.yaml`
+- `just resolve-nkp-releases` — probe downloads.d2iq.com from `nkpVersionFloor` → `.cache/nkp-releases.json`
+- `just fetch-catalog-sources` — Platform git + OCI sources (needs `oras`)
+- `just update-docs-config` — alias of `resolve-nkp-releases` (does not rewrite config.yaml)
 - `just generate-cli-docs` — download nkp CLIs → versioned CLI pages + commands.json
 - `just docs-preview` — generate + prepare + build/serve (**skips** Chrome/PDF)
 - `just docs-local` — full local preview including Export PDF/HTML (needs Chrome)
 - `just docs-build` — production build (`/nkp-partner-catalog/`) including Export
 - `just docs-offline` — PDF + HTML only
 
-Sibling clones (public) next to this repo:
+Sibling clones (public) next to this repo — see `source/config.yaml` → `catalogs[]`:
 
 - `nkp-ai-applications-catalog`
 - `nkp-nutanix-product-catalog`
@@ -46,4 +48,4 @@ just docs-preview    # runs generate-catalog + generate-cli-docs first
 
 - Offline Export needs Chrome/Chromium (`CHROME_PATH` override supported).
 - Local search from `docusaurus start` is limited; prefer `docs-preview` / `serve` of a build.
-- Production publish is CI → GitHub Pages artifact (not a `gh-pages` push from this tree).
+- Production publish is CI → GitHub Pages artifact.

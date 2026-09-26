@@ -166,6 +166,35 @@ function cardRangeFromRanges(ranges) {
   };
 }
 
+/** Union two NKP ranges (e.g. same chart version in 2.19 and 2.20 OCI). */
+function unionNkpRanges(a, b) {
+  if (!a && !b) return parseNkpRange('');
+  if (!a) return b;
+  if (!b) return a;
+  const min = pickMin(a.min || DEFAULT_NKP_FLOOR, b.min || DEFAULT_NKP_FLOOR);
+  let maxExclusive = '';
+  if (a.maxExclusive && b.maxExclusive) {
+    maxExclusive = pickMax(a.maxExclusive, b.maxExclusive);
+  } else {
+    // Either side open-ended → union is open-ended.
+    maxExclusive = '';
+  }
+  return {
+    raw: supportStringFromRange({min, maxExclusive}),
+    min,
+    maxExclusive,
+    label: labelFor(min, maxExclusive),
+  };
+}
+
+function supportStringFromRange(range) {
+  if (!range) return '';
+  const parts = [];
+  if (range.min) parts.push(`>=${range.min}`);
+  if (range.maxExclusive) parts.push(`<${range.maxExclusive}`);
+  return parts.join(' ');
+}
+
 function matchesNkpVersion(range, selected) {
   if (!selected || selected === 'all') return true;
   const sel = toMinor(selected);
@@ -197,6 +226,7 @@ const api = {
   compareMinor,
   parseNkpRange,
   cardRangeFromRanges,
+  unionNkpRanges,
   matchesNkpVersion,
   gaNkpVersions,
 };

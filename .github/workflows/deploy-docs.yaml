@@ -1,12 +1,12 @@
 # Copyright 2025 Nutanix. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
-# Rebuild the docs site from the three catalog repos and publish to GitHub
-# Pages via the workflow artifact (upload-pages-artifact + deploy-pages).
+# Rebuild the docs site from catalog repos + Platform OCI/git sources and
+# publish to GitHub Pages via the workflow artifact.
 #
 # Triggers:
 #   - push to main affecting docs
-#   - nightly cron (regenerates catalog + CLI from downloads.d2iq.com / config.yaml, then publishes)
+#   - nightly cron (resolve NKP tags, regenerate catalog + CLI, publish)
 #   - manual dispatch
 
 name: Deploy Docs
@@ -65,33 +65,16 @@ jobs:
           enable-cache: true
           skip-nix-installation: true
 
-      - name: Probe CLI versions (best-effort)
-        # Separate from generate: refresh cliDocs.minors[].latest when downloads
-        # are reachable. Failures are ignored so catalog/CLI generate still run
-        # against the committed config.yaml.
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-        continue-on-error: true
+      - name: Build docs
+        # resolve-nkp-releases → fetch Platform git/OCI (oras via devbox) →
+        # generate catalog + CLI → prepare → export → docusaurus build.
+        # Sibling root is GITHUB_WORKSPACE.
         run: |
           cd nkp-partner-catalog/docs
-          devbox run -- just update-docs-config
-
-      - name: Generate catalog index from sibling repos
-        run: |
-          cd nkp-partner-catalog/docs
-          devbox run -- just generate-catalog "${GITHUB_WORKSPACE}"
-
-      - name: Generate versioned CLI reference
-        run: |
-          cd nkp-partner-catalog/docs
-          # Nightly (and CI) always re-fetch nkp so patch bumps on downloads.d2iq.com apply.
           if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             export NKP_CLI_FORCE_DOWNLOAD=1
           fi
-          devbox run -- just generate-cli-docs
-
-      - name: Build docs
-        run: |
-          cd nkp-partner-catalog/docs
+          export CI=true
           devbox run -- just docs-build
 
       - name: Upload static files as Pages artifact

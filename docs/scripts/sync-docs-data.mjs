@@ -14,8 +14,10 @@ const {
   DOCS_ROOT,
   loadConfigYaml,
   applicationsFromConfig,
+  catalogsFromConfig,
+  siteFromConfig,
   cliVersionsFromConfig,
-  portalFromApplications,
+  portalFromConfig,
 } = require('./docs-config.cjs');
 
 const DATA_DIR = path.join(DOCS_ROOT, 'site', 'src', 'data');
@@ -23,13 +25,44 @@ const DATA_DIR = path.join(DOCS_ROOT, 'site', 'src', 'data');
 function sync() {
   const cfg = loadConfigYaml();
   const nkp = applicationsFromConfig(cfg);
-  const cliVersions = cliVersionsFromConfig(cfg);
-  const portal = portalFromApplications(nkp);
+  // Footer / nav: logical catalogs only (do not require resolved hybrid expand).
+  const {list: catalogsFull} = catalogsFromConfig(cfg, {requireResolved: false});
+  const catalogs = catalogsFull.map((c) => ({
+    id: c.id,
+    name: c.name,
+    slug: c.slug,
+    repo: c.repo,
+    nkpVersionsSource: c.nkpVersionsSource,
+  }));
+  const site = siteFromConfig(cfg);
+  const portal = portalFromConfig(cfg);
+
+  let cliVersions;
+  try {
+    cliVersions = cliVersionsFromConfig(cfg);
+  } catch (err) {
+    console.warn(
+      `WARN: cli-versions sync skipped (${err.message || err}); run just resolve-nkp-releases`,
+    );
+    cliVersions = {
+      downloadUrl: String((cfg.cliDocs && cfg.cliDocs.downloadUrl) || ''),
+      defaultMinor: String((cfg.cliDocs && cfg.cliDocs.defaultMinor) || nkp.nkpVersionFloor),
+      minors: [],
+    };
+  }
 
   fs.mkdirSync(DATA_DIR, {recursive: true});
   fs.writeFileSync(
     path.join(DATA_DIR, 'nkp-version-config.json'),
     `${JSON.stringify(nkp, null, 2)}\n`,
+  );
+  fs.writeFileSync(
+    path.join(DATA_DIR, 'catalogs.json'),
+    `${JSON.stringify(catalogs, null, 2)}\n`,
+  );
+  fs.writeFileSync(
+    path.join(DATA_DIR, 'site-config.json'),
+    `${JSON.stringify(site, null, 2)}\n`,
   );
   fs.writeFileSync(
     path.join(DATA_DIR, 'cli-versions.json'),
@@ -41,6 +74,8 @@ function sync() {
   );
   console.log('Synced site/src/data from config.yaml', {
     nkp,
+    catalogs: catalogs.map((c) => c.id),
+    site: {organization: site.organization, project: site.project},
     cliDefault: cliVersions.defaultMinor,
     cliMinors: cliVersions.minors.map((m) => m.minor),
     portal,

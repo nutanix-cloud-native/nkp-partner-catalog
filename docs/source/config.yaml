@@ -1,81 +1,87 @@
 # Shared docs source configuration (human-edited).
 # Add new top-level sections here as other generators need them.
 #
-# This is the only place to bump NKP floors, GA ceiling, known minors, CLI
-# minors, or portal docs version. Scripts sync to site/src/data/*.json —
-# do not hardcode versions in docs/scripts or docs/site.
+# Bump NKP floor / GA ceiling, portal/site URLs, and catalog list here.
+# Patch tags are NOT committed — `just resolve-nkp-releases` probes
+# downloads.d2iq.com from nkpVersionFloor upward into .cache/nkp-releases.json.
 
 # ---------------------------------------------------------------------------
-# applications — catalog browser NKP version filter (`just generate-catalog`)
+# site — Docusaurus site identity + footer/community links
 #
-# Controls the Applications page version dropdown and empty-metadata floor.
-# Synced to site/src/data/*.json at prepare time (`just _docs-prepare`).
-# Do not hand-edit those JSON files.
+# Synced to site/src/data/site-config.json at prepare. Used by docusaurus.config.js.
+# portalDocsUrlTemplate placeholders: {version} (e.g. 2.19), {version_underscore}
+# (e.g. 2_19). Filled from applications.maxGaNkpVersion.
+# ---------------------------------------------------------------------------
+site:
+  title: NKP Catalog
+  tagline: Documentation for NKP Catalog
+  organization: nutanix-cloud-native
+  project: nkp-partner-catalog
+  siteUrl: https://nutanix-cloud-native.github.io
+  githubRepo: https://github.com/nutanix-cloud-native/nkp-partner-catalog
+  editPath: tree/main/docs/source
+  portalHomeUrl: https://portal.nutanix.com
+  portalDocsUrlTemplate: >-
+    https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform-v{version_underscore}
+
+# ---------------------------------------------------------------------------
+# catalogs — crawled by `just generate-catalog` (after fetch-catalog-sources)
 #
-# - nkpVersionFloor: empty nkpVersionSupport ⇒ this minor+ (not "any version");
-#   also used as lower bound when support is upper-only (e.g. "<2.17")
-# - maxGaNkpVersion: highest MAJOR.MINOR shown in the dropdown (hide pre-GA)
-# - knownNkpVersions: fallback list if .release/stable.yaml is missing/unreadable
+# Legacy entries: sibling git clone at <root>/<id>/applications/...
+# Platform: kind platformHybrid expands per resolved NKP minor —
+#   git kommander-applications @ v{latest} when minor < ociFromMinor
+#   oci  kommander-applications-full:{v}{latest} when minor >= ociFromMinor
+# ---------------------------------------------------------------------------
+catalogs:
+  - id: nkp-ai-applications-catalog
+    name: AI Applications
+    slug: ai
+    repo: https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog
+
+  - id: nkp-partner-catalog
+    name: Partner Catalog
+    slug: partner
+    repo: https://github.com/nutanix-cloud-native/nkp-partner-catalog
+    nkpVersionsSource: true
+
+  - id: nkp-nutanix-product-catalog
+    name: Nutanix Products
+    slug: nutanix
+    repo: https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog
+
+  - id: nkp-platform
+    name: Platform
+    slug: platform
+    repo: https://github.com/mesosphere/kommander-applications
+    sources:
+      - kind: platformHybrid
+        gitRepo: https://github.com/mesosphere/kommander-applications
+        oci: ghcr.io/mesosphere/kommander-applications-full
+        ociFromMinor: "2.19"
+
+# ---------------------------------------------------------------------------
+# applications — catalog browser NKP version filter
+#
+# - nkpVersionFloor: probe start for catalog/Platform + empty nkpVersionSupport
+# - maxGaNkpVersion: highest MAJOR.MINOR in the public Applications dropdown;
+#   resolved minors above this (or with -dev tags) are CLI-unlisted by default
 # Override max at generate time: MAX_GA_NKP_VERSION=2.20 just generate-catalog
 # ---------------------------------------------------------------------------
 applications:
   nkpVersionFloor: "2.16"
   maxGaNkpVersion: "2.19"
-  knownNkpVersions:
-    - "2.16"
-    - "2.17"
-    - "2.18"
-    - "2.19"
 
 # ---------------------------------------------------------------------------
 # cliDocs — NKP CLI reference generation (`just generate-cli-docs`)
 #
-# Downloads each `latest` tag from downloads.d2iq.com and writes
-# source/cli/<minor>/ from `nkp help --output markdown --tree`.
-#
-# - minor: URL path under /docs/cli/<minor>/ (MAJOR.MINOR)
-# - latest: download tag for https://downloads.d2iq.com/dkp/v<latest>/nkp_v<latest>_…
-# - unlisted: omit from the public version pills (still generated; Older menu / URL works)
-# - label: optional dropdown/label override
-# - defaultMinor: latest GA shown by default
-#
-# Nightly / workflow_dispatch may run `just update-docs-config` (best-effort)
-# to rewrite `latest` when probes succeed. Prefers GA over `-dev`. Humans still
-# add/remove minors, set unlisted / defaultMinor, and control maxGaNkpVersion.
-#
-# Support window (public pills): current GA + ~2 prior. Older minors stay
-# generated but unlisted. Mark pre-GA/dev with label and/or unlisted.
+# Minors + patch tags come from resolve-nkp-releases (shared cache with Platform).
+# Probe starts at the lower of cliDocs.nkpVersionFloor and applications.nkpVersionFloor.
+# Platform/catalog only consume minors >= applications.nkpVersionFloor.
+# - downloadUrl: tarball template ({version}, {os}, {arch})
+# - defaultMinor: public default in the version pills
+# - minors: optional overlays only (unlisted / label / rare latest pin)
 # ---------------------------------------------------------------------------
 cliDocs:
+  nkpVersionFloor: "2.12"
+  downloadUrl: https://downloads.d2iq.com/dkp/v{version}/nkp_v{version}_{os}_{arch}.tar.gz
   defaultMinor: "2.18"
-  minors:
-    - minor: "2.12"
-      latest: "2.12.2"
-
-    - minor: "2.13"
-      latest: "2.13.3"
-
-    - minor: "2.14"
-      latest: "2.14.3"
-
-    - minor: "2.15"
-      latest: "2.15.2"
-
-    - minor: "2.16"
-      latest: "2.16.1"
-
-    - minor: "2.17"
-      latest: "2.17.1"
-
-    - minor: "2.18"
-      latest: "2.18.0"
-
-    - minor: "2.19"
-      latest: "2.19.0-dev"
-      label: "2.19 (dev)"
-      unlisted: true
-
-    - minor: "2.20"
-      latest: "2.20.0-dev"
-      label: "2.20 (dev)"
-      unlisted: true

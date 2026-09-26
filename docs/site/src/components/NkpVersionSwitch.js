@@ -1,4 +1,5 @@
 import React, {useMemo} from 'react';
+import Link from '@docusaurus/Link';
 
 const DEFAULT_PILL_COUNT = 3;
 
@@ -13,6 +14,7 @@ const DEFAULT_PILL_COUNT = 3;
  * @param {string} [ariaLabel]
  * @param {number} [pillCount]
  * @param {string} [label] — visible group label (default "Version")
+ * @param {(id: string) => string} [itemTo] — when set, pills are Links (baseUrl-safe)
  */
 export default function NkpVersionSwitch({
   value,
@@ -23,6 +25,7 @@ export default function NkpVersionSwitch({
   pillCount = DEFAULT_PILL_COUNT,
   label = 'Version',
   className = '',
+  itemTo,
 }) {
   const listed = useMemo(() => {
     const base = (options || []).map((o) => ({
@@ -35,7 +38,6 @@ export default function NkpVersionSwitch({
   }, [options, includeAll]);
 
   const {pillEntries, olderEntries, showOlder} = useMemo(() => {
-    // Keep "All" on the pill strip when present; window applies to version ids.
     const allOpt = listed.find((o) => o.id === 'all');
     const versions = listed.filter((o) => o.id !== 'all');
     const useOlder = versions.length > pillCount;
@@ -74,6 +76,7 @@ export default function NkpVersionSwitch({
 
   const olderActive = showOlder && olderEntries.some((o) => o.id === value);
   const rootClass = ['nkp-version-switch', className].filter(Boolean).join(' ');
+  const useLinks = typeof itemTo === 'function';
 
   return (
     <div className={rootClass} role="group" aria-label={ariaLabel}>
@@ -81,15 +84,29 @@ export default function NkpVersionSwitch({
       <div className="nkp-version-switch__list">
         {pillEntries.map((entry) => {
           const active = entry.id === value;
+          const classNameBtn = active
+            ? 'nkp-version-switch__btn is-active'
+            : 'nkp-version-switch__btn';
+          if (useLinks) {
+            return (
+              <Link
+                key={entry.id}
+                to={itemTo(entry.id)}
+                className={classNameBtn}
+                aria-current={active ? 'page' : undefined}
+                onClick={(e) => {
+                  if (active) e.preventDefault();
+                }}
+              >
+                {entry.label}
+              </Link>
+            );
+          }
           return (
             <button
               key={entry.id}
               type="button"
-              className={
-                active
-                  ? 'nkp-version-switch__btn is-active'
-                  : 'nkp-version-switch__btn'
-              }
+              className={classNameBtn}
               aria-pressed={active}
               onClick={() => go(entry.id)}
             >
