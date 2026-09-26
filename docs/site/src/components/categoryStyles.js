@@ -1,9 +1,39 @@
 'use strict';
 
+/** Token → display form for category slug words (case-insensitive match). */
+const CATEGORY_WORD_LABELS = {
+  api: 'API',
+  ai: 'AI',
+  ml: 'ML',
+  gpu: 'GPU',
+  crd: 'CRD',
+  csi: 'CSI',
+  and: 'and',
+  of: 'of',
+  for: 'for',
+  the: 'the',
+  to: 'to',
+};
+
+function categoryWordLabel(word, index) {
+  const key = String(word || '').toLowerCase();
+  if (Object.prototype.hasOwnProperty.call(CATEGORY_WORD_LABELS, key)) {
+    const mapped = CATEGORY_WORD_LABELS[key];
+    // Keep small words lowercase unless first token.
+    if (index > 0 && mapped === mapped.toLowerCase()) return mapped;
+    if (mapped === mapped.toLowerCase()) {
+      return mapped.charAt(0).toUpperCase() + mapped.slice(1);
+    }
+    return mapped;
+  }
+  return key.charAt(0).toUpperCase() + key.slice(1);
+}
+
 function categoryLabel(cat) {
-  return cat
+  return String(cat || '')
     .split('-')
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .filter(Boolean)
+    .map((w, i) => categoryWordLabel(w, i))
     .join(' ');
 }
 
@@ -20,7 +50,7 @@ const CATEGORY_TONES = {
 };
 
 const CERT_TONES = {
-  qualified: 'success',
+  qualified: 'warning',
   'nutanix-supported': 'success',
   'preferred-partner': 'neutral',
 };
@@ -28,12 +58,13 @@ const CERT_TONES = {
 /** Fixed facet order for Support status (All stays first in the UI). */
 const SUPPORT_STATUS_ORDER = [
   'nutanix-supported',
-  'preferred-partner',
   'qualified',
+  'preferred-partner',
 ];
 
-function supportStatusKeys(counts) {
-  return SUPPORT_STATUS_ORDER.filter(key => (counts[key] || 0) > 0);
+/** Fixed Support status facet keys (All stays first in the UI). Always shown. */
+function supportStatusKeys() {
+  return SUPPORT_STATUS_ORDER.slice();
 }
 
 function categoryTone(cat) {
@@ -46,12 +77,12 @@ function certTone(cert) {
 
 const APPLICATION_PANEL_INFO = {
   qualified: {
-    title: 'Qualified by Nutanix',
+    title: 'Qualified',
     description:
       'This open source software is curated and supported by Nutanix as part of the NKP platform. As an open source project, Nutanix cannot guarantee that it is bug free nor that bugs will be fixed in a timely manner.',
   },
   'nutanix-supported': {
-    title: 'Supported by Nutanix',
+    title: 'Nutanix Supported',
     description:
       "This application is developed and maintained by Nutanix, and is fully covered under Nutanix's standard support terms and SLAs, including failure assistance and bug fixes.",
   },
@@ -78,28 +109,46 @@ function certDescription(cert) {
   return panelDescription(cert);
 }
 
-function supportPanelKey(app) {
-  if (!app) return '';
-  if (app.type === 'preferred-partner') {
-    return app.type;
-  }
-  if (app.type === 'nkp-catalog') {
-    if ((app.certifications || []).includes('nutanix-supported')) {
-      return 'nutanix-supported';
-    }
-    return 'qualified';
-  }
+const TYPED_CATALOG_APPS = new Set([
+  'preferred-partner',
+  'nkp-core-platform',
+  'nkp-catalog',
+]);
+
+function isTypedCatalogApp(app) {
+  return Boolean(app && TYPED_CATALOG_APPS.has(app.type));
+}
+
+function isPreferredPartnerApp(app) {
+  return (app && app.type) === 'preferred-partner';
+}
+
+/** Certification badge from `certifications` — only for typed catalog apps. */
+function certificationBadge(app) {
+  if (!isTypedCatalogApp(app)) return '';
+  const certs = app.certifications || [];
+  if (certs.includes('nutanix-supported')) return 'nutanix-supported';
+  if (certs.includes('qualified')) return 'qualified';
   return '';
+}
+
+function supportPanelKey(app) {
+  return certificationBadge(app);
 }
 
 function appHasCertFacet(app, key) {
   if (!key || key === 'all') return true;
-  return supportPanelKey(app) === key;
+  if (key === 'preferred-partner') return isPreferredPartnerApp(app);
+  return certificationBadge(app) === key;
 }
 
+/** Support-status chips on cards/facets: preferred-partner (type) + cert. */
 function supportBadges(app) {
-  const panel = supportPanelKey(app);
-  return panel ? [panel] : [];
+  const badges = [];
+  if (isPreferredPartnerApp(app)) badges.push('preferred-partner');
+  const cert = certificationBadge(app);
+  if (cert) badges.push(cert);
+  return badges;
 }
 
 function canonicalLicense(name) {
@@ -137,6 +186,35 @@ function licenseDescription(name) {
   return LICENSE_INFO[canonicalLicense(name)] || '';
 }
 
+const CORE_PLATFORM_TYPE = 'nkp-core-platform';
+
+const CORE_PLATFORM_DESCRIPTION =
+  'This is a core platform application and will be upgraded by default when the cluster undergoes an upgrade.';
+
+function isCorePlatformApp(app) {
+  return (app && app.type) === CORE_PLATFORM_TYPE;
+}
+
+function corePlatformLabel() {
+  return 'NKP Core Platform';
+}
+
+function corePlatformDescription() {
+  return CORE_PLATFORM_DESCRIPTION;
+}
+
+function corePlatformTone() {
+  return 'info';
+}
+
+/** Apps shown in the public catalog browser (and generated detail pages). */
+function isPublishedCatalogApp(app) {
+  if (!app) return false;
+  if (app.type === 'internal') return false;
+  if (/deprecated/i.test(String(app.displayName || ''))) return false;
+  return true;
+}
+
 export {
   categoryLabel,
   categoryTone,
@@ -146,8 +224,10 @@ export {
   panelTitle,
   panelDescription,
   supportPanelKey,
+  certificationBadge,
   appHasCertFacet,
   supportBadges,
+  isPreferredPartnerApp,
   supportStatusKeys,
   SUPPORT_STATUS_ORDER,
   canonicalLicense,
@@ -155,4 +235,10 @@ export {
   appHasLicense,
   licenseDescription,
   NKP_LICENSE_OPTIONS_URL,
+  CORE_PLATFORM_TYPE,
+  isCorePlatformApp,
+  corePlatformLabel,
+  corePlatformDescription,
+  corePlatformTone,
+  isPublishedCatalogApp,
 };

@@ -1,5 +1,6 @@
 import React, {useMemo} from 'react';
 import {useHistory, useLocation} from '@docusaurus/router';
+import {useBaseUrlUtils} from '@docusaurus/useBaseUrl';
 import NkpVersionSwitch from './NkpVersionSwitch';
 import {
   defaultMinor,
@@ -17,6 +18,10 @@ function commandPath(minor, commandId) {
 /**
  * CLI adapter over shared NkpVersionSwitch.
  * Pass `onMinorChange` on the landing to switch tree version without navigating.
+ *
+ * Doc pages navigate via history.push(withBaseUrl(...)) — not <Link itemTo>.
+ * Version pills must not emit static Links to the same command in other minors:
+ * many commands are version-specific and Docusaurus onBrokenLinks would fail the build.
  */
 export default function CliVersionSelect({
   minor: minorProp,
@@ -25,8 +30,9 @@ export default function CliVersionSelect({
 }) {
   const history = useHistory();
   const location = useLocation();
+  const {withBaseUrl} = useBaseUrlUtils();
   const parsed = parseCliPath(location.pathname);
-  const minor = minorProp || parsed?.minor || defaultMinor();
+  const minor = String(minorProp || parsed?.minor || defaultMinor());
   const commandId = commandIdProp || parsed?.commandId || 'nkp';
   const publics = useMemo(() => publicMinors(), []);
   const currentEntry = findMinor(minor);
@@ -51,7 +57,7 @@ export default function CliVersionSelect({
       onMinorChange(nextMinor);
       return;
     }
-    history.push(commandPath(nextMinor, commandId));
+    history.push(withBaseUrl(commandPath(nextMinor, commandId)));
   };
 
   return (

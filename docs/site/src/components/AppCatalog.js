@@ -1,17 +1,13 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import Link from '@docusaurus/Link';
 import { useHistory, useLocation } from '@docusaurus/router';
-import { categoryLabel, certTone, certLabel, certDescription, supportBadges, appHasCertFacet, supportStatusKeys } from './categoryStyles';
+import { categoryLabel, certTone, certLabel, certDescription, supportBadges, appHasCertFacet, supportStatusKeys, isPublishedCatalogApp, isPreferredPartnerApp, isCorePlatformApp, corePlatformLabel, corePlatformDescription, corePlatformTone } from './categoryStyles';
 import { AppIcon, Tag } from './catalogUi';
 import nkpVersion from './nkpVersion';
 import NkpVersionSwitch from './NkpVersionSwitch';
 
 const { matchesNkpVersion, DEFAULT_NKP_VERSIONS, DEFAULT_NKP_FLOOR, gaNkpVersions } = nkpVersion;
-
-function isUserFacing(app) {
-  return app.type !== 'internal';
-}
 
 function nkpLabel(app) {
   return (app.nkpCardRange && app.nkpCardRange.label)
@@ -19,7 +15,7 @@ function nkpLabel(app) {
     || `NKP ${DEFAULT_NKP_FLOOR}+`;
 }
 
-function appMatchesNkp(app, selected) {
+function appMatchesNkpMinor(app, selected) {
   const entries = app.versionNkp;
   if (entries && entries.length) {
     return entries.some((e) => matchesNkpVersion(e.nkpRange, selected));
@@ -27,9 +23,71 @@ function appMatchesNkp(app, selected) {
   return matchesNkpVersion(app.nkpRange, selected);
 }
 
-function AppCard({ app, catalog }) {
+/** Match a selected minor, or (for "all") any public GA minor in the version switcher. */
+function appMatchesNkp(app, selected, publicMinors) {
+  if (selected && selected !== 'all') {
+    return appMatchesNkpMinor(app, selected);
+  }
+  const minors = publicMinors && publicMinors.length
+    ? publicMinors
+    : DEFAULT_NKP_VERSIONS;
+  return minors.some((v) => appMatchesNkpMinor(app, v));
+}
+
+function AppCard({ app }) {
   const href = useBaseUrl(`/docs/applications/${app.name}`);
   const rangeLabel = nkpLabel(app);
+  const description = app.description || '';
+  const descRef = useRef(null);
+  const [descTruncated, setDescTruncated] = useState(false);
+  const versionCount = (app.allVersions && app.allVersions.length) || 1;
+  const typeCertChips = (
+    <>
+      {isPreferredPartnerApp(app) && (
+        <Tag tone={certTone('preferred-partner')} tip={certDescription('preferred-partner')}>
+          {certLabel('preferred-partner')}
+        </Tag>
+      )}
+      {isCorePlatformApp(app) && (
+        <Tag tone={corePlatformTone()} tip={corePlatformDescription()}>
+          {corePlatformLabel()}
+        </Tag>
+      )}
+      {supportBadges(app)
+        .filter((c) => c !== 'preferred-partner')
+        .map((c) => (
+          <Tag key={c} tone={certTone(c)} tip={certDescription(c)}>
+            {certLabel(c)}
+          </Tag>
+        ))}
+    </>
+  );
+  const hasTypeCert =
+    isPreferredPartnerApp(app)
+    || isCorePlatformApp(app)
+    || supportBadges(app).some((c) => c !== 'preferred-partner');
+
+  useLayoutEffect(() => {
+    const el = descRef.current;
+    if (!el || !description) {
+      setDescTruncated(false);
+      return undefined;
+    }
+    const measure = () => {
+      setDescTruncated(el.scrollHeight > el.clientHeight + 1);
+    };
+    measure();
+    const ro = typeof ResizeObserver !== 'undefined'
+      ? new ResizeObserver(measure)
+      : null;
+    if (ro) ro.observe(el);
+    window.addEventListener('resize', measure);
+    return () => {
+      if (ro) ro.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [description]);
+
   return (
     <Link className="cat-card" to={href}>
       <div className="cat-card-header">
@@ -39,18 +97,24 @@ function AppCard({ app, catalog }) {
           <span className="cat-card-version">v{app.version}</span>
         </div>
       </div>
-      <p className="cat-card-desc">{app.description}</p>
-      <div className="cat-card-meta">
-        <Tag tone="info">{rangeLabel}</Tag>
-        {supportBadges(app).map(c => (
-          <Tag key={c} tone={certTone(c)} tip={certDescription(c)}>{certLabel(c)}</Tag>
-        ))}
-      </div>
+      {hasTypeCert && (
+        <div className="cat-card-meta">{typeCertChips}</div>
+      )}
+      {description ? (
+        <div
+          className={`cat-card-desc-wrap${descTruncated ? ' cat-tip' : ''}`}
+          data-tip={descTruncated ? description : undefined}
+        >
+          <p className="cat-card-desc" ref={descRef}>{description}</p>
+        </div>
+      ) : (
+        <div className="cat-card-desc-wrap" aria-hidden="true" />
+      )}
       <div className="cat-card-footer">
-        <span className="cat-card-catalog">{catalog.name}</span>
-        {app.allVersions.length > 1 && (
+        <Tag tone="info">{rangeLabel}</Tag>
+        {versionCount > 1 && (
           <span className="cat-card-versions-count">
-            {app.allVersions.length} versions
+            {versionCount} versions
           </span>
         )}
       </div>
@@ -78,10 +142,10 @@ function filtersToSearch(filters) {
   return qs ? `?${qs}` : '';
 }
 
-function appMatches(app, catalog, filters, except) {
-  if (!isUserFacing(app)) return false;
+function appMatches(app, catalog, filters, except, publicMinors) {
+  if (!isPublishedCatalogApp(app)) return false;
   if (except !== 'category' && filters.category !== 'all' && !(app.category || []).includes(filters.category)) return false;
-  if (except !== 'nkp' && !appMatchesNkp(app, filters.nkp)) return false;
+  if (except !== 'nkp' && !appMatchesNkp(app, filters.nkp, publicMinors)) return false;
   if (except !== 'cert' && filters.cert !== 'all' && !appHasCertFacet(app, filters.cert)) return false;
   if (except !== 'q' && filters.q) {
     const q = filters.q.toLowerCase();
@@ -130,14 +194,6 @@ function FacetGroup({ title, options, preview = 6 }) {
       )}
     </div>
   );
-}
-
-function keysByCountThenLabel(counts, labelFn = k => k) {
-  return Object.keys(counts).sort((a, b) => {
-    const diff = (counts[b] || 0) - (counts[a] || 0);
-    if (diff !== 0) return diff;
-    return String(labelFn(a)).localeCompare(String(labelFn(b)));
-  });
 }
 
 function FacetOption({ label, count, active, onClick, tip }) {
@@ -232,12 +288,17 @@ export default function AppCatalog() {
         rows.push({ app, catalog });
       }
     }
+    // Flat A–Z across catalogs; catalog stays on the card footer only.
+    rows.sort((a, b) =>
+      String(a.app.displayName).localeCompare(String(b.app.displayName)),
+    );
     return rows;
   }, [data]);
 
   const filtered = useMemo(
-    () => cataloged.filter(({ app, catalog }) => appMatches(app, catalog, effectiveFilters)),
-    [cataloged, effectiveFilters],
+    () => cataloged.filter(({ app, catalog }) =>
+      appMatches(app, catalog, effectiveFilters, undefined, nkpVersions)),
+    [cataloged, effectiveFilters, nkpVersions],
   );
 
   const facetCounts = useMemo(() => {
@@ -245,14 +306,29 @@ export default function AppCatalog() {
     const certs = {};
     let allForCert = 0;
     let allForCategory = 0;
+    // Seed every category on public GA apps so zero-count facets still appear.
     for (const { app, catalog } of cataloged) {
-      if (appMatches(app, catalog, effectiveFilters, 'category')) {
+      if (!appMatches(
+        app,
+        catalog,
+        {category: 'all', nkp: 'all', cert: 'all', q: ''},
+        undefined,
+        nkpVersions,
+      )) {
+        continue;
+      }
+      for (const c of app.category || []) {
+        if (!(c in categories)) categories[c] = 0;
+      }
+    }
+    for (const { app, catalog } of cataloged) {
+      if (appMatches(app, catalog, effectiveFilters, 'category', nkpVersions)) {
         allForCategory += 1;
         for (const c of app.category || []) {
           categories[c] = (categories[c] || 0) + 1;
         }
       }
-      if (appMatches(app, catalog, effectiveFilters, 'cert')) {
+      if (appMatches(app, catalog, effectiveFilters, 'cert', nkpVersions)) {
         allForCert += 1;
         for (const c of supportBadges(app)) {
           certs[c] = (certs[c] || 0) + 1;
@@ -265,7 +341,7 @@ export default function AppCatalog() {
       allForCert,
       allForCategory,
     };
-  }, [cataloged, effectiveFilters]);
+  }, [cataloged, effectiveFilters, nkpVersions]);
 
   const resetFilters = () => {
     setSearchQuery('');
@@ -295,35 +371,42 @@ export default function AppCatalog() {
     );
   }
 
-  const publicTotal = cataloged.filter(({ app }) => isUserFacing(app)).length;
+  const publicTotal = cataloged.filter(({ app, catalog }) =>
+    appMatches(
+      app,
+      catalog,
+      {category: 'all', nkp: 'all', cert: 'all', q: ''},
+      undefined,
+      nkpVersions,
+    ),
+  ).length;
 
   const facetRail = (
     <aside className="cat-facets" aria-label="Catalog filters">
-      {Object.keys(facetCounts.certs).length > 0 && (
-        <FacetGroup
-          title="Support status"
-          options={[
-            {
-              key: 'all',
-              label: 'All',
-              count: facetCounts.allForCert,
-              active: effectiveFilters.cert === 'all',
-              onClick: () => updateFilters({ cert: 'all' }),
-            },
-            ...supportStatusKeys(facetCounts.certs).map(c => ({
-              key: c,
-              label: certLabel(c),
-              count: facetCounts.certs[c],
-              active: effectiveFilters.cert === c,
-              onClick: () => updateFilters({ cert: c }),
-              tip: certDescription(c),
-            })),
-          ]}
-        />
-      )}
+      <FacetGroup
+        title="Support status"
+        options={[
+          {
+            key: 'all',
+            label: 'All',
+            count: facetCounts.allForCert,
+            active: effectiveFilters.cert === 'all',
+            onClick: () => updateFilters({ cert: 'all' }),
+          },
+          ...supportStatusKeys().map(c => ({
+            key: c,
+            label: certLabel(c),
+            count: facetCounts.certs[c] || 0,
+            active: effectiveFilters.cert === c,
+            onClick: () => updateFilters({ cert: c }),
+            tip: certDescription(c),
+          })),
+        ]}
+      />
 
       <FacetGroup
         title="Category"
+        preview={Infinity}
         options={[
           {
             key: 'all',
@@ -332,7 +415,11 @@ export default function AppCatalog() {
             active: effectiveFilters.category === 'all',
             onClick: () => updateFilters({ category: 'all' }),
           },
-          ...keysByCountThenLabel(facetCounts.categories, categoryLabel).map(c => ({
+          ...Object.keys(facetCounts.categories)
+            .sort((a, b) =>
+              String(categoryLabel(a)).localeCompare(String(categoryLabel(b))),
+            )
+            .map(c => ({
             key: c,
             label: categoryLabel(c),
             count: facetCounts.categories[c],
@@ -390,7 +477,6 @@ export default function AppCatalog() {
               <AppCard
                 key={`${catalog.id}/${app.name}`}
                 app={app}
-                catalog={catalog}
               />
             ))}
           </div>

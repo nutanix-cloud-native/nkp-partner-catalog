@@ -537,6 +537,14 @@ html[data-theme='dark'] .DocSearch-Button-Key {
   color: var(--ifm-font-color-base);
   font-size: 0.875rem;
   cursor: pointer;
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.2;
+}
+
+a.nkp-version-switch__btn:hover {
+  text-decoration: none !important;
 }
 
 .nkp-version-switch__btn:hover {

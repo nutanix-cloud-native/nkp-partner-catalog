@@ -68,6 +68,7 @@ html[data-theme='dark'] {
 
 .cat-main {
   min-width: 0;
+  overflow: visible;
 }
 
 @media (max-width: 996px) {
@@ -240,11 +241,15 @@ html[data-theme='dark'] {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: calc(var(--cat-space) * 2);
+  align-items: stretch;
+  overflow: visible;
 }
 
 .cat-card {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  min-height: 0;
   background: var(--cat-bg-base);
   border: 1px solid var(--cat-border);
   border-radius: 8px;
@@ -255,11 +260,13 @@ html[data-theme='dark'] {
   text-decoration: none;
   color: inherit;
   transition: box-shadow 0.15s, border-color 0.15s;
+  /* visible so description / badge tips are not clipped */
+  overflow: visible;
 }
 
 .cat-card:hover,
 .cat-card:focus-visible {
-  z-index: 2;
+  z-index: 20;
 }
 
 .cat-card:hover {
@@ -273,7 +280,7 @@ html[data-theme='dark'] {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.65rem;
 }
 
 .cat-icon-placeholder {
@@ -319,43 +326,80 @@ html[data-theme='dark'] {
   font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+.cat-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-bottom: 0.55rem;
+}
+
+.cat-card-desc-wrap {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-bottom: 0.65rem;
+  position: relative;
+  z-index: 1;
+}
+
+.cat-card-desc-wrap.cat-tip {
+  cursor: help;
+}
+
 .cat-card-desc {
   font-size: 0.875rem;
   color: var(--cat-text-secondary);
   line-height: 1.5;
-  margin: 0 0 0.75rem;
-  flex: 1;
+  margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.cat-card-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-  margin-bottom: 0.75rem;
+/* Full description tip above the clamp — card overflow is visible so it isn't clipped. */
+.cat-card-desc-wrap.cat-tip[data-tip]::after {
+  top: auto;
+  bottom: calc(100% + 6px);
+  left: 0;
+  right: auto;
+  max-width: min(360px, 80vw);
+  z-index: 50;
+  transform: translateY(4px);
+  white-space: normal;
+}
+
+.cat-card-desc-wrap.cat-tip[data-tip]:hover::after,
+.cat-card-desc-wrap.cat-tip[data-tip]:focus-visible::after {
+  transform: translateY(0);
+}
+
+.cat-card:hover .cat-card-desc-wrap.cat-tip,
+.cat-card:focus-within .cat-card-desc-wrap.cat-tip {
+  z-index: 30;
 }
 
 .cat-card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 0.5rem;
   border-top: 1px solid var(--cat-border);
   padding-top: 0.6rem;
   margin-top: auto;
 }
 
-.cat-card-catalog {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--cat-text-secondary);
-}
-
 .cat-card-versions-count {
   font-size: 0.72rem;
   color: var(--cat-text-tertiary);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* Doc article wrappers often clip absolutely-positioned tips */
+article:has(.cat-layout),
+article:has(.cat-layout) .theme-doc-markdown,
+article:has(.cat-layout) .markdown {
+  overflow: visible;
 }
 
 .cat-tag {
@@ -417,7 +461,7 @@ button.cat-tag {
   left: 0;
   bottom: calc(100% + 6px);
   width: max-content;
-  max-width: 280px;
+  max-width: 320px;
   padding: 0.4rem 0.55rem;
   border-radius: var(--cat-radius);
   background: var(--cat-tooltip-bg);

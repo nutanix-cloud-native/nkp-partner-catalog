@@ -2,35 +2,37 @@
 
 ## Generator
 
+`just resolve-nkp-releases` then `just fetch-catalog-sources` then
 `just generate-catalog [root]` → `site/scripts/generate-catalog.js`
 
-- Walks sibling `applications/<name>/<semver>/metadata.yaml` under
-  `nkp-ai-applications-catalog`, `nkp-partner-catalog`, `nkp-nutanix-product-catalog`
-  (all **public** clones; no token required).
+- Catalog list: `source/config.yaml` → `catalogs[]`.
+- Legacy entries: sibling `<id>/applications/<name>/<semver>/metadata.yaml`.
+- Platform (`kind: platformHybrid`): one source per resolved NKP minor —
+  git `kommander-applications` @ `v{latest}` when minor `< ociFromMinor` (default 2.19);
+  OCI `ghcr.io/mesosphere/kommander-applications-full:v{latest}` at/above that minor.
+- Merges apps by name within a logical catalog; injects `nkpVersionSupport` from
+  the source minor when metadata omits it.
 - Writes (gitignored): `source/catalog-data.json`, `source/applications/*`,
   `site/static/catalog-icons/*`.
-- Listing JSON omits `overview` / `readme` / `catalogAppNames`.
-- Detail JSON includes `versionNkp[]`, `nkpCardRange` (oldest floor as `NKP {min}+`),
-  and `catalogAppNames` for in-site dependency links.
-- Latest `nkpVersionSupport` / `nkpRange` remain on the app for the default version.
+- NKP filter versions: resolved releases (GA ≤ `maxGaNkpVersion`), with
+  `.release/stable.yaml` only as a secondary fallback.
 
-Wipe policy: after a successful walk, the generator replaces `source/applications/`
-and refreshes icons. Duplicate app directory names across catalogs fail the run.
+Duplicate app directory names across **logical** catalogs fail the run.
 
 ## UI
 
-- Listing: `AppCatalog` fetches `/catalog-data.json` (copied to `site/static/` at prepare).
-- Detail: generated MDX imports `AppDetailPage` + sibling JSON.
-- Card NKP label = `nkpCardRange`; filter matches **any** `versionNkp` range.
-- Detail version pills select locally; NKP tag follows selection; GitHub link separate.
-- Dependencies: `Tag` with `to=/docs/applications/<name>` when name is in `catalogAppNames`.
+- Listing: `AppCatalog` fetches `/catalog-data.json`.
+- Detail: `AppDetailPage`; GitHub link uses per-version `catalogRepo` + `ref`
+  (omitted for OCI-backed Platform versions).
+- Card NKP label = `nkpCardRange`; filter matches any `versionNkp` range.
 
 ## Config
 
 `source/config.yaml` → `applications`:
 
-- `nkpVersionFloor` — empty support ⇒ this minor+; also lower bound for upper-only ranges (`<2.17` → floor). Sole source: `config.yaml` (synced JSON).
-- `maxGaNkpVersion` — hide pre-GA from dropdown (do not show 2.20 until GA)
-- `knownNkpVersions` — fallback list
+- `nkpVersionFloor` — catalog/Platform start + empty-support floor (CLI may probe older via `cliDocs.nkpVersionFloor`)
+- `maxGaNkpVersion` — public Applications dropdown ceiling
 
-Synced to `site/src/data/` by `sync-docs-data` (prepare) / generate-catalog.
+No committed `knownNkpVersions` / patch pins. Tags come from
+`.cache/nkp-releases.json` (`just resolve-nkp-releases`); Platform expansion
+skips minors below `applications.nkpVersionFloor`.

@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import Link from '@docusaurus/Link';
 import DOMPurify from 'isomorphic-dompurify';
 import { marked } from 'marked';
-import { categoryLabel, categoryTone, certTone, certLabel, certDescription, supportPanelKey, supportBadges, appLicenses, licenseDescription, NKP_LICENSE_OPTIONS_URL } from './categoryStyles';
+import { categoryLabel, categoryTone, certTone, certLabel, certDescription, supportBadges, appLicenses, licenseDescription, NKP_LICENSE_OPTIONS_URL, isPreferredPartnerApp, isCorePlatformApp, corePlatformLabel, corePlatformDescription, corePlatformTone } from './categoryStyles';
 import { AppIcon, Tag } from './catalogUi';
 import nkpVersion from './nkpVersion';
 
@@ -29,11 +29,19 @@ export default function AppDetailPage({ data }) {
   }, [data, selectedVersion]);
   const overviewHtml = useMemo(() => renderMarkdown(data.overview), [data.overview]);
   const readmeHtml = useMemo(() => renderMarkdown(data.readme), [data.readme]);
-  const panel = supportPanelKey(data);
-  const badges = supportBadges(data);
-  const githubHref = data.catalogRepo
-    ? `${data.catalogRepo}/tree/main/applications/${data.name}/${selectedVersion}`
-    : '';
+  const badges = supportBadges(data).filter((c) => c !== 'preferred-partner');
+  const githubHref = useMemo(() => {
+    const hit = (data.versionNkp || []).find((e) => e.version === selectedVersion);
+    // Per-version source only — do not fall back to top-level catalogRepo
+    // (OCI rows intentionally leave catalogRepo empty; fallback would wrongly
+    // reuse a sibling git repo URL from another NKP minor).
+    if (hit && (hit.kind === 'oci' || hit.sourceKind === 'oci')) return '';
+    const repo = hit ? (hit.catalogRepo || '') : (data.catalogRepo || '');
+    if (!repo || !/^https?:\/\/(www\.)?github\.com\//i.test(repo)) return '';
+    const ref = (hit && hit.ref) || 'main';
+    const appsPath = (hit && hit.applicationsPath) || 'applications';
+    return `${repo}/tree/${ref}/${appsPath}/${data.name}/${selectedVersion}`;
+  }, [data, selectedVersion]);
 
   function depTag(name, required) {
     const label = required ? `${name} (required)` : name;
@@ -68,7 +76,11 @@ export default function AppDetailPage({ data }) {
           <div className="cat-detail-meta-item">
             <span className="cat-detail-meta-label">Category</span>
             <div className="cat-detail-meta-value">
-              {data.category.map(c => (
+              {[...data.category]
+                .sort((a, b) =>
+                  String(categoryLabel(a)).localeCompare(String(categoryLabel(b))),
+                )
+                .map(c => (
                 <Tag key={c} tone={categoryTone(c)}>{categoryLabel(c)}</Tag>
               ))}
             </div>
@@ -106,6 +118,26 @@ export default function AppDetailPage({ data }) {
               {badges.map(c => (
                 <Tag key={c} tone={certTone(c)} tip={certDescription(c)}>{certLabel(c)}</Tag>
               ))}
+            </div>
+          </div>
+        )}
+        {isPreferredPartnerApp(data) && (
+          <div className="cat-detail-meta-item">
+            <span className="cat-detail-meta-label">Partner</span>
+            <div className="cat-detail-meta-value">
+              <Tag tone={certTone('preferred-partner')} tip={certDescription('preferred-partner')}>
+                {certLabel('preferred-partner')}
+              </Tag>
+            </div>
+          </div>
+        )}
+        {isCorePlatformApp(data) && (
+          <div className="cat-detail-meta-item">
+            <span className="cat-detail-meta-label">Platform</span>
+            <div className="cat-detail-meta-value">
+              <Tag tone={corePlatformTone()} tip={corePlatformDescription()}>
+                {corePlatformLabel()}
+              </Tag>
             </div>
           </div>
         )}

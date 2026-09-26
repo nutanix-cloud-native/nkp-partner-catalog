@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Crawls applications/ in the three NKP catalog repos and generates:
+// Crawls applications/ for each catalog source (git sibling or OCI unpack)
+// listed/expanded from docs/source/config.yaml and generates:
 //   - catalog-data.json (slim listing index for AppCatalog; icon = URL)
 //   - source/applications/<app>.{mdx,json} (flat detail pages; icon = URL)
 //   - site/static/catalog-icons/<app>.{svg,png,...} (decoded from metadata)
@@ -7,9 +8,7 @@
 // Usage:
 //   node generate-catalog.js [--root <sibling-root>] [-o output.json]
 //
-// Default --root is the parent of this checkout (the org directory that
-// contains nkp-partner-catalog, nkp-nutanix-product-catalog, and
-// nkp-ai-applications-catalog as siblings).
+// Platform hybrid sources must be fetched first (`just fetch-catalog-sources`).
 
 'use strict';
 
@@ -21,6 +20,9 @@ const DOCS_ROOT = path.resolve(__dirname, '..', '..');
 const {
   loadConfigYaml,
   applicationsFromConfig,
+  catalogsFromConfig,
+  nkpSupportForMinors,
+  loadResolvedNkpReleases,
 } = require(path.join(DOCS_ROOT, 'scripts', 'docs-config.cjs'));
 const NKP_VERSION_JSON = path.join(
   __dirname,
@@ -30,41 +32,35 @@ const NKP_VERSION_JSON = path.join(
   'nkp-version-config.json',
 );
 
-/** Sync docs/source/config.yaml → applications into site/src/data for the browser. */
 function syncApplicationsConfig() {
   const out = applicationsFromConfig(loadConfigYaml());
-  fs.mkdirSync(path.dirname(NKP_VERSION_JSON), { recursive: true });
+  fs.mkdirSync(path.dirname(NKP_VERSION_JSON), {recursive: true});
   fs.writeFileSync(NKP_VERSION_JSON, `${JSON.stringify(out, null, 2)}\n`);
   console.log(
     `Synced applications NKP filter → ${path.relative(DOCS_ROOT, NKP_VERSION_JSON)} ` +
-      `(floor ${out.nkpVersionFloor}, max GA ${out.maxGaNkpVersion})`,
+      `(floor ${out.nkpVersionFloor}, max GA ${out.maxGaNkpVersion}, known ${out.knownNkpVersions.join(',')})`,
   );
   return out;
 }
 
 syncApplicationsConfig();
 
-const { parseNkpRange, cardRangeFromRanges, DEFAULT_NKP_VERSIONS, toMinor, compareMinor, gaNkpVersions } = require('../src/components/nkpVersion');
+const {
+  parseNkpRange,
+  cardRangeFromRanges,
+  unionNkpRanges,
+  DEFAULT_NKP_VERSIONS,
+  toMinor,
+  compareMinor,
+  gaNkpVersions,
+} = require('../src/components/nkpVersion');
 
-const CATALOGS = {
-  'nkp-ai-applications-catalog': {
-    name: 'AI Applications',
-    slug: 'ai',
-    repo: 'https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog',
-  },
-  'nkp-partner-catalog': {
-    name: 'Partner Catalog',
-    slug: 'partner',
-    repo: 'https://github.com/nutanix-cloud-native/nkp-partner-catalog',
-  },
-  'nkp-nutanix-product-catalog': {
-    name: 'Nutanix Products',
-    slug: 'nutanix',
-    repo: 'https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog',
-  },
-};
+const cfg = loadConfigYaml();
+const {list: LOGICAL_CATALOGS} = catalogsFromConfig(cfg, {requireResolved: true});
 
 const DEFAULT_ROOT = path.resolve(__dirname, '..', '..', '..', '..');
+const IN_CI =
+  process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true';
 
 function parseSemver(v) {
   const m = v.match(/^(\d+)\.(\d+)\.(\d+)/);
@@ -93,23 +89,29 @@ function readVersionMeta(appPath, version) {
   }
 }
 
-function scanApps(repoPath) {
-  const appsDir = path.join(repoPath, 'applications');
+/**
+ * @param {string} repoPath
+ * @param {{ applicationsPath?: string, nkpVersions?: string[], catalogRepo?: string, ref?: string }} source
+ */
+function scanApps(repoPath, source = {}) {
+  const appsDir = path.join(repoPath, source.applicationsPath || 'applications');
   if (!fs.existsSync(appsDir)) {
     console.warn(`  WARN: no applications/ directory at ${appsDir}`);
     return [];
   }
 
+  const injectedSupport = nkpSupportForMinors(source.nkpVersions || []);
   const apps = [];
-  const entries = fs.readdirSync(appsDir, { withFileTypes: true });
+  const entries = fs.readdirSync(appsDir, {withFileTypes: true});
 
   for (const entry of entries) {
     if (!entry.isDirectory() || entry.name.startsWith('.')) continue;
 
     const appPath = path.join(appsDir, entry.name);
-    const versions = fs.readdirSync(appPath, { withFileTypes: true })
-      .filter(d => d.isDirectory() && parseSemver(d.name))
-      .map(d => d.name)
+    const versions = fs
+      .readdirSync(appPath, {withFileTypes: true})
+      .filter((d) => d.isDirectory() && parseSemver(d.name))
+      .map((d) => d.name)
       .sort(compareSemver);
 
     if (versions.length === 0) {
@@ -120,7 +122,9 @@ function scanApps(repoPath) {
     const latest = versions[versions.length - 1];
     const meta = readVersionMeta(appPath, latest);
     if (!meta) {
-      console.warn(`  WARN: skipping ${entry.name}: missing or invalid ${path.join(appPath, latest, 'metadata.yaml')}`);
+      console.warn(
+        `  WARN: skipping ${entry.name}: missing or invalid ${path.join(appPath, latest, 'metadata.yaml')}`,
+      );
       continue;
     }
 
@@ -132,14 +136,21 @@ function scanApps(repoPath) {
 
     const versionNkp = versions.map((v) => {
       const m = v === latest ? meta : readVersionMeta(appPath, v);
-      const raw = (m && m.nkpVersionSupport) || '';
+      let raw = (m && m.nkpVersionSupport) || '';
+      if (!raw && injectedSupport) raw = injectedSupport;
       return {
         version: v,
         nkpVersionSupport: raw,
         nkpRange: parseNkpRange(raw),
+        catalogRepo: source.catalogRepo || '',
+        ref: source.ref || '',
+        applicationsPath: source.applicationsPath || 'applications',
+        kind: source.kind || (source.catalogRepo ? 'git' : 'oci'),
       };
     });
     const nkpCardRange = cardRangeFromRanges(versionNkp.map((e) => e.nkpRange));
+    const latestSupport =
+      meta.nkpVersionSupport || injectedSupport || '';
 
     apps.push({
       name: entry.name,
@@ -156,17 +167,88 @@ function scanApps(repoPath) {
       dependencies: meta.dependencies || [],
       requiredDependencies: meta.requiredDependencies || [],
       allowMultipleInstances: !!meta.allowMultipleInstances,
-      nkpVersionSupport: meta.nkpVersionSupport || '',
-      nkpRange: parseNkpRange(meta.nkpVersionSupport || ''),
+      nkpVersionSupport: latestSupport,
+      nkpRange: parseNkpRange(latestSupport),
       versionNkp,
       nkpCardRange,
       type: meta.type || 'custom',
       certifications: meta.certifications || [],
       readme,
+      catalogRepo: source.catalogRepo || '',
     });
   }
 
   return apps.sort((a, b) => a.displayName.localeCompare(b.displayName));
+}
+
+/** Merge same chart version seen in multiple NKP sources (union NKP range). */
+function mergeVersionNkpEntries(a, b) {
+  const nkpRange = unionNkpRanges(a.nkpRange, b.nkpRange);
+  const nkpVersionSupport = nkpRange.raw || a.nkpVersionSupport || b.nkpVersionSupport || '';
+  const aGit = a.kind === 'git' && a.catalogRepo;
+  const bGit = b.kind === 'git' && b.catalogRepo;
+  const kind = aGit || bGit ? 'git' : (a.kind || b.kind || 'oci');
+  const catalogRepo = aGit
+    ? a.catalogRepo
+    : bGit
+      ? b.catalogRepo
+      : '';
+  const ref = aGit ? (a.ref || '') : bGit ? (b.ref || '') : '';
+  return {
+    version: a.version,
+    nkpVersionSupport,
+    nkpRange,
+    catalogRepo,
+    ref,
+    applicationsPath: a.applicationsPath || b.applicationsPath || 'applications',
+    kind,
+  };
+}
+
+/** Merge apps that share a directory name across sources of one logical catalog. */
+function mergeApps(appLists) {
+  const byName = new Map();
+  for (const apps of appLists) {
+    for (const app of apps) {
+      const prior = byName.get(app.name);
+      if (!prior) {
+        byName.set(app.name, {
+          ...app,
+          allVersions: [...app.allVersions],
+          versionNkp: [...app.versionNkp],
+        });
+        continue;
+      }
+      const versionMap = new Map(prior.versionNkp.map((e) => [e.version, e]));
+      for (const e of app.versionNkp) {
+        const existing = versionMap.get(e.version);
+        versionMap.set(
+          e.version,
+          existing ? mergeVersionNkpEntries(existing, e) : e,
+        );
+      }
+      const allVersions = [...versionMap.keys()].sort(compareSemver);
+      const latest = allVersions[allVersions.length - 1];
+      const latestEntry = versionMap.get(latest);
+      // Prefer display metadata from the source owning the newest semver.
+      const metaSource = compareSemver(app.version, prior.version) >= 0 ? app : prior;
+      byName.set(app.name, {
+        ...metaSource,
+        version: latest,
+        allVersions,
+        versionNkp: allVersions.map((v) => versionMap.get(v)),
+        nkpCardRange: cardRangeFromRanges(
+          allVersions.map((v) => versionMap.get(v).nkpRange),
+        ),
+        nkpVersionSupport: latestEntry.nkpVersionSupport,
+        nkpRange: latestEntry.nkpRange,
+        catalogRepo: latestEntry.catalogRepo || metaSource.catalogRepo || '',
+      });
+    }
+  }
+  return [...byName.values()].sort((a, b) =>
+    a.displayName.localeCompare(b.displayName),
+  );
 }
 
 function parseArgs(argv) {
@@ -188,21 +270,25 @@ function parseArgs(argv) {
     }
   }
 
-  return { outputPath, root, repoOverrides };
+  return {outputPath, root, repoOverrides};
 }
 
-function repoPathFor(id, root, repoOverrides) {
-  if (repoOverrides[id]) return repoOverrides[id];
-  return path.join(root, id);
+function sourcePathFor(sourceId, root, repoOverrides) {
+  if (repoOverrides[sourceId]) return repoOverrides[sourceId];
+  return path.join(root, sourceId);
 }
 
 function loadNkpVersions(partnerRepoPath) {
+  const resolved = loadResolvedNkpReleases();
+  if (resolved && resolved.minors.length) {
+    return gaNkpVersions(resolved.minors.map((m) => m.minor));
+  }
   const specPath = path.join(partnerRepoPath, '.release', 'stable.yaml');
   if (!fs.existsSync(specPath)) return DEFAULT_NKP_VERSIONS.slice();
   try {
     const spec = yaml.load(fs.readFileSync(specPath, 'utf8'));
     const versions = (spec.releases || [])
-      .map(r => toMinor((r.constraints && r.constraints.nkpVersion) || r.tagName))
+      .map((r) => toMinor((r.constraints && r.constraints.nkpVersion) || r.tagName))
       .filter(Boolean);
     const unique = [...new Set(versions)].sort(compareMinor);
     return unique.length ? gaNkpVersions(unique) : DEFAULT_NKP_VERSIONS.slice();
@@ -213,7 +299,7 @@ function loadNkpVersions(partnerRepoPath) {
 }
 
 function toListingApp(app) {
-  const listingApp = { ...app };
+  const listingApp = {...app};
   delete listingApp.overview;
   delete listingApp.readme;
   delete listingApp.catalogAppNames;
@@ -224,7 +310,30 @@ function writeJson(filePath, value) {
   fs.writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`);
 }
 
-/** Decode metadata icon base64 → static file; return site-absolute path or ''. */
+function adaptSvgForLightBackground(svgText) {
+  // Upstream icons (e.g. Ollama favicon) are white-on-transparent for dark UIs.
+  // On our light catalog pages those become invisible — recolor pure-white SVGs.
+  const attrFills = [...svgText.matchAll(/\bfill\s*=\s*["']([^"']+)["']/gi)].map(
+    (m) => m[1].trim().toLowerCase(),
+  );
+  const styleFills = [...svgText.matchAll(/fill\s*:\s*([^;}]+)/gi)].map((m) =>
+    m[1].trim().toLowerCase(),
+  );
+  const colors = [...attrFills, ...styleFills].filter(
+    (c) => c && c !== 'none' && c !== 'transparent' && c !== 'currentcolor',
+  );
+  if (!colors.length) return svgText;
+  const isWhite = (c) =>
+    /^(#fff(?:fff)?|white|rgb\(\s*255\s*,\s*255\s*,\s*255\s*\))$/i.test(c);
+  if (!colors.every(isWhite)) return svgText;
+  return svgText
+    .replace(/\bfill\s*=\s*["'](?:white|#fff(?:fff)?)["']/gi, 'fill="#111111"')
+    .replace(
+      /fill\s*:\s*(?:white|#fff(?:fff)?|rgb\(\s*255\s*,\s*255\s*,\s*255\s*\))/gi,
+      'fill:#111111',
+    );
+}
+
 function writeCatalogIcon(iconsRoot, appName, iconBase64) {
   if (!iconBase64) return '';
   let buf;
@@ -240,74 +349,107 @@ function writeCatalogIcon(iconsRoot, appName, iconBase64) {
   if (buf[0] === 0x89 && buf[1] === 0x50) ext = 'png';
   else if (buf[0] === 0xff && buf[1] === 0xd8) ext = 'jpg';
   else if (buf[0] === 0x47 && buf[1] === 0x49) ext = 'gif';
-  else if (buf.length >= 12 && buf.slice(8, 12).toString('ascii') === 'WEBP') ext = 'webp';
+  else if (buf.length >= 12 && buf.slice(8, 12).toString('ascii') === 'WEBP') {
+    ext = 'webp';
+  }
 
   const fileName = `${appName}.${ext}`;
   let out = buf;
-  // Normalize text SVGs to match trailing-whitespace + end-of-file pre-commit hooks.
-  // Do not alter binary formats (png/jpg/gif/webp).
   if (ext === 'svg') {
-    const text = buf.toString('utf8')
+    let text = buf
+      .toString('utf8')
       .replace(/[ \t]+$/gm, '')
       .replace(/\s*$/, '\n');
+    text = adaptSvgForLightBackground(text);
     out = Buffer.from(text, 'utf8');
   }
   fs.writeFileSync(path.join(iconsRoot, fileName), out);
   return `/catalog-icons/${fileName}`;
 }
 
-const { outputPath, root, repoOverrides } = parseArgs(process.argv.slice(2));
-
-for (const id of Object.keys(repoOverrides)) {
-  if (!CATALOGS[id]) {
-    console.warn(`Ignoring unknown catalog id ${id} (supported: ${Object.keys(CATALOGS).join(', ')})`);
-  }
-}
+const {outputPath, root, repoOverrides} = parseArgs(process.argv.slice(2));
 
 const catalogs = [];
+const missingRequired = [];
 
-for (const [id, info] of Object.entries(CATALOGS)) {
-  const repoPath = repoPathFor(id, root, repoOverrides);
-  if (!fs.existsSync(repoPath)) {
-    console.warn(`Skipping ${id}: ${repoPath} does not exist`);
+for (const logical of LOGICAL_CATALOGS) {
+  const perSourceApps = [];
+  for (const source of logical.sources) {
+    const repoPath = sourcePathFor(source.id, root, repoOverrides);
+    if (!fs.existsSync(repoPath)) {
+      const msg = `${source.id} missing at ${repoPath}`;
+      if (IN_CI || source.kind === 'oci') {
+        missingRequired.push(msg);
+      } else {
+        console.warn(`Skipping ${msg}`);
+      }
+      continue;
+    }
+    console.log(
+      `Scanning ${logical.name} / ${source.id} (${source.kind}) at ${repoPath} ...`,
+    );
+    const apps = scanApps(repoPath, source);
+    console.log(`  Found ${apps.length} application(s)`);
+    perSourceApps.push(apps);
+  }
+
+  if (!perSourceApps.length) {
+    console.warn(`Skipping logical catalog ${logical.id}: no sources available`);
     continue;
   }
-  console.log(`Scanning ${info.name} (${id}) applications/ at ${repoPath} ...`);
 
-  const apps = scanApps(repoPath);
-  console.log(`  Found ${apps.length} application(s)`);
-
+  const merged = mergeApps(perSourceApps);
+  const apps = merged.filter((app) => {
+    if (app.type === 'internal') return false;
+    if (/deprecated/i.test(String(app.displayName || ''))) return false;
+    return true;
+  });
+  const skipped = merged.length - apps.length;
+  if (skipped) {
+    console.log(`  Published ${apps.length} (skipped ${skipped} internal/deprecated)`);
+  }
   catalogs.push({
-    id,
-    name: info.name,
-    slug: info.slug,
-    repo: info.repo,
+    id: logical.id,
+    name: logical.name,
+    slug: logical.slug,
+    repo: logical.repo,
     appCount: apps.length,
     apps,
   });
 }
 
-if (catalogs.length === 0) {
-  console.error('No catalog repositories found. Clone the three catalog repos as siblings, or pass --root.');
+if (missingRequired.length) {
+  console.error(`Missing required catalog sources:\n  - ${missingRequired.join('\n  - ')}`);
   process.exit(1);
 }
 
-const partnerPath = repoPathFor('nkp-partner-catalog', root, repoOverrides);
-const nkpVersions = loadNkpVersions(partnerPath);
+if (catalogs.length === 0) {
+  console.error(
+    `No catalog repositories found under ${root}. Run just fetch-catalog-sources / clone siblings.`,
+  );
+  process.exit(1);
+}
+
+const versionsSource = LOGICAL_CATALOGS.find((c) => c.nkpVersionsSource);
+const nkpVersions = loadNkpVersions(
+  sourcePathFor(
+    versionsSource ? versionsSource.id : catalogs[0].id,
+    root,
+    repoOverrides,
+  ),
+);
 
 const iconsRoot = path.resolve(__dirname, '..', 'static', 'catalog-icons');
 if (fs.existsSync(iconsRoot)) {
-  fs.rmSync(iconsRoot, { recursive: true });
+  fs.rmSync(iconsRoot, {recursive: true});
 }
-fs.mkdirSync(iconsRoot, { recursive: true });
+fs.mkdirSync(iconsRoot, {recursive: true});
 
-// Flat URLs require globally unique app names. Build both output shapes before
-// writing anything so a duplicate cannot leave partially generated output.
 const seenNames = new Map();
 const flatApps = [];
 let iconCount = 0;
-const listingCatalogs = catalogs.map(catalog => {
-  const apps = catalog.apps.map(app => {
+const listingCatalogs = catalogs.map((catalog) => {
+  const apps = catalog.apps.map((app) => {
     const prior = seenNames.get(app.name);
     if (prior) {
       console.error(
@@ -325,13 +467,13 @@ const listingCatalogs = catalogs.map(catalog => {
       icon: iconUrl,
       catalogName: catalog.name,
       catalogSlug: catalog.slug,
-      catalogRepo: catalog.repo,
+      catalogRepo: app.catalogRepo || catalog.repo,
     };
     flatApps.push(fullApp);
     return toListingApp(fullApp);
   });
 
-  return { ...catalog, apps };
+  return {...catalog, apps};
 });
 
 flatApps.sort((a, b) => a.displayName.localeCompare(b.displayName));
@@ -342,24 +484,25 @@ const data = {
   catalogs: listingCatalogs,
 };
 
-fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+fs.mkdirSync(path.dirname(outputPath), {recursive: true});
 writeJson(outputPath, data);
-console.log(`\nWrote ${outputPath} — ${data.totalApps} app(s) across ${catalogs.length} catalog(s)`);
+console.log(
+  `\nWrote ${outputPath} — ${data.totalApps} app(s) across ${catalogs.length} catalog(s)`,
+);
 
 const pagesRoot = path.resolve(path.dirname(outputPath), 'applications');
 
 if (fs.existsSync(pagesRoot)) {
-  fs.rmSync(pagesRoot, { recursive: true });
+  fs.rmSync(pagesRoot, {recursive: true});
 }
 
-fs.mkdirSync(pagesRoot, { recursive: true });
+fs.mkdirSync(pagesRoot, {recursive: true});
 writeJson(path.join(pagesRoot, '_category_.json'), {
   label: 'Applications',
   position: 2,
   className: 'hidden',
   collapsible: false,
-  // Keeps breadcrumb "Applications" clickable while staying out of the docs sidebar.
-  link: { type: 'doc', id: 'applications/index' },
+  link: {type: 'doc', id: 'applications/index'},
 });
 
 fs.writeFileSync(

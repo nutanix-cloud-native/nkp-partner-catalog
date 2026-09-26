@@ -5,50 +5,49 @@
 ```bash
 cd docs
 just clean                          # wipe generated/build artifacts
+just resolve-nkp-releases           # probe → .cache/nkp-releases.json
+just fetch-catalog-sources          # Platform git + OCI (needs oras)
 just generate-catalog               # needs sibling catalog clones
 just generate-cli-docs              # needs network or .cache/nkp-cli
-just docs-preview                   # generate + prepare + serve (no PDF)
+just docs-preview                   # full generate + prepare + serve
 just docs-local                     # same + Chrome PDF/HTML export
 just docs-build                     # production baseUrl + export
 ```
 
-Sibling layout (public repos):
+Sibling layout (`catalogs[].id` + expanded Platform source ids):
 
 ```
 <org>/
   nkp-partner-catalog/
   nkp-ai-applications-catalog/
   nkp-nutanix-product-catalog/
+  kommander-applications-2.16/   # fetched
+  kommander-applications-2.17/
+  kommander-applications-2.18/
+  kommander-applications-full-2.19/  # oras pull
 ```
 
-`justfile` `sibling_root` defaults to the parent of this checkout’s parent
-(`docs/../../` → org root when repo is `…/nkp-partner-catalog`).
+`justfile` `sibling_root` defaults to the org root (`docs/../../`).
 
 ## Prepare
 
-`_docs-prepare` (via docs-preview/local/build/offline):
+`_docs-prepare`:
 
-- rsync `source/schemas/v1/` → `site/static/schemas/v1/` (authored schemas; static
-  copy not committed — browser loads `/schemas/v1/…`)
-- copy `catalog-data.json` → `site/static/` when present
+- rsync schemas; copy `catalog-data.json` when present
 - `npm ci` in `site/`
-- `scripts/sync-docs-data.mjs` → `site/src/data/{nkp-version-config,cli-versions,portal-version}.json`
-  (gitignored; edit `source/config.yaml` only)
+- `sync-docs-data.mjs` → `site/src/data/*.json` (uses resolved releases when present)
 
-## CI (do not edit workflow from docs overhaul)
+## CI
 
-`.github/workflows/deploy-docs.yaml` (describe only):
+`.github/workflows/deploy-docs.yaml`:
 
-1. Optional best-effort `just update-docs-config` (schedule/dispatch)
-2. `just generate-catalog` / `just generate-cli-docs`
-3. `just docs-build`
-4. `upload-pages-artifact` → `deploy-pages`
+1. Check out partner + AI + Nutanix siblings
+2. `just docs-build` (resolve → fetch Platform → generate → prepare → export → build)
+3. `upload-pages-artifact` → `deploy-pages`
 
-No `gh-pages` branch push from CI. Do not revive `npm run deploy` / `just docs-deploy`.
+Requires `oras` (devbox) and network for downloads.d2iq.com + ghcr.io.
 
 ## Export
 
-`scripts/build-exports.mjs` builds PDF + HTML under `site/static/offline/`
-(Chrome required). Portal version comes from `portal-version.json` (prepare),
-not a hardcoded constant. Skips generated application shells and per-version
-CLI dumps (landing is enough offline).
+`scripts/build-exports.mjs` → `site/static/offline/` (Chrome). Skips generated
+application shells and per-version CLI dumps.

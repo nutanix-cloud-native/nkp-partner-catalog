@@ -1,6 +1,12 @@
 import React, {useState} from 'react';
 import Link from '@docusaurus/Link';
+import {useLocation} from '@docusaurus/router';
 import {useOfflineAssets} from './offlineAssets';
+
+function useHideExport() {
+  const {pathname} = useLocation();
+  return /\/applications(\/|$)/.test(pathname);
+}
 
 function DownloadItems({className}) {
   const {pdfUrl, htmlUrl} = useOfflineAssets();
@@ -80,5 +86,7 @@ function ExportMobile() {
 }
 
 export default function ExportNavbarItem({mobile}) {
+  const hide = useHideExport();
+  if (hide) return null;
   return mobile ? <ExportMobile /> : <ExportDesktop />;
 }

@@ -27,20 +27,14 @@ const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DOCS_ROOT = path.resolve(__dirname, '..');
 const SOURCE_CLI = path.join(DOCS_ROOT, 'source', 'cli');
-const CONFIG_FILE = path.join(DOCS_ROOT, 'source', 'config.yaml');
 const DEFAULT_CACHE = path.join(DOCS_ROOT, '.cache', 'nkp-cli');
-const DEFAULT_URL =
-  'https://downloads.d2iq.com/dkp/v{version}/nkp_v{version}_{os}_{arch}.tar.gz';
+const {
+  loadConfigYaml,
+  cliVersionsFromConfig,
+} = require('./docs-config.cjs');
 
-function loadYaml() {
-  try {
-    return require(path.join(DOCS_ROOT, 'site', 'node_modules', 'js-yaml'));
-  } catch {
-    throw new Error(
-      'Missing js-yaml. From docs/: just generate-cli-docs (installs site deps) or cd site && npm ci',
-    );
-  }
-}
+/** @type {string} filled when config is loaded */
+let cliDownloadUrlTemplate = '';
 
 function parseArgs(argv) {
   const out = {
@@ -86,36 +80,9 @@ function parseArgs(argv) {
 }
 
 function readVersionsConfig() {
-  if (!fs.existsSync(CONFIG_FILE)) {
-    throw new Error(`Missing ${path.relative(DOCS_ROOT, CONFIG_FILE)}`);
-  }
-  const yaml = loadYaml();
-  const root = yaml.load(fs.readFileSync(CONFIG_FILE, 'utf8')) || {};
-  const data = root.cliDocs;
-  if (!data || typeof data !== 'object') {
-    throw new Error(
-      `${path.relative(DOCS_ROOT, CONFIG_FILE)} missing cliDocs section`,
-    );
-  }
-  if (!Array.isArray(data.minors) || data.minors.length === 0) {
-    throw new Error(
-      `${path.relative(DOCS_ROOT, CONFIG_FILE)} cliDocs.minors is empty`,
-    );
-  }
-  return {
-    defaultMinor: String(
-      data.defaultMinor || data.minors[data.minors.length - 1].minor,
-    ),
-    minors: data.minors.map((m) => ({
-      minor: String(m.minor),
-      latest: String(m.latest),
-      patches: Array.isArray(m.patches)
-        ? m.patches.map(String)
-        : [String(m.latest)],
-      unlisted: !!m.unlisted,
-      ...(m.label ? { label: String(m.label) } : {}),
-    })),
-  };
+  const data = cliVersionsFromConfig(loadConfigYaml());
+  cliDownloadUrlTemplate = data.downloadUrl;
+  return data;
 }
 
 function compareMinor(a, b) {
@@ -142,7 +109,10 @@ function detectArch() {
 }
 
 function downloadUrl(tag, osName, arch) {
-  const template = (process.env.NKP_CLI_URL || DEFAULT_URL).trim();
+  if (!cliDownloadUrlTemplate && !process.env.NKP_CLI_URL) {
+    readVersionsConfig();
+  }
+  const template = (process.env.NKP_CLI_URL || cliDownloadUrlTemplate).trim();
   return template
     .replaceAll('{version}', tag)
     .replaceAll('{os}', osName)
@@ -343,12 +313,15 @@ function escapeHtmlText(s) {
     .replace(/>/g, '&gt;')
     .replace(/\{/g, '&#123;')
     .replace(/\}/g, '&#125;')
-    // MDX still parses markdown emphasis/links inside raw HTML text nodes.
+    // MDX still parses markdown emphasis/links/strikethrough inside raw HTML text nodes.
     .replace(/\*/g, '&#42;')
     .replace(/_/g, '&#95;')
     .replace(/`/g, '&#96;')
     .replace(/\[/g, '&#91;')
-    .replace(/\]/g, '&#93;');
+    .replace(/\]/g, '&#93;')
+    // Lone `~` (e.g. ~/.kommander/config) starts mdast strikethrough and
+    // conflicts with nested </code> → Docusaurus end-tag-mismatch.
+    .replace(/~/g, '&#126;');
 }
 
 /** Rewrite CI home paths (e.g. /home/runner/…) to ~/… for docs. */
