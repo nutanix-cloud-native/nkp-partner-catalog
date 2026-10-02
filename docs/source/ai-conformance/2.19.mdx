@@ -7,10 +7,11 @@ toc_max_heading_level: 2
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import useBaseUrl from '@docusaurus/useBaseUrl';
+// import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # CNCF AI Conformance
 
+{/*
 <div style={{ float: 'right', width: '140px', margin: '0 0 0.75rem 1rem', textAlign: 'center' }}>
   <a href="https://github.com/cncf/k8s-ai-conformance/tree/main/v1.35/nkp" target="_blank" rel="noopener noreferrer">
     <img
@@ -20,15 +21,16 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
     />
   </a>
 </div>
+*/}
 
 The [CNCF Kubernetes AI Conformance](https://github.com/cncf/k8s-ai-conformance/blob/main/docs/AIConformance-1.36.yaml) defines a set of additional capabilities, APIs, and configurations that a Kubernetes cluster MUST offer, on top of standard CNCF Kubernetes Conformance, to reliably and efficiently run AI/ML workloads.
 
 This page shows how NKP 2.19 meets these requirements using Kubernetes v1.36.2 and the NVIDIA GPU Operator v26.3.3, deployed via Flux CD as platform HelmReleases.
 
-<div style={{ clear: 'both' }} />
+{/* <div style={{ clear: 'both' }} /> */}
 
 :::note
-NKP 2.19 is pending **CNCF Kubernetes AI Conformance** certification for v1.36. NKP also holds **CNCF Certified Kubernetes** conformance, which AI Conformance builds on. That certification was submitted under NKP's former product name, **Konvoy**; see the [v1.36 Konvoy conformance submission](https://github.com/cncf/k8s-conformance/tree/master/v1.36/konvoy). For installation, configuration, and operations guidance, see the official [NKP 2.19 documentation](https://portal.nutanix.com/page/documents/details?targetId=Nutanix-Kubernetes-Platform-v2_19).
+NKP 2.19 is pending **CNCF Kubernetes AI Conformance** certification for v1.36. NKP also holds **CNCF Certified Kubernetes** conformance, which AI Conformance builds on. That certification was submitted under NKP's former product name, **Konvoy**; see the [v1.36 Konvoy conformance submission](https://github.com/cncf/k8s-conformance/tree/master/v1.36/konvoy).
 :::
 
 ## Requirements Overview
