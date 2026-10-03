@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+data:
+  values.yaml: |
+    controller:
+      kind: deployment
+      replicaCount: 1
+      image:
+        repository: nginx/nginx-ingress
+        tag: "5.6.3"
+        pullPolicy: IfNotPresent
+      ingressClass:
+        name: nginx
+        setAsDefaultIngress: false
+      service:
+        type: LoadBalancer
+      enableCustomResources: true
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-5.6.3-config-defaults
+  namespace: ${releaseNamespace}
