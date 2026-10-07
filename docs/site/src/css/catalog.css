@@ -753,3 +753,597 @@ button.cat-tag {
   background: var(--cat-bg-base-alt);
   font-weight: 600;
 }
+
+/* ---- App detail: title CTA, YAML panel, airgapped modal ---- */
+
+.cat-page-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+
+.cat-page-cta-hint {
+  margin: 0.45rem 0 0;
+  font-size: 0.82rem;
+  color: var(--cat-text-tertiary);
+  max-width: 52ch;
+  line-height: 1.45;
+}
+
+.cat-page-section-lead {
+  margin: 0 0 0.85rem;
+  color: var(--cat-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.cat-yaml-overrides-hint {
+  margin: 0 0 0.75rem;
+  color: var(--cat-text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.cat-yaml-overrides-hint code {
+  font-size: 0.84em;
+}
+
+.cat-btn {
+  appearance: none;
+  border: 1px solid var(--cat-border);
+  background: var(--cat-bg-base);
+  color: var(--cat-text-primary);
+  border-radius: var(--cat-radius);
+  padding: 0.45rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.cat-btn:hover {
+  background: var(--cat-bg-base-alt);
+}
+
+.cat-btn--primary {
+  background: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+  color: #fff;
+}
+
+.cat-btn--primary:hover {
+  background: var(--ifm-color-primary-dark, var(--ifm-color-primary));
+  color: #fff;
+}
+
+.cat-code-panel {
+  --yaml-bg: #ffffff;
+  --yaml-fg: #1f2328;
+  --yaml-ln: #6e7681;
+  --yaml-ln-bg: #f6f8fa;
+  --yaml-guide: #d8dee4;
+  --yaml-border: #d0d7de;
+  --yaml-key: #0550ae;
+  --yaml-str: #0a3069;
+  --yaml-num: #0550ae;
+  --yaml-bool: #cf222e;
+  --yaml-comment: #6e7781;
+  --yaml-punct: #656d76;
+  --yaml-fade-from: rgba(255, 255, 255, 0);
+  --yaml-fade-to: #ffffff;
+  --editor-tabbar-bg: #ececec;
+  --editor-tab-bg: transparent;
+  --editor-tab-fg: #616161;
+  --editor-tab-active-bg: #ffffff;
+  --editor-tab-active-fg: #333333;
+  --editor-tab-hover-bg: #dcdcdc;
+  --editor-tab-border: #cecece;
+  --editor-tab-accent: var(--ifm-color-primary);
+  --editor-footer-bg: #f3f3f3;
+
+  border: 1px solid var(--yaml-border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--yaml-bg);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+html[data-theme='dark'] .cat-code-panel {
+  --yaml-bg: #1e1e1e;
+  --yaml-fg: #d4d4d4;
+  --yaml-ln: #858585;
+  --yaml-ln-bg: #1e1e1e;
+  --yaml-guide: #404040;
+  --yaml-border: #3c3c3c;
+  --yaml-key: #9cdcfe;
+  --yaml-str: #ce9178;
+  --yaml-num: #b5cea8;
+  --yaml-bool: #569cd6;
+  --yaml-comment: #6a9955;
+  --yaml-punct: #d4d4d4;
+  --yaml-fade-from: rgba(30, 30, 30, 0);
+  --yaml-fade-to: #1e1e1e;
+  --editor-tabbar-bg: #252526;
+  --editor-tab-bg: transparent;
+  --editor-tab-fg: #969696;
+  --editor-tab-active-bg: #1e1e1e;
+  --editor-tab-active-fg: #ffffff;
+  --editor-tab-hover-bg: #2a2d2e;
+  --editor-tab-border: #252526;
+  --editor-tab-accent: var(--ifm-color-primary);
+  --editor-footer-bg: #252526;
+}
+
+/* VS Code–style editor title bar + tabs */
+.cat-editor-titlebar {
+  display: flex;
+  align-items: stretch;
+  min-height: 35px;
+  background: var(--editor-tabbar-bg);
+  border-bottom: 1px solid var(--yaml-border);
+}
+
+.cat-editor-tabs {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.cat-editor-tab {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 0 0 auto;
+  max-width: 16rem;
+  margin: 0;
+  padding: 0 0.85rem;
+  min-height: 35px;
+  border: none;
+  border-right: 1px solid var(--editor-tab-border);
+  border-radius: 0;
+  background: var(--editor-tab-bg);
+  color: var(--editor-tab-fg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.2;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: inset 0 -1px 0 transparent;
+}
+
+.cat-editor-tab:hover {
+  background: var(--editor-tab-hover-bg);
+  color: var(--editor-tab-active-fg);
+}
+
+.cat-editor-tab.is-active {
+  background: var(--editor-tab-active-bg);
+  color: var(--editor-tab-active-fg);
+  box-shadow: inset 0 2px 0 var(--editor-tab-accent);
+  z-index: 1;
+}
+
+.cat-editor-tab:focus-visible {
+  outline: 2px solid var(--editor-tab-accent);
+  outline-offset: -2px;
+  z-index: 2;
+}
+
+.cat-editor-tab-icon {
+  flex: 0 0 auto;
+  display: block;
+}
+
+.cat-editor-tab-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cat-editor-titlebar-actions {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 0.35rem;
+  padding: 0 0.55rem;
+  border-left: 1px solid var(--yaml-border);
+  background: var(--editor-tabbar-bg);
+}
+
+.cat-code-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.85rem;
+  background: var(--cat-bg-base-alt);
+  border-bottom: 1px solid var(--yaml-border);
+  font-size: 0.8rem;
+  color: var(--cat-text-tertiary);
+}
+
+.cat-code-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.cat-code-action {
+  appearance: none;
+  border: 1px solid var(--yaml-border);
+  background: var(--editor-tab-active-bg, var(--cat-bg-base));
+  border-radius: 3px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--editor-tab-active-fg, var(--cat-text-secondary));
+}
+
+.cat-code-action:hover {
+  background: var(--editor-tab-hover-bg, var(--cat-bg-neutral));
+}
+
+.cat-code-action--footer {
+  width: 100%;
+  padding: 0.45rem 0.75rem;
+  border: none;
+  background: transparent;
+  font-weight: 600;
+}
+
+.cat-code-action--footer:hover {
+  background: color-mix(in srgb, var(--editor-tab-hover-bg) 65%, transparent);
+}
+
+.cat-code-footer {
+  border-top: 1px solid var(--yaml-border);
+  background: var(--editor-footer-bg, var(--cat-bg-base-alt));
+  padding: 0.35rem 0.45rem;
+}
+
+.cat-yaml-wrap {
+  position: relative;
+  background: var(--yaml-bg);
+  /* No overflow:hidden here — avoids black corner bleed under border-radius */
+}
+
+.cat-yaml-wrap.is-collapsed .cat-yaml-body {
+  max-height: 16.5rem;
+  overflow: hidden;
+}
+
+.cat-yaml-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3rem;
+  pointer-events: none;
+  background: linear-gradient(var(--yaml-fade-from), var(--yaml-fade-to));
+}
+
+.cat-yaml-body {
+  margin: 0;
+  padding: 0.55rem 0;
+  overflow-x: auto;
+  color: var(--yaml-fg);
+  font-family: Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.cat-yaml-line {
+  display: flex;
+  align-items: stretch;
+  min-height: 1.55em;
+}
+
+/* Fixed-width gutter: digit count set via --yaml-ln-digits on the panel.
+   Right-justified so 1 vs 1000 never shifts the code column. */
+.cat-yaml-ln {
+  flex: 0 0 calc(var(--yaml-ln-digits, 2) * 1ch + 1.25rem);
+  width: calc(var(--yaml-ln-digits, 2) * 1ch + 1.25rem);
+  box-sizing: border-box;
+  text-align: right;
+  padding: 0 0.65rem 0 0.5rem;
+  color: var(--yaml-ln);
+  background: var(--yaml-ln-bg);
+  border-right: 1px solid var(--yaml-border);
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}
+
+.cat-yaml-fold {
+  flex: 0 0 1.1rem;
+  width: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--yaml-bg);
+  user-select: none;
+}
+
+.cat-yaml-fold-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--yaml-ln);
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  width: 1rem;
+  height: 1rem;
+  font-size: 0.55rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+}
+
+.cat-yaml-fold-btn:hover {
+  background: var(--yaml-guide);
+  color: var(--yaml-fg);
+}
+
+.cat-yaml-line.is-folded .cat-yaml-fold-btn {
+  color: var(--yaml-key);
+}
+
+.cat-yaml-code {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  padding: 0 0.9rem 0 0.35rem;
+  white-space: pre;
+}
+
+.cat-yaml-guides {
+  position: absolute;
+  inset: 0 auto 0 0.35rem;
+  pointer-events: none;
+}
+
+.cat-yaml-guide {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--yaml-guide);
+}
+
+.cat-yaml-text {
+  position: relative;
+}
+
+.cat-y-key { color: var(--yaml-key); }
+.cat-y-str { color: var(--yaml-str); }
+.cat-y-num { color: var(--yaml-num); }
+.cat-y-bool { color: var(--yaml-bool); }
+.cat-y-comment { color: var(--yaml-comment); font-style: italic; }
+.cat-y-punct { color: var(--yaml-punct); }
+
+/* ---- Airgapped bundle modal (theme-aware, light-mode first) ---- */
+
+.cat-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.48);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  z-index: 200;
+}
+
+.cat-modal {
+  /* NKP production docs command chip */
+  --cmd-bg: #f2f3f5;
+  --cmd-fg: #1b1f24;
+  --cmd-var-fg: #0b5cab;
+  --cmd-icon: #5c6570;
+
+  width: min(640px, 100%);
+  max-height: min(92vh, 860px);
+  overflow: auto;
+  background: var(--cat-bg-base);
+  border-radius: 10px;
+  box-shadow: var(--cat-shadow);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--cat-border);
+}
+
+html[data-theme='dark'] .cat-modal {
+  --cmd-bg: #2a2f38;
+  --cmd-fg: #e8edf5;
+  --cmd-var-fg: #91d2fb;
+  --cmd-icon: #a8b0ba;
+}
+
+.cat-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.15rem;
+  border-bottom: 1px solid var(--cat-border);
+  position: sticky;
+  top: 0;
+  background: var(--cat-bg-base);
+  z-index: 1;
+}
+
+.cat-modal-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 650;
+  color: var(--cat-text-primary);
+}
+
+.cat-modal-close {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--cat-text-tertiary);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+.cat-modal-close:hover {
+  background: var(--cat-bg-base-alt);
+  color: var(--cat-text-primary);
+}
+
+.cat-modal-body {
+  padding: 1rem 1.15rem 0.35rem;
+}
+
+.cat-modal-note {
+  margin: 0 0 1.1rem;
+  font-size: 0.84rem;
+  color: var(--cat-text-secondary);
+  line-height: 1.5;
+}
+
+.cat-step {
+  margin-bottom: 1rem;
+}
+
+.cat-step-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--cat-text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.cat-step-optional {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.08rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: var(--cat-bg-neutral);
+  color: var(--cat-text-tertiary);
+  vertical-align: middle;
+}
+
+.cat-step-note {
+  font-size: 0.78rem;
+  color: var(--cat-text-tertiary);
+  margin: -0.15rem 0 0.45rem;
+  line-height: 1.4;
+}
+
+/* Single flat command bar — matches NKP portal docs (no nested code chip). */
+.cat-step-row {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--cmd-bg);
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 0.4rem 0.5rem 0.85rem;
+  box-shadow: none;
+}
+
+.cat-step-cmd {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--cmd-fg);
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+.cat-step-row code,
+.cat-modal .cat-step-row code {
+  /* legacy: if any nested code remains, keep flat */
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  font: inherit !important;
+}
+
+.cat-cmd-var {
+  background: transparent;
+  color: var(--cmd-var-fg);
+  border-radius: 0;
+  padding: 0;
+  font-weight: 600;
+}
+
+.cat-step-copy {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--cmd-icon);
+  cursor: pointer;
+  line-height: 0;
+}
+
+.cat-step-copy:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--cat-text-primary);
+  filter: none;
+}
+
+.cat-step-copy.is-copied {
+  color: #1b7a4a;
+}
+
+html[data-theme='dark'] .cat-step-copy:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  filter: none;
+}
+
+.cat-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.9rem 1.15rem;
+  border-top: 1px solid var(--cat-border);
+  margin-top: 0.25rem;
+  position: sticky;
+  bottom: 0;
+  background: var(--cat-bg-base);
+}

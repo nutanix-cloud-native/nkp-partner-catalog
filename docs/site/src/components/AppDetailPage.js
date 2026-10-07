@@ -1,10 +1,12 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import Link from '@docusaurus/Link';
 import DOMPurify from 'isomorphic-dompurify';
 import { marked } from 'marked';
 import { categoryLabel, categoryTone, certTone, certLabel, certDescription, supportBadges, appLicenses, licenseDescription, NKP_LICENSE_OPTIONS_URL, isPreferredPartnerApp, isCorePlatformApp, corePlatformLabel, corePlatformDescription, corePlatformTone } from './categoryStyles';
 import { AppIcon, Tag } from './catalogUi';
 import nkpVersion from './nkpVersion';
+import YamlCodePanel from './YamlCodePanel';
+import AirgappedBundleModal, { buildAirgappedVars } from './AirgappedBundleModal';
 
 const { parseNkpRange } = nkpVersion;
 
@@ -17,6 +19,8 @@ function renderMarkdown(md) {
 
 export default function AppDetailPage({ data }) {
   const [selectedVersion, setSelectedVersion] = useState(data.version);
+  const [airgapOpen, setAirgapOpen] = useState(false);
+  const closeAirgap = useCallback(() => setAirgapOpen(false), []);
   const knownApps = useMemo(
     () => new Set(data.catalogAppNames || []),
     [data.catalogAppNames],
@@ -43,6 +47,59 @@ export default function AppDetailPage({ data }) {
     return `${repo}/tree/${ref}/${appsPath}/${data.name}/${selectedVersion}`;
   }, [data, selectedVersion]);
 
+  const showConfigDefaults = !!data.configDefaults;
+  const showAirgappedBundle = !!data.airgappedBundle;
+  const defaultValuesPanels = useMemo(() => {
+    if (!showConfigDefaults) return [];
+    const hit = (data.versionNkp || []).find((e) => e.version === selectedVersion);
+    const panels =
+      (hit && Array.isArray(hit.defaultValuesPanels) && hit.defaultValuesPanels) ||
+      (selectedVersion === data.version &&
+        Array.isArray(data.defaultValuesPanels) &&
+        data.defaultValuesPanels) ||
+      [];
+    if (panels.length) {
+      return panels.filter((p) => p && String(p.valuesYaml || '').trim());
+    }
+    // Legacy single-string payloads
+    let yaml = '';
+    if (hit && hit.defaultValuesYaml != null) yaml = String(hit.defaultValuesYaml);
+    else if (selectedVersion === data.version && data.defaultValuesYaml != null) {
+      yaml = String(data.defaultValuesYaml);
+    }
+    if (!yaml.trim()) return [];
+    return [
+      {
+        name: data.name,
+        primary: true,
+        valuesYaml: yaml,
+        overrideConfigMaps: [],
+      },
+    ];
+  }, [data, selectedVersion, showConfigDefaults]);
+
+  const [valuesTab, setValuesTab] = useState(0);
+  const activeValuesPanel =
+    defaultValuesPanels[
+      Math.min(valuesTab, Math.max(defaultValuesPanels.length - 1, 0))
+    ] || null;
+
+  useEffect(() => {
+    setValuesTab(0);
+  }, [selectedVersion, data.name]);
+
+  const airgapVars = useMemo(
+    () =>
+      buildAirgappedVars({
+        name: data.name,
+        version: selectedVersion,
+        displayName: data.displayName,
+        catalogRepo: data.catalogRepo,
+        catalogId: data.catalogId || data.catalogSlug,
+      }),
+    [data, selectedVersion],
+  );
+
   function depTag(name, required) {
     const label = required ? `${name} (required)` : name;
     const to = knownApps.has(name) ? `/docs/applications/${name}` : undefined;
@@ -62,10 +119,27 @@ export default function AppDetailPage({ data }) {
       <div className="cat-page-header">
         <AppIcon icon={data.icon} name={data.displayName} size={72} />
         <div className="cat-page-header-text">
-          <div className="cat-page-version-row">
-            <Tag tone="neutral">v{selectedVersion}</Tag>
-            <span className="cat-detail-catalog">{data.catalogName}</span>
+          <div className="cat-page-title-row">
+            <div className="cat-page-version-row">
+              <Tag tone="neutral">v{selectedVersion}</Tag>
+              <span className="cat-detail-catalog">{data.catalogName}</span>
+            </div>
+            {showAirgappedBundle ? (
+              <button
+                type="button"
+                className="cat-btn cat-btn--primary"
+                onClick={() => setAirgapOpen(true)}
+              >
+                Airgapped bundle
+              </button>
+            ) : null}
           </div>
+          {showAirgappedBundle ? (
+            <p className="cat-page-cta-hint">
+              For connected clusters, enable this app from the NKP UI. This button
+              is for building an airgapped bundle.
+            </p>
+          ) : null}
         </div>
       </div>
 
@@ -196,6 +270,43 @@ export default function AppDetailPage({ data }) {
         )}
       </div>
 
+      {showConfigDefaults && defaultValuesPanels.length > 0 && activeValuesPanel ? (
+        <div className="cat-page-section" id="default-configuration">
+          <h2 className="cat-page-section-title">Default configuration</h2>
+          <p className="cat-page-section-lead">
+            Default Helm values for the selected version. All of these values
+            can be customized at deploy time.
+          </p>
+          {activeValuesPanel.overrideConfigMaps?.length > 0 ? (
+            <p className="cat-yaml-overrides-hint">
+              Customize by creating ConfigMap
+              {activeValuesPanel.overrideConfigMaps.length > 1 ? 's' : ''}{' '}
+              {activeValuesPanel.overrideConfigMaps.map((cm, i) => (
+                <React.Fragment key={cm}>
+                  {i > 0 ? (i === activeValuesPanel.overrideConfigMaps.length - 1 ? ' or ' : ', ') : null}
+                  <code>{cm}</code>
+                </React.Fragment>
+              ))}
+              .
+            </p>
+          ) : null}
+          <YamlCodePanel
+            key={selectedVersion}
+            source={activeValuesPanel.valuesYaml}
+            tabs={defaultValuesPanels.map((panel, i) => ({
+              id: panel.name || String(i),
+              label: panel.name || 'values',
+              primary: !!panel.primary,
+            }))}
+            activeTabIndex={Math.min(
+              valuesTab,
+              Math.max(defaultValuesPanels.length - 1, 0),
+            )}
+            onTabChange={setValuesTab}
+          />
+        </div>
+      ) : null}
+
       {data.overview && (
         <div className="cat-page-section" id="overview">
           <div
@@ -215,6 +326,15 @@ export default function AppDetailPage({ data }) {
           />
         </div>
       )}
+
+      {showAirgappedBundle ? (
+        <AirgappedBundleModal
+          open={airgapOpen}
+          onClose={closeAirgap}
+          displayName={data.displayName}
+          vars={airgapVars}
+        />
+      ) : null}
     </div>
   );
 }

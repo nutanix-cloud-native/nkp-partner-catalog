@@ -147,6 +147,8 @@ function catalogsFromConfig(cfg, opts = {}) {
       slug: String(raw.slug),
       repo: String(raw.repo),
       nkpVersionsSource: !!raw.nkpVersionsSource,
+      configDefaults: !!raw.configDefaults,
+      airgappedBundle: !!raw.airgappedBundle,
       sources: [],
     };
     if (entry.nkpVersionsSource) versionsSources += 1;

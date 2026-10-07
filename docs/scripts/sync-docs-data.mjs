@@ -33,9 +33,42 @@ function sync() {
     slug: c.slug,
     repo: c.repo,
     nkpVersionsSource: c.nkpVersionsSource,
+    configDefaults: !!c.configDefaults,
+    airgappedBundle: !!c.airgappedBundle,
   }));
   const site = siteFromConfig(cfg);
   const portal = portalFromConfig(cfg);
+
+  const airgappedTemplatePath = path.join(
+    DOCS_ROOT,
+    'source',
+    'templates',
+    'catalog-airgapped-bundle.yaml',
+  );
+  let airgappedBundle = {steps: []};
+  if (fs.existsSync(airgappedTemplatePath)) {
+    let yaml;
+    try {
+      yaml = require(path.join(DOCS_ROOT, 'site', 'node_modules', 'js-yaml'));
+    } catch {
+      yaml = require('js-yaml');
+    }
+    const loaded = yaml.load(fs.readFileSync(airgappedTemplatePath, 'utf8'));
+    if (loaded && Array.isArray(loaded.steps)) {
+      airgappedBundle = {
+        steps: loaded.steps.map((s) => ({
+          title: String((s && s.title) || ''),
+          command: String((s && s.command) || ''),
+          optional: !!(s && s.optional),
+          note: s && s.note != null ? String(s.note) : '',
+        })),
+      };
+    }
+  } else {
+    console.warn(
+      `WARN: missing ${airgappedTemplatePath}; airgapped bundle modal will have no steps`,
+    );
+  }
 
   let cliVersions;
   try {
@@ -72,6 +105,10 @@ function sync() {
     path.join(DATA_DIR, 'portal-version.json'),
     `${JSON.stringify(portal, null, 2)}\n`,
   );
+  fs.writeFileSync(
+    path.join(DATA_DIR, 'catalog-airgapped-bundle.json'),
+    `${JSON.stringify(airgappedBundle, null, 2)}\n`,
+  );
   console.log('Synced site/src/data from config.yaml', {
     nkp,
     catalogs: catalogs.map((c) => c.id),
@@ -79,6 +116,7 @@ function sync() {
     cliDefault: cliVersions.defaultMinor,
     cliMinors: cliVersions.minors.map((m) => m.minor),
     portal,
+    airgappedSteps: airgappedBundle.steps.length,
   });
 }
 

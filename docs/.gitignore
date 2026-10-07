@@ -1,6 +1,9 @@
 # Local docs tooling (devbox run from docs/)
 .devbox/
 
+# UX HTML mockups (not part of the site build)
+.preview/
+
 # Node / Docusaurus
 site/node_modules/
 site/.docusaurus/
@@ -18,6 +21,8 @@ dist/
 .cache/nkp-cli/
 .cache/nkp-releases.json
 .cache/bin/
+# helm pull cache for merged catalog default values
+.cache/helm-charts/
 
 # Generated catalog (just generate-catalog); do not commit
 source/applications/

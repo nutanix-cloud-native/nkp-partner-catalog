@@ -2,6 +2,7 @@
 // Note: type annotations allow type checking and IDEs autocompletion
 
 const path = require('path');
+const versionedSearchOrderPlugin = require('./src/search/versionedSearchOrderPlugin');
 
 /**
  * Normalize baseUrl so the site works regardless of how BASE_URL is set.
@@ -115,6 +116,8 @@ const config = {
         searchResultLimits: 8,
       },
     ],
+    // Versioned paths (cli/, ai-conformance/, …) are indexed oldest first; prefer newer.
+    versionedSearchOrderPlugin,
   ],
 
   themes: [['docusaurus-json-schema-plugin', {}], '@docusaurus/theme-mermaid'],

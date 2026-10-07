@@ -89,9 +89,40 @@ function readVersionMeta(appPath, version) {
   }
 }
 
+const {
+  resolveMergedValuesPanels,
+} = require('./merge-app-values');
+
+const HELM_CHART_CACHE = path.join(DOCS_ROOT, '.cache', 'helm-charts');
+
+/**
+ * Merged values panels (one per HelmRelease). Primary = HR name matches app.
+ * @returns {{ panels: object[], primaryYaml: string }}
+ */
+function readDefaultValuesPanels(appPath, version, appName) {
+  const versionDir = path.join(appPath, version);
+  try {
+    const panels = resolveMergedValuesPanels(versionDir, {
+      cacheRoot: HELM_CHART_CACHE,
+      appName: appName || path.basename(appPath),
+      version,
+    });
+    const primary = panels.find((p) => p.primary);
+    return {
+      panels,
+      primaryYaml: primary ? primary.valuesYaml : '',
+    };
+  } catch (err) {
+    console.warn(
+      `  WARN: merge values failed for ${appName || path.basename(appPath)}@${version}: ${err.message}`,
+    );
+    return {panels: [], primaryYaml: ''};
+  }
+}
+
 /**
  * @param {string} repoPath
- * @param {{ applicationsPath?: string, nkpVersions?: string[], catalogRepo?: string, ref?: string }} source
+ * @param {{ applicationsPath?: string, nkpVersions?: string[], catalogRepo?: string, ref?: string, kind?: string, configDefaults?: boolean }} source
  */
 function scanApps(repoPath, source = {}) {
   const appsDir = path.join(repoPath, source.applicationsPath || 'applications');
@@ -101,6 +132,7 @@ function scanApps(repoPath, source = {}) {
   }
 
   const injectedSupport = nkpSupportForMinors(source.nkpVersions || []);
+  const crawlDefaults = !!source.configDefaults;
   const apps = [];
   const entries = fs.readdirSync(appsDir, {withFileTypes: true});
 
@@ -138,7 +170,7 @@ function scanApps(repoPath, source = {}) {
       const m = v === latest ? meta : readVersionMeta(appPath, v);
       let raw = (m && m.nkpVersionSupport) || '';
       if (!raw && injectedSupport) raw = injectedSupport;
-      return {
+      const entryRow = {
         version: v,
         nkpVersionSupport: raw,
         nkpRange: parseNkpRange(raw),
@@ -147,12 +179,31 @@ function scanApps(repoPath, source = {}) {
         applicationsPath: source.applicationsPath || 'applications',
         kind: source.kind || (source.catalogRepo ? 'git' : 'oci'),
       };
+      if (crawlDefaults) {
+        const {panels, primaryYaml} = readDefaultValuesPanels(
+          appPath,
+          v,
+          entry.name,
+        );
+        entryRow.defaultValuesPanels = panels;
+        entryRow.defaultValuesYaml = primaryYaml;
+      }
+      return entryRow;
     });
     const nkpCardRange = cardRangeFromRanges(versionNkp.map((e) => e.nkpRange));
     const latestSupport =
       meta.nkpVersionSupport || injectedSupport || '';
+    const latestEntry = crawlDefaults
+      ? versionNkp.find((e) => e.version === latest) || {}
+      : {};
+    const latestDefaults = crawlDefaults
+      ? latestEntry.defaultValuesYaml || ''
+      : undefined;
+    const latestPanels = crawlDefaults
+      ? latestEntry.defaultValuesPanels || []
+      : undefined;
 
-    apps.push({
+    const app = {
       name: entry.name,
       version: latest,
       allVersions: versions,
@@ -175,7 +226,12 @@ function scanApps(repoPath, source = {}) {
       certifications: meta.certifications || [],
       readme,
       catalogRepo: source.catalogRepo || '',
-    });
+    };
+    if (crawlDefaults) {
+      app.defaultValuesYaml = latestDefaults;
+      app.defaultValuesPanels = latestPanels;
+    }
+    apps.push(app);
   }
 
   return apps.sort((a, b) => a.displayName.localeCompare(b.displayName));
@@ -194,7 +250,14 @@ function mergeVersionNkpEntries(a, b) {
       ? b.catalogRepo
       : '';
   const ref = aGit ? (a.ref || '') : bGit ? (b.ref || '') : '';
-  return {
+  const defaultValuesYaml =
+    (a.defaultValuesYaml && String(a.defaultValuesYaml)) ||
+    (b.defaultValuesYaml && String(b.defaultValuesYaml)) ||
+    '';
+  const aPanels = Array.isArray(a.defaultValuesPanels) ? a.defaultValuesPanels : [];
+  const bPanels = Array.isArray(b.defaultValuesPanels) ? b.defaultValuesPanels : [];
+  const defaultValuesPanels = aPanels.length ? aPanels : bPanels;
+  const out = {
     version: a.version,
     nkpVersionSupport,
     nkpRange,
@@ -203,6 +266,13 @@ function mergeVersionNkpEntries(a, b) {
     applicationsPath: a.applicationsPath || b.applicationsPath || 'applications',
     kind,
   };
+  if (a.defaultValuesYaml != null || b.defaultValuesYaml != null) {
+    out.defaultValuesYaml = defaultValuesYaml;
+  }
+  if (a.defaultValuesPanels != null || b.defaultValuesPanels != null) {
+    out.defaultValuesPanels = defaultValuesPanels;
+  }
+  return out;
 }
 
 /** Merge apps that share a directory name across sources of one logical catalog. */
@@ -232,7 +302,7 @@ function mergeApps(appLists) {
       const latestEntry = versionMap.get(latest);
       // Prefer display metadata from the source owning the newest semver.
       const metaSource = compareSemver(app.version, prior.version) >= 0 ? app : prior;
-      byName.set(app.name, {
+      const mergedApp = {
         ...metaSource,
         version: latest,
         allVersions,
@@ -243,7 +313,14 @@ function mergeApps(appLists) {
         nkpVersionSupport: latestEntry.nkpVersionSupport,
         nkpRange: latestEntry.nkpRange,
         catalogRepo: latestEntry.catalogRepo || metaSource.catalogRepo || '',
-      });
+      };
+      if (latestEntry.defaultValuesYaml != null) {
+        mergedApp.defaultValuesYaml = latestEntry.defaultValuesYaml;
+      }
+      if (latestEntry.defaultValuesPanels != null) {
+        mergedApp.defaultValuesPanels = latestEntry.defaultValuesPanels;
+      }
+      byName.set(app.name, mergedApp);
     }
   }
   return [...byName.values()].sort((a, b) =>
@@ -303,6 +380,16 @@ function toListingApp(app) {
   delete listingApp.overview;
   delete listingApp.readme;
   delete listingApp.catalogAppNames;
+  delete listingApp.defaultValuesYaml;
+  delete listingApp.defaultValuesPanels;
+  if (Array.isArray(listingApp.versionNkp)) {
+    listingApp.versionNkp = listingApp.versionNkp.map((e) => {
+      const row = {...e};
+      delete row.defaultValuesYaml;
+      delete row.defaultValuesPanels;
+      return row;
+    });
+  }
   return listingApp;
 }
 
@@ -388,7 +475,10 @@ for (const logical of LOGICAL_CATALOGS) {
     console.log(
       `Scanning ${logical.name} / ${source.id} (${source.kind}) at ${repoPath} ...`,
     );
-    const apps = scanApps(repoPath, source);
+    const apps = scanApps(repoPath, {
+      ...source,
+      configDefaults: !!logical.configDefaults,
+    });
     console.log(`  Found ${apps.length} application(s)`);
     perSourceApps.push(apps);
   }
@@ -413,6 +503,8 @@ for (const logical of LOGICAL_CATALOGS) {
     name: logical.name,
     slug: logical.slug,
     repo: logical.repo,
+    configDefaults: !!logical.configDefaults,
+    airgappedBundle: !!logical.airgappedBundle,
     appCount: apps.length,
     apps,
   });
@@ -465,9 +557,12 @@ const listingCatalogs = catalogs.map((catalog) => {
     const fullApp = {
       ...app,
       icon: iconUrl,
+      catalogId: catalog.id,
       catalogName: catalog.name,
       catalogSlug: catalog.slug,
       catalogRepo: app.catalogRepo || catalog.repo,
+      configDefaults: !!catalog.configDefaults,
+      airgappedBundle: !!catalog.airgappedBundle,
     };
     flatApps.push(fullApp);
     return toListingApp(fullApp);

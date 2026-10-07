@@ -1,0 +1,18 @@
+# Shared airgapped-bundle steps for catalogs with airgappedBundle: true.
+# Synced to site/src/data/catalog-airgapped-bundle.json at prepare (gitignored).
+# Vars use {{name}} style and are substituted per app / selected version in the UI.
+steps:
+  - title: Clone the catalog repository
+    command: git clone {{catalogCloneUrl}}
+  - title: Enter the repository
+    command: cd {{catalogDir}}
+  - title: Build the airgapped bundle
+    command: nkp create catalog-bundle --apps={{name}}={{version}} --airgapped
+  - title: Push the bundle to a registry
+    command: nkp push bundle --bundle {{bundleFile}} --to-registry {{registry}}
+  - title: Register the catalog application
+    command: nkp create catalog-application --url {{ociAppUrl}} --tag {{version}} --workspace {{workspace}}
+  - title: Deploy the application (optional)
+    optional: true
+    note: Optional — you can also enable the app from the NKP UI after registration.
+    command: nkp create appdeployment {{name}} --app {{name}}-{{version}} -w {{workspace}} --clusters {{clusters}}

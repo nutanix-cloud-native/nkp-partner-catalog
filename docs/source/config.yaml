@@ -31,28 +31,37 @@ site:
 # Platform: kind platformHybrid expands per resolved NKP minor —
 #   git kommander-applications @ v{latest} when minor < ociFromMinor
 #   oci  kommander-applications-full:{v}{latest} when minor >= ociFromMinor
+#
+# Optional per-catalog docs UI flags (default false):
+#   configDefaults  — merge chart values.yaml ⊕ helmrelease ConfigMap → Default configuration panel
+#   airgappedBundle — Airgapped bundle CTA/modal on app detail pages
 # ---------------------------------------------------------------------------
 catalogs:
   - id: nkp-ai-applications-catalog
     name: AI Applications
     slug: ai
     repo: https://github.com/nutanix-cloud-native/nkp-ai-applications-catalog
+    configDefaults: true
 
   - id: nkp-partner-catalog
     name: Partner Catalog
     slug: partner
     repo: https://github.com/nutanix-cloud-native/nkp-partner-catalog
     nkpVersionsSource: true
+    configDefaults: true
+    airgappedBundle: true
 
   - id: nkp-nutanix-product-catalog
     name: Nutanix Products
     slug: nutanix
     repo: https://github.com/nutanix-cloud-native/nkp-nutanix-product-catalog
+    configDefaults: true
 
   - id: nkp-platform
     name: Platform
     slug: platform
     repo: https://github.com/mesosphere/kommander-applications
+    configDefaults: true
     sources:
       - kind: platformHybrid
         gitRepo: https://github.com/mesosphere/kommander-applications
