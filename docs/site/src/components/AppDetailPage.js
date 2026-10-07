@@ -2,7 +2,7 @@ import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import Link from '@docusaurus/Link';
 import DOMPurify from 'isomorphic-dompurify';
 import { marked } from 'marked';
-import { categoryLabel, categoryTone, certTone, certLabel, certDescription, supportBadges, appLicenses, licenseDescription, NKP_LICENSE_OPTIONS_URL, isPreferredPartnerApp, isCorePlatformApp, corePlatformLabel, corePlatformDescription, corePlatformTone } from './categoryStyles';
+import { categoryLabel, categoryTone, scopeLabel, certTone, certLabel, certDescription, supportBadges, appLicenses, licenseDescription, NKP_LICENSE_OPTIONS_URL, isPreferredPartnerApp, isCorePlatformApp, corePlatformLabel, corePlatformDescription, corePlatformTone } from './categoryStyles';
 import { AppIcon, Tag } from './catalogUi';
 import nkpVersion from './nkpVersion';
 import YamlCodePanel from './YamlCodePanel';
@@ -163,7 +163,9 @@ export default function AppDetailPage({ data }) {
           <div className="cat-detail-meta-item">
             <span className="cat-detail-meta-label">Scope</span>
             <div className="cat-detail-meta-value">
-              {data.scope.map(s => <Tag key={s} tone="neutral">{s}</Tag>)}
+              {data.scope.map((s) => (
+                <Tag key={s} tone="neutral">{scopeLabel(s)}</Tag>
+              ))}
             </div>
           </div>
         )}
@@ -295,13 +297,19 @@ export default function AppDetailPage({ data }) {
             Default Helm values for the selected version. All of these values
             can be customized at deploy time.
           </p>
-          {activeValuesPanel.overrideConfigMaps?.length > 0 ? (
+          {defaultValuesPanels.length > 1 &&
+          !activeValuesPanel.primary &&
+          activeValuesPanel.overrideConfigMaps?.length > 0 ? (
             <p className="cat-yaml-overrides-hint">
               Customize by creating ConfigMap
               {activeValuesPanel.overrideConfigMaps.length > 1 ? 's' : ''}{' '}
               {activeValuesPanel.overrideConfigMaps.map((cm, i) => (
                 <React.Fragment key={cm}>
-                  {i > 0 ? (i === activeValuesPanel.overrideConfigMaps.length - 1 ? ' or ' : ', ') : null}
+                  {i > 0
+                    ? i === activeValuesPanel.overrideConfigMaps.length - 1
+                      ? ' or '
+                      : ', '
+                    : null}
                   <code>{cm}</code>
                 </React.Fragment>
               ))}

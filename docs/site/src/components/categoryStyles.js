@@ -37,6 +37,15 @@ function categoryLabel(cat) {
     .join(' ');
 }
 
+/** Display label for scope metadata (raw values stay lowercase for data/filters). */
+function scopeLabel(scope) {
+  return String(scope || '')
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+}
+
 const CATEGORY_TONES = {
   security: 'warning',
   backup: 'info',
@@ -217,6 +226,7 @@ function isPublishedCatalogApp(app) {
 
 export {
   categoryLabel,
+  scopeLabel,
   categoryTone,
   certTone,
   certLabel,

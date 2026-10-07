@@ -14,7 +14,7 @@ Live: https://nutanix-cloud-native.github.io/nkp-partner-catalog/
 - `site/src/data/` — **generated** from `config.yaml` at prepare (gitignored)
 - `site/static/cli/` — **generated** `commands.json` (gitignored)
 - `scripts/` — CLI generator, config probe, `sync-docs-data`, offline PDF/HTML export
-- `AGENTS.md` + `agents/` — guidance for coding agents
+- `AGENTS.md` — guidance for coding agents (catalog, CLI, CI)
 
 ## Local commands
 

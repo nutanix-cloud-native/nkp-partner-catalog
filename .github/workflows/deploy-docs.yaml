@@ -67,7 +67,8 @@ jobs:
 
       - name: Build docs
         # resolve-nkp-releases → fetch Platform git/OCI (oras via devbox) →
-        # generate catalog + CLI → prepare → export → docusaurus build.
+        # generate catalog (helm/kubectl for merged values) + CLI → prepare →
+        # export → docusaurus build.
         # Sibling root is GITHUB_WORKSPACE.
         run: |
           cd nkp-partner-catalog/docs

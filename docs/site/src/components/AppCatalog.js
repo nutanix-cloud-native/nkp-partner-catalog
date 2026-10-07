@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useLayoutEffect, useRef, useCallba
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import Link from '@docusaurus/Link';
 import { useHistory, useLocation } from '@docusaurus/router';
-import { categoryLabel, certTone, certLabel, certDescription, supportBadges, appHasCertFacet, supportStatusKeys, isPublishedCatalogApp, isPreferredPartnerApp, isCorePlatformApp, corePlatformLabel, corePlatformDescription, corePlatformTone } from './categoryStyles';
+import { categoryLabel, scopeLabel, certTone, certLabel, certDescription, supportBadges, appHasCertFacet, supportStatusKeys, isPublishedCatalogApp, isPreferredPartnerApp, isCorePlatformApp, corePlatformLabel, corePlatformDescription, corePlatformTone } from './categoryStyles';
 import { AppIcon, Tag } from './catalogUi';
 import nkpVersion from './nkpVersion';
 import NkpVersionSwitch from './NkpVersionSwitch';
@@ -111,7 +111,18 @@ function AppCard({ app }) {
         <div className="cat-card-desc-wrap" aria-hidden="true" />
       )}
       <div className="cat-card-footer">
-        <Tag tone="info">{rangeLabel}</Tag>
+        <div className="cat-card-footer-tags">
+          <Tag tone="info">{rangeLabel}</Tag>
+          {(app.scope || []).map((s) => (
+            <Tag
+              key={s}
+              tone="neutral"
+              tip={`Deployed at ${scopeLabel(s)} scope`}
+            >
+              {scopeLabel(s)}
+            </Tag>
+          ))}
+        </div>
         {versionCount > 1 && (
           <span className="cat-card-versions-count">
             {versionCount} versions

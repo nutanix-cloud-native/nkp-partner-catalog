@@ -4,6 +4,8 @@
     "nodejs": "20",
     "just": "latest",
     "oras": "latest",
+    "kubernetes-helm": "latest",
+    "kubectl": "latest",
     "chromium": {
       "version": "latest",
       "platforms": ["x86_64-linux", "aarch64-linux"]

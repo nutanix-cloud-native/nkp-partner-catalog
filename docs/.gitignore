@@ -17,12 +17,8 @@ site/static/offline/
 .export-work/
 dist/
 
-# Downloaded nkp CLI binaries + resolved NKP release map
-.cache/nkp-cli/
-.cache/nkp-releases.json
-.cache/bin/
-# helm pull cache for merged catalog default values
-.cache/helm-charts/
+# Local caches (nkp CLI, releases, helm charts, …)
+.cache
 
 # Generated catalog (just generate-catalog); do not commit
 source/applications/

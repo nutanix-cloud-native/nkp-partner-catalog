@@ -408,7 +408,11 @@ function resolveOciChart(docs, helmRelease) {
   if (!repo && repos.length === 1) repo = repos[0];
   if (!repo || !repo.spec || !repo.spec.url) return null;
 
-  const url = String(repo.spec.url).trim();
+  // Expand Flux/bash-style ${var:=default} / ${var:-default} left unsubstituted
+  // in catalog manifests (e.g. ${ociRegistryURL:=oci://ghcr.io}/mesosphere/...).
+  const url = String(repo.spec.url)
+    .trim()
+    .replace(/\$\{[^:=}-]+:?[=-]([^}]+)\}/g, '$1');
   const tag =
     (repo.spec.ref && (repo.spec.ref.tag || repo.spec.ref.semver)) || '';
   if (!tag) {
@@ -514,6 +518,11 @@ function helmPull(url, tag, cacheRoot) {
         timeout: 120000,
       },
     );
+    if (result.error && result.error.code === 'ENOENT') {
+      throw new Error(
+        'helm not found (install kubernetes-helm in docs/devbox.json)',
+      );
+    }
     if (result.status === 0) {
       const valuesPath = findValuesYaml(dest);
       if (valuesPath) {

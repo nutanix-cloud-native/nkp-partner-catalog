@@ -388,6 +388,14 @@ html[data-theme='dark'] {
   margin-top: auto;
 }
 
+.cat-card-footer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
 .cat-card-versions-count {
   font-size: 0.72rem;
   color: var(--cat-text-tertiary);
