@@ -15,4 +15,4 @@ steps:
   - title: Deploy the application (optional)
     optional: true
     note: Optional — you can also enable the app from the NKP UI after registration.
-    command: nkp create appdeployment {{name}} --app {{name}}-{{version}} -w {{workspace}} --clusters {{clusters}}
+    command: nkp create appdeployment {{name}} --app {{name}}-{{version}} -w {{workspace}}

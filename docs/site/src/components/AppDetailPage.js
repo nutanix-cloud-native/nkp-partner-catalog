@@ -12,9 +12,25 @@ const { parseNkpRange } = nkpVersion;
 
 marked.setOptions({ gfm: true, breaks: false });
 
+const markdownLinkRenderer = {
+  link({href, title, text}) {
+    const url = href || '';
+    const titleAttr = title ? ` title="${title}"` : '';
+    const external = /^(https?:|mailto:|\/\/)/i.test(url);
+    const target = external
+      ? ' target="_blank" rel="noopener noreferrer"'
+      : '';
+    return `<a href="${url}"${titleAttr}${target}>${text}</a>`;
+  },
+};
+marked.use({renderer: markdownLinkRenderer});
+
 function renderMarkdown(md) {
   if (!md) return '';
-  return DOMPurify.sanitize(marked.parse(md));
+  // Keep target/rel so overview & getting-started links can open externally.
+  return DOMPurify.sanitize(marked.parse(md), {
+    ADD_ATTR: ['target'],
+  });
 }
 
 export default function AppDetailPage({ data }) {
@@ -119,27 +135,10 @@ export default function AppDetailPage({ data }) {
       <div className="cat-page-header">
         <AppIcon icon={data.icon} name={data.displayName} size={72} />
         <div className="cat-page-header-text">
-          <div className="cat-page-title-row">
-            <div className="cat-page-version-row">
-              <Tag tone="neutral">v{selectedVersion}</Tag>
-              <span className="cat-detail-catalog">{data.catalogName}</span>
-            </div>
-            {showAirgappedBundle ? (
-              <button
-                type="button"
-                className="cat-btn cat-btn--primary"
-                onClick={() => setAirgapOpen(true)}
-              >
-                Airgapped bundle
-              </button>
-            ) : null}
+          <div className="cat-page-version-row">
+            <Tag tone="neutral">v{selectedVersion}</Tag>
+            <span className="cat-detail-catalog">{data.catalogName}</span>
           </div>
-          {showAirgappedBundle ? (
-            <p className="cat-page-cta-hint">
-              For connected clusters, enable this app from the NKP UI. This button
-              is for building an airgapped bundle.
-            </p>
-          ) : null}
         </div>
       </div>
 
@@ -268,6 +267,25 @@ export default function AppDetailPage({ data }) {
             </div>
           </div>
         )}
+        {showAirgappedBundle ? (
+          <div className="cat-install-row">
+            <div className="cat-install-copy">
+              <span className="cat-detail-meta-label">Install</span>
+              <p>
+                On connected clusters, enable this app from the NKP UI. For
+                airgapped environments, build a catalog bundle for the selected
+                version.
+              </p>
+            </div>
+            <button
+              type="button"
+              className="cat-btn"
+              onClick={() => setAirgapOpen(true)}
+            >
+              Build airgapped bundle
+            </button>
+          </div>
+        ) : null}
       </div>
 
       {showConfigDefaults && defaultValuesPanels.length > 0 && activeValuesPanel ? (

@@ -55,8 +55,7 @@ export function buildAirgappedVars({
     bundleFile: `./${name}-${version}.tar`,
     registry: 'oci://<registry>/<org>',
     ociAppUrl: `oci://<registry>/<org>/${catalogDir}/${name}`,
-    workspace: 'kommander-workspace',
-    clusters: 'management',
+    workspace: '<workspace>',
   };
 }
 
@@ -148,9 +147,12 @@ export default function AirgappedBundleModal({
     >
       <div className="cat-modal">
         <div className="cat-modal-header">
-          <h2 id="cat-airgap-modal-title">
-            Airgapped bundle{displayName ? ` · ${displayName}` : ''}
-          </h2>
+          <div className="cat-modal-heading">
+            <h2 id="cat-airgap-modal-title">Build airgapped bundle</h2>
+            {displayName ? (
+              <p className="cat-modal-subtitle">{displayName}</p>
+            ) : null}
+          </div>
           <button
             type="button"
             className="cat-modal-close"
@@ -162,10 +164,9 @@ export default function AirgappedBundleModal({
         </div>
         <div className="cat-modal-body">
           <p className="cat-modal-note">
-            For connected clusters, enable the app from the NKP UI.
-            Below: build and push an airgapped catalog bundle, then register it.
-            Blue highlights are filled for this app; <code>&lt;angle brackets&gt;</code> are
-            yours to replace.
+            Copy each command in order to build, push, and register a catalog
+            bundle. Highlighted values are filled for this app and version;
+            replace <code>&lt;angle brackets&gt;</code> with your own.
           </p>
           {steps.map((step, i) => (
             <div
@@ -192,9 +193,6 @@ export default function AirgappedBundleModal({
           ))}
         </div>
         <div className="cat-modal-footer">
-          <button type="button" className="cat-btn" onClick={onClose}>
-            Close
-          </button>
           <button type="button" className="cat-btn cat-btn--primary" onClick={onClose}>
             Done
           </button>

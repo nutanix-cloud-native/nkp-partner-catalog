@@ -661,6 +661,40 @@ button.cat-tag {
   word-break: break-all;
 }
 
+/* Install path lives in the meta card — secondary to identity, not the hero */
+.cat-install-row {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem 1.25rem;
+  margin-top: 0.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--cat-border);
+}
+
+.cat-install-copy {
+  flex: 1 1 16rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.cat-install-copy p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--cat-text-secondary);
+  max-width: 54ch;
+}
+
+.cat-install-row .cat-btn {
+  flex: 0 0 auto;
+  background: var(--cat-bg-base);
+}
+
 .cat-page-section {
   margin-top: 1.5rem;
 }
@@ -754,23 +788,7 @@ button.cat-tag {
   font-weight: 600;
 }
 
-/* ---- App detail: title CTA, YAML panel, airgapped modal ---- */
-
-.cat-page-title-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
-  justify-content: space-between;
-}
-
-.cat-page-cta-hint {
-  margin: 0.45rem 0 0;
-  font-size: 0.82rem;
-  color: var(--cat-text-tertiary);
-  max-width: 52ch;
-  line-height: 1.45;
-}
+/* ---- App detail: YAML panel, airgapped modal ---- */
 
 .cat-page-section-lead {
   margin: 0 0 0.85rem;
@@ -1173,7 +1191,7 @@ html[data-theme='dark'] .cat-modal {
 
 .cat-modal-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
   padding: 1rem 1.15rem;
@@ -1184,11 +1202,22 @@ html[data-theme='dark'] .cat-modal {
   z-index: 1;
 }
 
+.cat-modal-heading {
+  min-width: 0;
+}
+
 .cat-modal-header h2 {
   margin: 0;
   font-size: 1.15rem;
   font-weight: 650;
   color: var(--cat-text-primary);
+}
+
+.cat-modal-subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.86rem;
+  color: var(--cat-text-secondary);
+  line-height: 1.35;
 }
 
 .cat-modal-close {
