@@ -1,0 +1,106 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: "NGINX Ingress Controller"
+description: "High-performance, production-ready ingress controller for Kubernetes from NGINX"
+category:
+  - networking
+licensing:
+  - Starter
+  - Pro
+  - Ultimate
+type: preferred-partner
+scope:
+  - workspace
+allowMultipleInstances: true
+supportLink: "https://github.com/nginx/kubernetes-ingress/issues"
+overview: |-
+  ## Overview
+
+    Built around the open source high-performance NGINX web server, NGINX Ingress Controller delivers Layer 7 routing, SSL/TLS termination, HTTP/2 and gRPC support, advanced traffic splitting, and comprehensive observability across Nutanix infrastructure.
+
+    Licensing can be added to provide enterprise-grade application delivery, traffic management, and security for Kubernetes workloads running on Nutanix Kubernetes Platform (NKP) through F5 NGINX Plus.
+
+    ## Key Features
+
+    - **Production-Grade Ingress Control:** Native Kubernetes Ingress API support alongside advanced Custom Resource Definitions (VirtualServer, VirtualServerRoute, TransportServer, Policy).
+    - **High Performance & Low Latency:** Optimized NGINX event-driven engine handling high throughput with minimal overhead.
+    - **Flexible Traffic Management:** Basic rate limiting, standard JWT validation, and IP allow/deny lists.
+    - **End-to-End Observability:** Standard Prometheus metrics, OpenTelemetry distributed tracing, and detailed access logging.
+
+    ### Enterprise support and capabilities with F5 NGINX Plus
+
+    If using NGINX Ingress Controller with your F5 NGINX Plus image and license, you will get access to:
+
+    - Enterprise level support and hardened releases
+    - Advanced JWT and OIDC authentication
+    - Zero downtime reconfiguration for backends and routing rules
+    - Advanced monitor metrics with OpenTelemetry and detailed access loggin
+    - WAF Integration
+
+    Go [here](https://www.f5.com/products/get-f5/nginx-open-source-vs-nginx-one-differences-in-features) for more information and [here](https://docs.nginx.com/nginx/) for documentation on how to enable these features
+
+    ## Deploying F5 NGINX Plus & Providing Secrets
+
+    ### Environments which have internet access
+
+    To deploy F5 NGINX Plus or provide custom sensitive values (like registry credentials or JWT license secrets):
+
+    1. Create a Kubernetes Secret named `<releaseName>-custom-values` (or `imagePullSecret`) in your workspace namespace (on the workload cluster(s) where the application will be deployed) before or during installation:
+        ```shell
+        kubectl create secret docker-registry imagePullSecret \
+          --docker-server=private-registry.nginx.com \
+          --docker-username=<JWT-TOKEN> \
+          --docker-password=none \
+          -n <releaseNamespace>
+        ```
+    2. In the NKP application deployment values, update the controller configuration:
+        ```yaml
+        controller:
+          nginxplus: true
+          image:
+            repository: private-registry.nginx.com/nginx-ic/nginx-plus-ingress
+            tag: "5.7.0"
+          imagePullSecrets:
+            - name: imagePullSecret
+        ```
+
+    ### Air-gapped Environments: Quick-Start Script for Security & Infrastructure Teams
+
+    If you're deploying the NGINX Ingress Controller in an air-gapped environment, follow the steps below to ensure all necessary images are available locally.
+
+    You will need to use the `nkp` cli.
+
+    #### 1. Clone the partner catalog repository
+
+    On a workstation with internet access, clone the partner catalog repository first.
+
+    ```shell
+    git clone git@github.com:nutanix-cloud-native/nkp-partner-catalog.git
+    cd nkp-partner-catalog
+    ```
+
+    #### 2. Create the air-gapped bundle
+
+    Next, edit the `applications/nginx-ingress-controller/5.7.0/extra_images.txt` file to include any additional images required for the air-gapped deployment, then build the air-gapped bundle with the following command:
+
+    ```shell
+    nkp create catalog-bundle --apps=nginx-ingress-controller=5.7.0 --airgapped
+    ```
+
+    #### 3. Move the air-gapped bundle file to your environment
+
+    Move the bundle file to the air-gapped environment and load it using the following commands from within your air-gapped environment.
+
+    ```shell
+    # 1. Push the bundle to the air-gapped registry
+    nkp push bundle --bundle /path/to/file/nginx-ingress-controller-5.7.0-airgapped.tar --to-registry <your-registry-url>
+
+    # 2. Create the catalog bundle
+    nkp create catalog-application --url oci://<registry-url>/nkp-partner-catalog/nginx-ingress-controller --tag 5.7.0 --workspace kommander-workspace
+    ```
+
+    ## More Information
+
+    - **Documentation:** [NGINX Ingress Controller Documentation](https://docs.nginx.com/nginx-ingress-controller/)
+    - **Support & Issues:** [NGINX Ingress Controller GitHub](https://github.com/nginx/kubernetes-ingress)
+    - Trial options and enterprise capabilities: [F5.com](https://www.f5.com/products/get-f5)
+icon: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MCA1NS41Ij4KICA8cGF0aCBmaWxsPSIjMDA5NjM5IiBkPSJNNS4zLDM5LjFjLjIuNC41LjcuOS45bDE3LjYsMTAuMmMuNy40LDEuNi40LDIuMywwbDE3LjYtMTAuMmMuNy0uNCwxLjItMS4yLDEuMi0ydi0yMC40YzAtLjgtLjQtMS42LTEuMi0yTDI2LjIsNS4zYy0uNy0uNC0xLjYtLjQtMi4zLDBTNi4yLDE1LjUsNi4yLDE1LjVjLS43LjQtMS4yLDEuMi0xLjIsMnYyMC40YzAsLjQuMS44LjMsMS4yIi8+CiAgPHBhdGggZmlsbD0iI2ZmZiIgZD0iTTE5LjMsMzUuNWMwLDEuMi0xLDIuMy0yLjMsMi4zcy0yLjMtMS0yLjMtMi4zdi0xNS42YzAtMS4yLDEuMS0yLjIsMi42LTIuMiwxLjIsMCwyLjMuNSwzLjEsMS40bC43LjgsOS41LDExLjR2LTExLjNjMC0xLjIsMS0yLjMsMi4zLTIuM3MyLjMsMSwyLjMsMi4zdjE1LjZjMCwxLjItMS4xLDIuMi0yLjYsMi4yLTEuMiwwLTIuMy0uNS0zLjEtMS40bC0xMC4yLTEyLjJ2MTEuM1oiLz4KICA8cGF0aCBmaWxsPSIjMDA5NjM5IiBkPSJNNDQuMzksNDQuNTJjLjI2LC4yNiwuMzksLjU3LC4zOSwuOTQsMCwuMzctLjEzLC42OS0uMzksLjk1LS4yNiwuMjYtLjU3LC4zOS0uOTQsLjM5LS4zNywwLS42OC0uMTMtLjk0LS4zOS0uMjYtLjI2LS4zOS0uNTgtLjM5LS45NSwwLS4zNywuMTMtLjY5LC4zOS0uOTQsLjI2LS4yNywuNTgtLjQsLjk0LS40LC4zNywwLC42OCwuMTMsLjk0LC40Wk00NC41NCw0NC4zNmMtLjMtLjMtLjY3LS40NS0xLjEtLjQ1LS40MiwwLS43OSwuMTUtMS4wOSwuNDUtLjMsLjMtLjQ1LC42Ny0uNDUsMS4xLDAsLjQzLC4xNSwuOCwuNDUsMS4xLC4zLC4zMSwuNjcsLjQ2LDEuMDksLjQ2LC40MywwLC44LS4xNSwxLjEtLjQ2LC4zLS4zLC40NS0uNjcsLjQ1LTEuMSwwLS40My0uMTUtLjgtLjQ1LTEuMVpNNDMuNjcsNDUuMzljLS4wNiwuMDMtLjE2LC4wNC0uMjgsLjA0aC0uMjd2LS42MmguMjZjLjE3LDAsLjI5LC4wMiwuMzYsLjA2LC4wOCwuMDQsLjExLC4xMywuMTEsLjI1LDAsLjEzLS4wNiwuMjItLjE4LC4yN1pNNDIuODIsNDYuM2guM3YtLjY3aC4yNGMuMTYsMCwuMjcsLjAyLC4zMywuMDYsLjExLC4wNiwuMTYsLjE5LC4xNiwuMzl2LjE0bC4wMSwuMDVjMCwuMDEsMCwuMDEsMCwuMDIsMCwuMDEsMCwuMDEsLjAxLC4wMWguMjhsLS4wMS0uMDJjLS4wMS0uMDEtLjAxLS4wNC0uMDEtLjA5LDAtLjA1LDAtLjA5LDAtLjEzdi0uMTNjMC0uMDktLjAzLS4xNy0uMDktLjI2LS4wNi0uMDktLjE2LS4xNC0uMy0uMTcsLjExLS4wMiwuMTktLjA1LC4yNS0uMDgsLjExLS4wNywuMTctLjE5LC4xNy0uMzQsMC0uMjEtLjA4LS4zNi0uMjYtLjQzLS4xLS4wNC0uMjUtLjA2LS40Ni0uMDZoLS41OXYxLjdaIi8+Cjwvc3ZnPg==
