@@ -11,6 +11,8 @@ type: preferred-partner
 scope:
   - workspace
 allowMultipleInstances: true
+requiredDependencies:
+  - gateway-api-crds
 supportLink: "https://github.com/nginx/nginx-gateway-fabric/issues"
 overview: |-
   ## Overview
