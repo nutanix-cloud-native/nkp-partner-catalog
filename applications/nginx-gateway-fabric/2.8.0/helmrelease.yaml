@@ -4,8 +4,6 @@ metadata:
   name: ${releaseName}-helmrelease
   namespace: ${releaseNamespace}
 spec:
-  dependsOn:
-    - name: ${releaseName}-gateway-api-crds
   interval: 6h0m0s
   path: ./helmrelease
   postBuild:
