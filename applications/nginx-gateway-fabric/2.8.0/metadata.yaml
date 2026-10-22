@@ -19,7 +19,7 @@ overview: |-
 
   ## Key Features
 
-  - **Gateway API Native:** Implementation of the Kubernetes Gateway API standard, supporting GatewayClass, Gateway, HTTPRoute, GRPCRoute, and TLSRoute resources. TCPRoute and UDPRoute are also supported when experimental features are enabled (see [Gateway API CRDs](#gateway-api-crds)).
+  - **Gateway API Native:** Implementation of the Kubernetes Gateway API standard. With the Gateway API CRDs that NKP installs, GatewayClass, Gateway, HTTPRoute, GRPCRoute, and ReferenceGrant are available. Other resources, such as TLSRoute, TCPRoute, UDPRoute, and BackendTLSPolicy, depend on the installed Gateway API version (see [Gateway API CRDs](#gateway-api-crds)).
   - **NGINX Data Plane:** Leverages the high-performance NGINX engine for traffic routing with low latency and high throughput.
   - **Two-Component Architecture:** Separate control plane (manages Gateway API resources) and data plane (handles actual traffic) for flexibility and scalability.
   - **Multiple Gateway Support:** Deploy multiple Gateways per instance, each with independent listener configurations.
@@ -61,13 +61,19 @@ overview: |-
 
   ## Gateway API CRDs
 
-  NKP installs the Gateway API CRDs from the standard channel. To use experimental features such as TCPRoute and UDPRoute, install the experimental-channel CRDs for the same Gateway API version, then set this in the application's configuration override:
+  This application doesn't install the Gateway API CRDs. It uses the Gateway API version that your NKP release supports and installs (the `gateway-api-crds` release), so the available Gateway API resources depend on your NKP version.
 
-  ```yaml
-  nginxGateway:
-    gwAPIExperimentalFeatures:
-      enable: true
+  At startup, NGINX Gateway Fabric checks which Gateway API CRDs exist and turns off support for any that are missing. Resources it can't use are logged as `CRD not found, controller disabled`. If the CRDs on the cluster change, restart the NGINX Gateway Fabric Deployment so it detects them again.
+
+  If the NKP-supported Gateway API version differs from the version NGINX Gateway Fabric recommends, the GatewayClass is still accepted but reports this condition:
+
   ```
+  SupportedVersion=False (UnsupportedVersion): The Gateway API CRD versions are not recommended.
+  ```
+
+  This is a warning. Resources available in the installed version work normally.
+
+  Don't replace the Gateway API CRDs that NKP manages. Recent Gateway API releases also install a `safe-upgrades.gateway.networking.k8s.io` ValidatingAdmissionPolicy, which can block NKP from reinstalling or upgrading its own Gateway API CRDs. Contact Nutanix support if you need a newer Gateway API version or experimental-channel features.
 
   ## Product Telemetry
 
@@ -156,7 +162,9 @@ overview: |-
 
   ## Uninstalling
 
-  Uninstalling the application leaves two kinds of resources in place:
+  Before uninstalling an instance, delete the Gateways that use its GatewayClass. NGINX Gateway Fabric creates an NGINX Deployment and Service for each Gateway, and uninstalling the instance doesn't remove them: they keep running with their last configuration and keep their LoadBalancer IP addresses.
+
+  Uninstalling the application also leaves these resources in place:
 
   - **TLS Secrets** created by the cert-generator Job, named `<instance-name>-server-tls` and `<instance-name>-agent-tls`. Delete them if you don't plan to reinstall with the same instance name.
   - **NGINX Gateway Fabric CRDs.** Helm doesn't delete CRDs. Deleting them also deletes any NGINX Gateway Fabric policy resources in the cluster.
