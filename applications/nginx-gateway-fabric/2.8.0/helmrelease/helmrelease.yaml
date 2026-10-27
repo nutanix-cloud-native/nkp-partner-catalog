@@ -14,7 +14,7 @@ spec:
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: ${releaseName}
+  name: nginx-gateway-fabric
   namespace: ${releaseNamespace}
 spec:
   chartRef:

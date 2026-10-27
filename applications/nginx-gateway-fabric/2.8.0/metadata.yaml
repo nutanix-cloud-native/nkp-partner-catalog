@@ -13,6 +13,10 @@ scope:
 allowMultipleInstances: true
 requiredDependencies:
   - gateway-api-crds
+dependsOn:
+  - type: Application
+    name: gateway-api-crds
+    optional: false
 supportLink: "https://github.com/nginx/nginx-gateway-fabric/issues"
 overview: |-
   ## Overview
