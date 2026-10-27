@@ -1,0 +1,31 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ${releaseName}-${appVersion}-defaults
+  namespace: ${releaseNamespace}
+data:
+  # Source: https://github.com/skyhook-io/radar/blob/v1.18.2/deploy/helm/radar/values.yaml
+  values.yaml: |
+    # Served under /radar on the cluster's shared Traefik address, so no hostname is needed.
+    basePath: /radar
+    ingress:
+      enabled: true
+      className: kommander-traefik
+      annotations:
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure
+        traefik.ingress.kubernetes.io/router.tls: "true"
+      hosts:
+        - host: ""
+          paths:
+            - path: /radar
+              pathType: Prefix
+    persistence:
+      enabled: true
+      size: 50Gi
+    timeline:
+      storage: sqlite
+      # Keeps the event database under the volume size, with room for the write-ahead log.
+      maxSize: 40Gi
+    cloud:
+      # The cluster's name in NKP (2.19 and later). Empty on older NKP, where Radar picks its own name.
+      clusterName: "${clusterName:=}"
