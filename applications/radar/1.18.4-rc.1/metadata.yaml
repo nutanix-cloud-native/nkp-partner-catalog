@@ -45,7 +45,7 @@ overview: |
   **On each cluster:**
 
   1. In the NKP UI, open your workspace, go to **Applications**, find Radar in the partner catalog and select **Enable**. Radar needs no settings.
-  2. On any cluster in the workspace, open `https://<cluster address>/radar`, using the same address as that cluster's other NKP dashboards, such as Grafana.
+  2. On any cluster in the workspace, open `https://<cluster address>/radar`, using the same address as that cluster's other NKP dashboards, such as Grafana, and sign in with your NKP login.
 
   Nothing leaves the cluster.
 
@@ -61,8 +61,9 @@ overview: |
 
   On each cluster:
 
+  - **NKP sign-in.** `/radar` uses the same NKP login as the workspace's other dashboards. Anyone with view access to the workspace can open it.
   - **Read-only by default.** Radar doesn't read Secrets, open a shell in a pod or change Helm releases unless you turn those on.
-  - **[Your Kubernetes RBAC decides](https://radarhq.io/docs/configuration/authentication).** With sign-in on (OIDC or an authenticating proxy), each person sees only the namespaces they can access, and every change runs as that person through Kubernetes impersonation.
+  - **[Your Kubernetes RBAC decides](https://radarhq.io/docs/configuration/authentication).** Each person sees only the namespaces they can access, and every change runs as that person through Kubernetes impersonation.
 
   With Radar Cloud:
 
@@ -123,7 +124,7 @@ overview: |
 
   The key is stored with the workspace configuration, so anyone who can read that configuration can see it. On NKP 2.19 and later, each cluster appears in Radar Cloud under its name in NKP.
 
-  All settings are in the [Radar Helm chart values](https://github.com/skyhook-io/radar/blob/v1.18.2/deploy/helm/radar/values.yaml).
+  All settings are in the [Radar Helm chart values](https://github.com/skyhook-io/radar/blob/v1.18.4-rc.1/deploy/helm/radar/values.yaml).
 
   ## Support
 

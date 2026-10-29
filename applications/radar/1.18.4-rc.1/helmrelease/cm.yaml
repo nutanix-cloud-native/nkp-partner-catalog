@@ -4,7 +4,7 @@ metadata:
   name: ${releaseName}-${appVersion}-defaults
   namespace: ${releaseNamespace}
 data:
-  # Source: https://github.com/skyhook-io/radar/blob/v1.18.2/deploy/helm/radar/values.yaml
+  # Source: https://github.com/skyhook-io/radar/blob/v1.18.4-rc.1/deploy/helm/radar/values.yaml
   values.yaml: |
     # Served under /radar on the cluster's shared Traefik address, so no hostname is needed.
     basePath: /radar
@@ -14,11 +14,19 @@ data:
       annotations:
         traefik.ingress.kubernetes.io/router.entrypoints: websecure
         traefik.ingress.kubernetes.io/router.tls: "true"
+        # NKP sign-in, as for the workspace's other dashboards.
+        traefik.ingress.kubernetes.io/router.middlewares: ${releaseNamespace}-forwardauth@kubernetescrd
       hosts:
         - host: ""
           paths:
             - path: /radar
               pathType: Prefix
+    # Each person signs in with NKP and sees only what their Kubernetes RBAC allows.
+    auth:
+      mode: proxy
+      proxy:
+        userHeader: X-Forwarded-User
+        groupsHeader: Impersonate-Group
     persistence:
       enabled: true
       size: 50Gi
