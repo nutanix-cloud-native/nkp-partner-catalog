@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 24h
   ref:
-    tag: 1.18.2
+    tag: 1.18.4-rc.1
   url: oci://ghcr.io/skyhook-io/charts/radar
   layerSelector:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
