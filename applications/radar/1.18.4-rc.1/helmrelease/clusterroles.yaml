@@ -19,7 +19,7 @@ metadata:
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
 rules:
   - nonResourceURLs: ["/radar", "/radar/*"]
-    verbs: ["get", "head", "patch", "post", "put"]
+    verbs: ["get", "head", "patch", "post", "put", "delete"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
