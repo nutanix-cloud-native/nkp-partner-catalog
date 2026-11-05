@@ -1,6 +1,6 @@
 schema: catalog.nkp.nutanix.com/v1/application-metadata
 displayName: "NGINX Gateway Fabric"
-description: "A Kubernetes-native Gateway API implementation using NGINX as the data plane"
+description: "A 100% Gateway API-conformant, Kubernetes-native implementation using NGINX as the data plane"
 category:
   - networking
 licensing:
@@ -21,13 +21,13 @@ supportLink: "https://github.com/nginx/nginx-gateway-fabric/issues"
 overview: |-
   ## Overview
 
-  NGINX Gateway Fabric is the open source, NGINX-powered implementation of the [Kubernetes Gateway API](https://gateway-api.sigs.k8s.io/), the standard successor to the Ingress API. It delivers Kubernetes-native traffic management for workloads running on Nutanix Kubernetes Platform (NKP): HTTP and gRPC routing, TLS termination, traffic splitting, and role-based configuration that separates platform and application teams.
+  NGINX Gateway Fabric is the open source, 100% Gateway API-conformant, NGINX-powered implementation of the [Kubernetes Gateway API](https://gateway-api.sigs.k8s.io/), the standard successor to the Ingress API. It delivers Kubernetes-native traffic management for workloads running on Nutanix Kubernetes Platform (NKP): HTTP and gRPC routing, TLS termination, traffic splitting, and role-based configuration that separates platform and application teams.
 
   Licensing can be added to provide enterprise-grade application delivery, traffic management, and security through F5 NGINX Plus.
 
   ## Key Features
 
-  - **Standards-Based Traffic Management:** Built on the Kubernetes Gateway API, so routing configuration is portable across platforms and clearly split between platform and application teams.
+  - **100% Gateway API Conformant:** Fully conformant with the Kubernetes Gateway API standard, so routing configuration is portable across platforms and clearly split between platform and application teams.
   - **High Performance & Low Latency:** The NGINX data plane handles high throughput with minimal overhead.
   - **Advanced Routing:** HTTP and gRPC routing, header and path matching, traffic splitting, and cross-namespace routing with ReferenceGrant.
   - **Built for NKP:** Install from the NKP catalog, run multiple isolated instances per cluster, and upgrade through Kommander.
