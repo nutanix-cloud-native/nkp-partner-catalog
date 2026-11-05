@@ -149,7 +149,7 @@ overview: |-
 
   ### 2. Create the air-gapped bundle
 
-  Edit `applications/nginx-gateway-fabric/2.8.0/helmrelease/extra_images.txt` to include any additional images required for the air-gapped deployment. For example, to use F5 NGINX Plus, uncomment the `nginx-plus` image line. Then build the air-gapped bundle:
+  Edit `applications/nginx-gateway-fabric/2.8.0/helmrelease/extra-images.txt` to include any additional images required for the air-gapped deployment. For example, to use F5 NGINX Plus, uncomment the `nginx-plus` image line. Then build the air-gapped bundle:
 
   ```shell
   nkp create catalog-bundle --apps=nginx-gateway-fabric=2.8.0 --airgapped
