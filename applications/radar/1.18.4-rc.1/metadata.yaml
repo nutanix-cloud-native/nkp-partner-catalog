@@ -1,0 +1,138 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+displayName: Radar
+description: "Open-source Kubernetes UI for NKP, for humans and AI agents. See what's failing and why, topology, Hubble traffic, Helm and Flux."
+category:
+  - monitoring
+type: preferred-partner
+scope:
+  - workspace
+allowMultipleInstances: false
+licensing:
+  - Pro
+  - Ultimate
+nkpVersionSupport: ">=2.18"
+supportLink: https://radarhq.io/support
+icon: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2IiB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiI+CiAgPGRlZnM+CiAgICA8IS0tIERhcmsgZW1lcmFsZCBiYWNrZ3JvdW5kIGdyYWRpZW50IC0tPgogICAgPHJhZGlhbEdyYWRpZW50IGlkPSJiZ0h1YiIgY3g9IjUwJSIgY3k9IjUwJSIgcj0iNTAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzA3MjkyMCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjcwJSIgc3RvcC1jb2xvcj0iIzAzMTgwZiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMTBhMDYiLz4KICAgIDwvcmFkaWFsR3JhZGllbnQ+CgogICAgPCEtLSBTd2VlcCB0cmFpbCBncmFkaWVudCwgZW1lcmFsZCAtLT4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ic3dlZXBHbG93SHViIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCIgZ3JhZGllbnRUcmFuc2Zvcm09InJvdGF0ZSgtNDUsIDAuNSwgMC41KSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMxMGI5ODEiIHN0b3Atb3BhY2l0eT0iMCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjYwJSIgc3RvcC1jb2xvcj0iIzEwYjk4MSIgc3RvcC1vcGFjaXR5PSIwLjIyIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2E3ZjNkMCIgc3RvcC1vcGFjaXR5PSIwLjU1Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgoKICAgIDwhLS0gUmluZyBnbG93IC0tPgogICAgPGZpbHRlciBpZD0icmluZ0dsb3dIdWIiIHg9Ii0yMCUiIHk9Ii0yMCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjE0MCUiPgogICAgICA8ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSIxLjUiIHJlc3VsdD0iYmx1ciIvPgogICAgICA8ZmVNZXJnZT4KICAgICAgICA8ZmVNZXJnZU5vZGUgaW49ImJsdXIiLz4KICAgICAgICA8ZmVNZXJnZU5vZGUgaW49IlNvdXJjZUdyYXBoaWMiLz4KICAgICAgPC9mZU1lcmdlPgogICAgPC9maWx0ZXI+CgogICAgPCEtLSBEb3QgZ2xvdyAtLT4KICAgIDxmaWx0ZXIgaWQ9ImRvdEdsb3dIdWIiIHg9Ii0xMDAlIiB5PSItMTAwJSIgd2lkdGg9IjMwMCUiIGhlaWdodD0iMzAwJSI+CiAgICAgIDxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjIuNSIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZU1lcmdlPgogICAgICAgIDxmZU1lcmdlTm9kZSBpbj0iYmx1ciIvPgogICAgICAgIDxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPgogICAgICA8L2ZlTWVyZ2U+CiAgICA8L2ZpbHRlcj4KCiAgICA8IS0tIFN3ZWVwIGxpbmUgZ2xvdyAtLT4KICAgIDxmaWx0ZXIgaWQ9ImxpbmVHbG93SHViIiB4PSItNTAlIiB5PSItNTAlIiB3aWR0aD0iMjAwJSIgaGVpZ2h0PSIyMDAlIj4KICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMyIgcmVzdWx0PSJibHVyIi8+CiAgICAgIDxmZU1lcmdlPgogICAgICAgIDxmZU1lcmdlTm9kZSBpbj0iYmx1ciIvPgogICAgICAgIDxmZU1lcmdlTm9kZSBpbj0iU291cmNlR3JhcGhpYyIvPgogICAgICA8L2ZlTWVyZ2U+CiAgICA8L2ZpbHRlcj4KCiAgICA8IS0tIE91dGVyIHJpbmcgZ2xvdyAtLT4KICAgIDxmaWx0ZXIgaWQ9Im91dGVyR2xvd0h1YiIgeD0iLTEwJSIgeT0iLTEwJSIgd2lkdGg9IjEyMCUiIGhlaWdodD0iMTIwJSI+CiAgICAgIDxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjQiIHJlc3VsdD0iYmx1ciIvPgogICAgICA8ZmVNZXJnZT4KICAgICAgICA8ZmVNZXJnZU5vZGUgaW49ImJsdXIiLz4KICAgICAgICA8ZmVNZXJnZU5vZGUgaW49IlNvdXJjZUdyYXBoaWMiLz4KICAgICAgPC9mZU1lcmdlPgogICAgPC9maWx0ZXI+CgogICAgPGNsaXBQYXRoIGlkPSJyYWRhckNsaXBIdWIiPgogICAgICA8Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjExOCIvPgogICAgPC9jbGlwUGF0aD4KICA8L2RlZnM+CgogIDwhLS0gQmFja2dyb3VuZCAtLT4KICA8Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjEyOCIgZmlsbD0iIzAxMGEwNiIvPgogIDxjaXJjbGUgY3g9IjEyOCIgY3k9IjEyOCIgcj0iMTE4IiBmaWxsPSJ1cmwoI2JnSHViKSIvPgoKICA8IS0tIE91dGVyIHJpbmcgLS0+CiAgPGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIxMTgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzM0ZDM5OSIgc3Ryb2tlLXdpZHRoPSIzLjUiIGZpbHRlcj0idXJsKCNvdXRlckdsb3dIdWIpIiBvcGFjaXR5PSIwLjkiLz4KCiAgPCEtLSBDb25jZW50cmljIHJpbmdzIC0tPgogIDxnIGZpbHRlcj0idXJsKCNyaW5nR2xvd0h1YikiIG9wYWNpdHk9IjAuNiI+CiAgICA8Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjkwIiBmaWxsPSJub25lIiBzdHJva2U9IiMwNTk2NjkiIHN0cm9rZS13aWR0aD0iMS4yIi8+CiAgICA8Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjYyIiBmaWxsPSJub25lIiBzdHJva2U9IiMwNTk2NjkiIHN0cm9rZS13aWR0aD0iMS4yIi8+CiAgICA8Y2lyY2xlIGN4PSIxMjgiIGN5PSIxMjgiIHI9IjM0IiBmaWxsPSJub25lIiBzdHJva2U9IiMwNTk2NjkiIHN0cm9rZS13aWR0aD0iMS4yIi8+CiAgPC9nPgoKICA8IS0tIENyb3NzaGFpcnMgLS0+CiAgPGcgb3BhY2l0eT0iMC4xNSIgc3Ryb2tlPSIjMzRkMzk5IiBzdHJva2Utd2lkdGg9IjAuNSI+CiAgICA8bGluZSB4MT0iMTI4IiB5MT0iMTAiIHgyPSIxMjgiIHkyPSIyNDYiLz4KICAgIDxsaW5lIHgxPSIxMCIgeTE9IjEyOCIgeDI9IjI0NiIgeTI9IjEyOCIvPgogIDwvZz4KCiAgPCEtLSBTd2VlcCB0cmFpbCAtLT4KICA8ZyBjbGlwLXBhdGg9InVybCgjcmFkYXJDbGlwSHViKSI+CiAgICA8cGF0aCBkPSJNMTI4LDEyOCBMMTI4LDEwIEExMTgsMTE4IDAgMCwxIDIxMS41LDQ0LjUgWiIgZmlsbD0idXJsKCNzd2VlcEdsb3dIdWIpIiBvcGFjaXR5PSIwLjc1Ii8+CiAgICA8cGF0aCBkPSJNMTI4LDEyOCBMMjExLjUsNDQuNSBBMTE4LDExOCAwIDAsMSAyNDAsOTUgWiIgZmlsbD0iIzEwYjk4MSIgb3BhY2l0eT0iMC4wNiIvPgogIDwvZz4KCiAgPCEtLSBTd2VlcCBsaW5lIC0tPgogIDxsaW5lIHgxPSIxMjgiIHkxPSIxMjgiIHgyPSIyMTEiIHkyPSI0NSIgc3Ryb2tlPSIjYTdmM2QwIiBzdHJva2Utd2lkdGg9IjIiIGZpbHRlcj0idXJsKCNsaW5lR2xvd0h1YikiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogIDxsaW5lIHgxPSIxMjgiIHkxPSIxMjgiIHgyPSIyMTEiIHkyPSI0NSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuOSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CgogIDwhLS0gUmFkYXIgYmxpcHMgLS0+CiAgPGcgZmlsdGVyPSJ1cmwoI2RvdEdsb3dIdWIpIj4KICAgIDxjaXJjbGUgY3g9IjE1NSIgY3k9IjY4IiByPSI0IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjk1Ii8+CiAgICA8Y2lyY2xlIGN4PSIxNzgiIGN5PSIxMDgiIHI9IjMuNSIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC45Ii8+CiAgICA8Y2lyY2xlIGN4PSI5OCIgY3k9Ijg1IiByPSIzIiBmaWxsPSIjZWNmZGY1IiBvcGFjaXR5PSIwLjciLz4KICAgIDxjaXJjbGUgY3g9Ijg1IiBjeT0iMTU1IiByPSIzLjUiIGZpbGw9IiNlY2ZkZjUiIG9wYWNpdHk9IjAuNjUiLz4KICAgIDxjaXJjbGUgY3g9IjE2MCIgY3k9IjE3NSIgcj0iMyIgZmlsbD0iI2VjZmRmNSIgb3BhY2l0eT0iMC42Ii8+CiAgICA8Y2lyY2xlIGN4PSIxMDgiIGN5PSIxOTUiIHI9IjMuNSIgZmlsbD0iI2VjZmRmNSIgb3BhY2l0eT0iMC41Ii8+CiAgPC9nPgoKICA8IS0tIENlbnRlciBkb3QgLS0+CiAgPGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIzIiBmaWxsPSIjNmVlN2I3IiBmaWx0ZXI9InVybCgjZG90R2xvd0h1YikiIG9wYWNpdHk9IjAuOSIvPgo8L3N2Zz4K
+overview: |
+  ## Overview
+
+  Radar is the open-source Kubernetes UI for NKP, for humans and AI agents. kubectl answers one question at a time. Radar shows the whole cluster: how resources connect, what is failing and why, what changed and when, and the traffic between services. AI agents such as Claude Code, Codex and Cursor get the same view through Radar's built-in MCP server. It works with what NKP already runs, including Cilium Hubble, Flux, Prometheus, cert-manager, Velero and OpenCost, so there is nothing to set up. Radar is Apache 2.0 open source, built in the open on GitHub with weekly releases.
+
+  ## Key Features
+
+  On each cluster, free and open source:
+
+  - **Find and fix failures:** failing workloads folded to their cause, with the resources each one affects, then the logs, events, YAML and related resources one click away.
+  - **For AI agents:** a built-in MCP server gives Claude Code, Codex, Cursor and other agents Radar's view of the cluster instead of raw kubectl output.
+  - **Live topology:** how workloads, Services and Ingresses connect, updated as the cluster changes.
+  - **Network traffic from Hubble:** which services talk to each other, read from NKP's built-in Cilium Hubble with no extra setup.
+  - **Events and change history:** Kubernetes events and resource changes, with a diff of each change, kept long past Kubernetes' one-hour event limit.
+  - **Helm and Flux:** Helm release values, history and diffs between revisions, Flux sync state and drift, and Argo CD if you run it. Upgrade or roll back from the UI when you allow it.
+  - **Metrics, cost and backups:** workload CPU, memory and throttling from NKP's Prometheus, cost from OpenCost, and Velero backups and restores.
+  - **Certificates:** cert-manager Certificates and Issuers, and whether each one is ready.
+  - **[Checks](https://radarhq.io/docs/features/cluster-audit):** best-practice checks for security, reliability and efficiency, labeled with NSA/CISA and CIS, an [upgrade impact](https://radarhq.io/docs/features/upgrade-impact) report before you move to a new Kubernetes version, and [who can do what](https://radarhq.io/docs/features/access-control) through RBAC.
+
+  With Radar Cloud, free to start ([pricing](https://radarhq.io/pricing)):
+
+  - **Alerts:** one alert per failure, not one per pod, sent to Slack or any webhook.
+  - **AI investigations:** a root cause with evidence, run automatically on the alerts you choose or on demand.
+  - **Every cluster in one place:** issues, checks, certificates and search across all your clusters, and a side-by-side diff when two clusters disagree.
+  - **History:** events and changes kept long after Kubernetes deletes them, even after the pods involved are gone.
+  - **Your team:** share any view by link, scoped by your Kubernetes RBAC, so nobody hands out a kubeconfig.
+
+  ## Getting started
+
+  **On each cluster:**
+
+  1. In the NKP UI, open your workspace, go to **Applications**, find Radar in the partner catalog and select **Enable**. Radar needs no settings.
+  2. On any cluster in the workspace, open `https://<cluster address>/radar`, using the same address as that cluster's other NKP dashboards, such as Grafana, and sign in with your NKP login.
+
+  Nothing leaves the cluster.
+
+  **With Radar Cloud:**
+
+  **[Connect your NKP clusters to Radar Cloud](https://app.radarhq.io/partners/nutanix?utm_source=nutanix&utm_medium=marketplace&utm_campaign=nkp-catalog)**
+
+  Radar Cloud has a free plan that needs no credit card, and paid plans start with a free trial. See [Radar Cloud pricing](https://radarhq.io/pricing).
+
+  The connect page creates an enrollment key and gives you the settings to paste into the workspace configuration for Radar (see "Connecting to Radar Cloud" below). Connected clusters open an outbound connection to Radar Cloud, and you open them from Radar Cloud instead of `/radar`. No outbound access, or an air-gapped site? Run [Radar Cloud on your own infrastructure](https://radarhq.io/docs/cloud/self-hosted), [air-gapped](https://radarhq.io/docs/cloud/self-hosted/install#air-gapped-install) if needed.
+
+  ## Security and access
+
+  On each cluster:
+
+  - **NKP sign-in.** `/radar` uses the same NKP login as the workspace's other dashboards. Anyone with view access to the workspace can open it.
+  - **Read-only by default.** Radar doesn't read Secrets, open a shell in a pod or change Helm releases unless you turn those on.
+  - **[Your Kubernetes RBAC decides](https://radarhq.io/docs/configuration/authentication).** Each person sees only the namespaces they can access, and every change runs as that person through Kubernetes impersonation.
+
+  With Radar Cloud:
+
+  - **[Single sign-on](https://radarhq.io/docs/cloud/sso)** with SAML or OIDC, with [identity provider groups](https://radarhq.io/docs/cloud/idp-groups) mapped to Kubernetes permissions.
+  - **[Your identity provider's own tokens](https://radarhq.io/docs/cloud/self-hosted/user-tokens).** With a self-managed Radar Cloud, clusters call the Kubernetes API with each person's own SSO token, so the RBAC you already have applies unchanged.
+  - **[Audit log](https://radarhq.io/docs/cloud/audit-log)** of sign-ins, membership and credential changes, pod terminal sessions and AI assistant tool calls, exportable as JSON or CSV.
+  - **[Personal access tokens](https://radarhq.io/docs/cloud/personal-access-tokens)** for AI assistants and CI: per person, revocable at any time.
+
+  ## Configuration
+
+  Radar needs no input. To serve it on its own hostname and certificate instead of `/radar`, override:
+
+  ```yaml
+  basePath: ""
+  ingress:
+    hosts:
+      - host: radar.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: radar-tls
+        hosts:
+          - radar.example.com
+  ```
+
+  ### Storage
+
+  The event history is kept on a 50Gi volume, capped at 40Gi. How much a cluster needs depends on its size and how many events and changes it produces: a small, quiet cluster can run on 10Gi, while a large or busy one may need more than 50Gi. We recommend starting with 50Gi and adjusting as needed. To change it, override both values together, keeping `timeline.maxSize` at about 80% of the volume:
+
+  ```yaml
+  persistence:
+    size: 100Gi
+  timeline:
+    maxSize: 80Gi
+  ```
+
+  ### Connecting to Radar Cloud
+
+  The connect page creates an enrollment key and gives you these settings filled in, to paste into the workspace configuration for Radar:
+
+  ```yaml
+  basePath: ""
+  ingress:
+    enabled: false
+  cloud:
+    enabled: true
+    hubURL: https://api.radarhq.io
+    enrollment:
+      key: <enrollment key>
+  rbac:
+    helm: true
+    secrets: true
+    podExec: true
+    portForward: true
+    metrics: true
+  ```
+
+  The key is stored with the workspace configuration, so anyone who can read that configuration can see it. On NKP 2.19 and later, each cluster appears in Radar Cloud under its name in NKP.
+
+  All settings are in the [Radar Helm chart values](https://github.com/skyhook-io/radar/blob/v1.18.4-rc.1/deploy/helm/radar/values.yaml).
+
+  ## Support
+
+  Radar is open source: ask questions and report issues on [GitHub](https://github.com/skyhook-io/radar/issues). Paid Radar Cloud plans include support by email at support@radarhq.io and in a dedicated Slack channel, with response times by plan. See [Radar support](https://radarhq.io/support).
+
+  ## More Information
+
+  - [Radar documentation](https://radarhq.io/docs)
+  - [Radar Cloud pricing](https://radarhq.io/pricing)
+  - [Radar on GitHub](https://github.com/skyhook-io/radar)
+  - [Radar community](https://radarhq.io/community): GitHub Discussions and time with the maintainers
