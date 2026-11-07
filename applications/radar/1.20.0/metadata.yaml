@@ -124,7 +124,7 @@ overview: |
 
   The key is stored with the workspace configuration, so anyone who can read that configuration can see it. On NKP 2.19 and later, each cluster appears in Radar Cloud under its name in NKP.
 
-  All settings are in the [Radar Helm chart values](https://github.com/skyhook-io/radar/blob/v1.18.4-rc.1/deploy/helm/radar/values.yaml).
+  All settings are in the [Radar Helm chart values](https://github.com/skyhook-io/radar/blob/v1.20.0/deploy/helm/radar/values.yaml).
 
   ## Support
 
