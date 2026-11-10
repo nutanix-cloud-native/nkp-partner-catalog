@@ -40,26 +40,38 @@ func createHubTokenSecret(name, namespace string) *unstructured.Unstructured {
 	}
 }
 
-// setTraefikHubValues patches the defaults ConfigMap so that hub.token points
-// to a real Kubernetes secret name instead of the placeholder "XXX".
-func setTraefikHubValues(ctx context.Context, releaseName, version, namespace string) error {
-	cm := &unstructured.Unstructured{
-		Object: map[string]interface{}{
-			"apiVersion": "v1",
-			"kind":       "ConfigMap",
-		},
-	}
-	cmName := releaseName + "-" + version + "-config-defaults"
-	if err := k8sClient.Get(ctx, ctrlClient.ObjectKey{Name: cmName, Namespace: namespace}, cm); err != nil {
+// setTraefikHubValues patches the defaults ConfigMap referenced by the
+// HelmRelease valuesFrom so that hub.token points to a real Kubernetes secret
+// name instead of the placeholder "XXX".
+func setTraefikHubValues(ctx context.Context, releaseName, namespace string) error {
+	hr := &fluxhelmv2.HelmRelease{}
+	if err := k8sClient.Get(ctx, ctrlClient.ObjectKey{Name: releaseName, Namespace: namespace}, hr); err != nil {
 		return err
 	}
-	valuesYAML, _, _ := unstructured.NestedString(cm.Object, "data", "values.yaml")
-	valuesYAML = strings.Replace(valuesYAML, "token: \"XXX\"", "token: \""+hubTokenSecretName+"\"", 1)
-	valuesYAML = strings.Replace(valuesYAML, "token: \"XXXX\"", "token: \""+hubTokenSecretName+"\"", 1)
-	if err := unstructured.SetNestedField(cm.Object, valuesYAML, "data", "values.yaml"); err != nil {
-		return err
+	for _, ref := range hr.Spec.ValuesFrom {
+		if ref.Kind != "ConfigMap" {
+			continue
+		}
+		cm := &unstructured.Unstructured{
+			Object: map[string]interface{}{
+				"apiVersion": "v1",
+				"kind":       "ConfigMap",
+			},
+		}
+		if err := k8sClient.Get(ctx, ctrlClient.ObjectKey{Name: ref.Name, Namespace: namespace}, cm); err != nil {
+			return err
+		}
+		valuesYAML, _, _ := unstructured.NestedString(cm.Object, "data", "values.yaml")
+		valuesYAML = strings.Replace(valuesYAML, "token: \"XXX\"", "token: \""+hubTokenSecretName+"\"", 1)
+		valuesYAML = strings.Replace(valuesYAML, "token: \"XXXX\"", "token: \""+hubTokenSecretName+"\"", 1)
+		if err := unstructured.SetNestedField(cm.Object, valuesYAML, "data", "values.yaml"); err != nil {
+			return err
+		}
+		if err := k8sClient.Update(ctx, cm); err != nil {
+			return err
+		}
 	}
-	return k8sClient.Update(ctx, cm)
+	return nil
 }
 
 var _ = Describe("traefik-hub Tests", Label("traefik-hub"), func() {
@@ -100,7 +112,7 @@ var _ = Describe("traefik-hub Tests", Label("traefik-hub"), func() {
 			err = t.Install(ctx, env)
 			Expect(err).ToNot(HaveOccurred())
 
-			err = setTraefikHubValues(ctx, t.Name(), *appVersion, catalog.DefaultNamespace)
+			err = setTraefikHubValues(ctx, t.Name(), catalog.DefaultNamespace)
 			Expect(err).ToNot(HaveOccurred())
 			GinkgoWriter.Printf("Install applied, waiting for HelmRelease to become Ready\n")
 
@@ -177,7 +189,7 @@ var _ = Describe("traefik-hub Tests", Label("traefik-hub"), func() {
 			err = t.InstallPreviousVersion(ctx, env)
 			Expect(err).ToNot(HaveOccurred())
 
-			err = setTraefikHubValues(ctx, t.Name(), *appVersion, catalog.DefaultNamespace)
+			err = setTraefikHubValues(ctx, t.Name(), catalog.DefaultNamespace)
 			Expect(err).ToNot(HaveOccurred())
 
 			hr = &fluxhelmv2.HelmRelease{
@@ -205,6 +217,9 @@ var _ = Describe("traefik-hub Tests", Label("traefik-hub"), func() {
 
 		It("should upgrade traefik-hub successfully", func() {
 			err := t.Upgrade(ctx, env)
+			Expect(err).ToNot(HaveOccurred())
+
+			err = setTraefikHubValues(ctx, t.Name(), catalog.DefaultNamespace)
 			Expect(err).ToNot(HaveOccurred())
 
 			hr = &fluxhelmv2.HelmRelease{
