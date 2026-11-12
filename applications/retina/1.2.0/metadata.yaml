@@ -1,0 +1,16 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+allowMultipleInstances: true
+category:
+- general
+description: Kubernetes observability with Retina
+displayName: Retina
+icon: ""
+licensing:
+- Pro
+- Ultimate
+overview: |-
+  Retina provides Kubernetes network observability using Hubble-compatible telemetry.
+scope:
+- project
+supportLink: https://retina.sh/
+---
