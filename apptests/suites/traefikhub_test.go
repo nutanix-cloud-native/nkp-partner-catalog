@@ -11,6 +11,7 @@ import (
 	apimeta "github.com/fluxcd/pkg/apis/meta"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"golang.org/x/mod/semver"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	ctrlClient "sigs.k8s.io/controller-runtime/pkg/client"
@@ -21,6 +22,9 @@ import (
 const (
 	hubTokenSecretName = "traefik-hub-token" //nolint:gosec // not a credential, just a resource name
 	hubTokenEnvVar     = "TRAEFIK_HUB_TOKEN" //nolint:gosec // not a credential, just an env var name
+	// hubProxyModeVersion is the first version whose defaults install without
+	// a license, with Traefik Hub running in proxy-only mode.
+	hubProxyModeVersion = "v3.21.0"
 )
 
 func createHubTokenSecret(name, namespace string) *unstructured.Unstructured {
@@ -42,7 +46,7 @@ func createHubTokenSecret(name, namespace string) *unstructured.Unstructured {
 
 // setTraefikHubValues patches the defaults ConfigMap referenced by the
 // HelmRelease valuesFrom so that hub.token points to a real Kubernetes secret
-// name instead of the placeholder "XXX".
+// name instead of the default, "" or the placeholder "XXX".
 func setTraefikHubValues(ctx context.Context, releaseName, namespace string) error {
 	hr := &fluxhelmv2.HelmRelease{}
 	if err := k8sClient.Get(ctx, ctrlClient.ObjectKey{Name: releaseName, Namespace: namespace}, hr); err != nil {
@@ -64,6 +68,7 @@ func setTraefikHubValues(ctx context.Context, releaseName, namespace string) err
 		valuesYAML, _, _ := unstructured.NestedString(cm.Object, "data", "values.yaml")
 		valuesYAML = strings.Replace(valuesYAML, "token: \"XXX\"", "token: \""+hubTokenSecretName+"\"", 1)
 		valuesYAML = strings.Replace(valuesYAML, "token: \"XXXX\"", "token: \""+hubTokenSecretName+"\"", 1)
+		valuesYAML = strings.Replace(valuesYAML, "token: \"\"", "token: \""+hubTokenSecretName+"\"", 1)
 		if err := unstructured.SetNestedField(cm.Object, valuesYAML, "data", "values.yaml"); err != nil {
 			return err
 		}
@@ -82,7 +87,7 @@ var _ = Describe("traefik-hub Tests", Label("traefik-hub"), func() {
 		)
 
 		BeforeAll(func() {
-			if os.Getenv(hubTokenEnvVar) == "" {
+			if os.Getenv(hubTokenEnvVar) == "" && semver.Compare("v"+*appVersion, hubProxyModeVersion) < 0 {
 				Skip(fmt.Sprintf("skipping traefik-hub test: %s env var not set", hubTokenEnvVar))
 			}
 
@@ -103,17 +108,24 @@ var _ = Describe("traefik-hub Tests", Label("traefik-hub"), func() {
 		})
 
 		It("should install successfully with default config", func() {
-			secret := createHubTokenSecret(hubTokenSecretName, catalog.DefaultNamespace)
-			err := k8sClient.Create(ctx, secret)
-			Expect(err).ToNot(HaveOccurred())
+			// Without a license, the defaults are installed as they are and
+			// Traefik Hub runs in proxy-only mode.
+			hasToken := os.Getenv(hubTokenEnvVar) != ""
+			if hasToken {
+				secret := createHubTokenSecret(hubTokenSecretName, catalog.DefaultNamespace)
+				err := k8sClient.Create(ctx, secret)
+				Expect(err).ToNot(HaveOccurred())
+			}
 
 			t = catalog.NewAppScenario("traefik-hub", *appVersion).(*catalog.App)
 			GinkgoWriter.Printf("Installing %s @ %s\n", t.Name(), *appVersion)
-			err = t.Install(ctx, env)
+			err := t.Install(ctx, env)
 			Expect(err).ToNot(HaveOccurred())
 
-			err = setTraefikHubValues(ctx, t.Name(), catalog.DefaultNamespace)
-			Expect(err).ToNot(HaveOccurred())
+			if hasToken {
+				err = setTraefikHubValues(ctx, t.Name(), catalog.DefaultNamespace)
+				Expect(err).ToNot(HaveOccurred())
+			}
 			GinkgoWriter.Printf("Install applied, waiting for HelmRelease to become Ready\n")
 
 			hr = &fluxhelmv2.HelmRelease{

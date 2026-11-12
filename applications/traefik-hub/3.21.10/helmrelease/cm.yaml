@@ -7,7 +7,7 @@ data:
       repository: traefik/traefik-hub
       tag: "v3.21.10"
     hub:
-      token: "XXX"
+      token: ""
       apimanagement:
         enabled: true
       aigateway:
