@@ -1,7 +1,7 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: ${releaseName}-${appVersion}-defaults
+  name: ${releaseName}-1.20.0-defaults
   namespace: ${releaseNamespace}
 data:
   # Source: https://github.com/skyhook-io/radar/blob/v1.20.0/deploy/helm/radar/values.yaml
