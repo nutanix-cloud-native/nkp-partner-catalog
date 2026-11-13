@@ -101,6 +101,18 @@ overview: |
     maxSize: 80Gi
   ```
 
+  ### Signing out
+
+  Signing out of Radar signs you out of `/radar` on that cluster. To also end your NKP dashboard session, add the management cluster's logout page. Use the address you open the NKP dashboard at:
+
+  ```yaml
+  auth:
+    proxy:
+      logoutURL: https://<management cluster address>/dkp/kommander/dashboard/logout
+  ```
+
+  If your NKP login goes through a single sign-on provider that remembers you, such as Okta or Microsoft Entra ID, the next sign-in may not ask for a password. Signing out of that provider ends that session.
+
   ### Connecting to Radar Cloud
 
   The connect page creates an enrollment key and gives you these settings filled in, to paste into the workspace configuration for Radar:
@@ -124,7 +136,7 @@ overview: |
 
   The key is stored with the workspace configuration, so anyone who can read that configuration can see it. On NKP 2.19 and later, each cluster appears in Radar Cloud under its name in NKP.
 
-  All settings are in the [Radar Helm chart values](https://github.com/skyhook-io/radar/blob/v1.20.2/deploy/helm/radar/values.yaml).
+  All settings are in the [Radar Helm chart values](https://github.com/skyhook-io/radar/blob/v1.20.3/deploy/helm/radar/values.yaml).
 
   ## Support
 
