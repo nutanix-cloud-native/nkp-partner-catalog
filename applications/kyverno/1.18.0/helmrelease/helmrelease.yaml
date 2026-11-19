@@ -7,7 +7,7 @@ spec:
   interval: 24h
   url: oci://ghcr.io/nirmata/charts/kyverno
   ref:
-    tag: 3.8.2
+    tag: 3.8.7
   layerSelector:
     mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
 ---
