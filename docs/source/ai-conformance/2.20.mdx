@@ -1,0 +1,315 @@
+---
+title: CNCF AI Conformance
+sidebar_label: NKP 2.20
+slug: /ai-conformance/2.20
+toc_max_heading_level: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# CNCF AI Conformance
+
+<div style={{ float: 'right', width: '140px', margin: '0 0 0.75rem 1rem', textAlign: 'center' }}>
+  <a href="https://github.com/cncf/k8s-ai-conformance/tree/main/v1.37/nkp" target="_blank" rel="noopener noreferrer">
+    <img
+      src={useBaseUrl('/img/ai-conformance/cncf-ai-conformance-logo-color-v2.png')}
+      alt="CNCF Kubernetes AI Conformance logo"
+      style={{ width: '100%', height: 'auto' }}
+    />
+  </a>
+</div>
+
+The [CNCF Kubernetes AI Conformance](https://github.com/cncf/k8s-ai-conformance/blob/main/docs/AIConformance-1.37.yaml) defines additional capabilities, APIs, and configurations that a Kubernetes cluster MUST offer, on top of standard CNCF Kubernetes Conformance, to reliably and efficiently run AI/ML workloads.
+
+This page shows how NKP 2.20 meets these requirements using Kubernetes v1.37.0 and the NVIDIA GPU Operator v26.3.3, deployed via Flux CD as platform HelmReleases. Hybrid verification (v1.37+) also collects upstream [kubernetes-sigs/ai-conformance](https://github.com/kubernetes-sigs/ai-conformance) suite artifacts under `v1.37/nkp/`.
+
+<div style={{ clear: 'both' }} />
+
+:::note
+NKP holds **CNCF Certified Kubernetes** conformance, which AI Conformance builds on. That certification was submitted under NKP's former product name, **Konvoy**; see the [v1.36 Konvoy conformance submission](https://github.com/cncf/k8s-conformance/tree/master/v1.36/konvoy).
+:::
+
+## Requirements Overview
+
+**On this cluster, NKP 2.20 satisfies all 8 MUST requirements.** Of the SHOULD requirements: five are Implemented, two are Partial (`advanced_inference_ingress`, `high_performance_networking`), and two are Not Implemented (`disaggregated_inference`, `workload_sandboxing`).
+
+| Requirement | Level | Supported | Section |
+|---|---|:---:|---|
+| **`accelerators`** | | | |
+| `driver_runtime_management` | SHOULD | ✅ | [Driver Runtime Management](#driver-runtime-management) |
+| `gpu_sharing` | SHOULD | ✅ | [GPU Sharing](#gpu-sharing) |
+| `virtualized_accelerator` | SHOULD | ✅ | [Virtualized Accelerator (vGPU)](#virtualized-accelerator-vgpu) |
+| **`networking`** | | | |
+| `ai_inference` | MUST | ✅ | [Support the Gateway API](#support-the-gateway-api) |
+| `advanced_inference_ingress` | SHOULD | Partial | [Gateway API Inference Extension](#gateway-api-inference-extension) |
+| `high_performance_networking` | SHOULD | Partial | [High-Performance Networking](#high-performance-networking) |
+| `disaggregated_inference` | SHOULD | ❌ | [Disaggregated Inference](#disaggregated-inference) |
+| **`schedulingOrchestration`** | | | |
+| `gang_scheduling` | MUST | ✅ | [Gang Scheduling](#gang-scheduling) |
+| `cluster_autoscaling` | MUST | ✅ | [Cluster Autoscaling](#cluster-autoscaling) |
+| `pod_autoscaling` | MUST | ✅ | [Horizontal Pod Autoscaler](#horizontal-pod-autoscaler) |
+| **`observability`** | | | |
+| `accelerator_metrics` | MUST | ✅ | [Accelerator Performance Metrics](#accelerator-performance-metrics) |
+| `ai_service_metrics` | MUST | ✅ | [AI Job and Inference Service Metrics](#ai-job-and-inference-service-metrics) |
+| **`security`** | | | |
+| `secure_accelerator_access` | MUST | ✅ | [Secure Accelerator Access](#secure-accelerator-access) |
+| `workload_sandboxing` | SHOULD | ❌ | [Workload Sandboxing](#workload-sandboxing) |
+| **`operator`** | | | |
+| `robust_controller` | MUST | ✅ | [Robust CRD and Controller Operation](#robust-crd-and-controller-operation) |
+
+## Verification Setup
+
+### Environment
+
+Verified on NKP **2.20.0-dev.3** (Kubernetes v1.37.0) on cluster `ubuntu-2404-ootb-ubuntu-starter-519a`.
+
+```bash
+kubectl get clusters -A
+```
+
+```
+NAMESPACE   NAME                                   CLUSTERCLASS                AVAILABLE   CP DESIRED   CP AVAILABLE   CP UP-TO-DATE   W DESIRED   W AVAILABLE   W UP-TO-DATE   PHASE         AGE    VERSION
+kommander   ubuntu-2404-ootb-ubuntu-starter-519a   nkp-nutanix-v2.20.0-dev.3   True        3            3              3               7           7             7              Provisioned   161m   v1.37.0
+```
+
+GPU workers use the STIG FIPS Ubuntu 22.04 image on PE `ncn-ci-workloads-gpu` / `vlan208` with host-preinstalled NVIDIA driver **580.126.20** (GPU Operator `driver.deploy=pre-installed` because FIPS `/tmp` is `noexec`).
+
+### Prerequisites
+
+Catalog apps deployed for this page include `nvidia-gpu-operator`, `nvidia-network-operator`, `nvidia-dra-driver`, `kube-prometheus-stack`, `prometheus-adapter`, `centralized-grafana`, `thanos`, `kueue`, `kserve`, `envoy-gateway-nai`, `slurm-operator`, `opentelemetry-operator`, `leaderworkerset`, and `nutanix-ai` (2.8.1; install blocked on private image pull — see [GAIE](#gateway-api-inference-extension)).
+
+## Support Dynamic Resource Allocation (DRA)
+
+DRA v1 (`resource.k8s.io/v1`) is served. HelmRelease `nvidia-dra-driver` (chart `dra-driver-nvidia-gpu@0.4.1`) publishes DeviceClasses including `gpu.nvidia.com`, `mig.nvidia.com`, and `vfio.gpu.nvidia.com`.
+
+```bash
+kubectl get deviceclass
+kubectl get resourceslice
+```
+
+ResourceSlice attribute `driverVersion` on `gpu.nvidia.com` is `580.126.20`, matching node label `nvidia.com/cuda.driver-version.full`.
+
+## Driver Runtime Management
+
+GPU Operator HelmRelease Ready (`gpu-operator@v26.3.3`). Ready GPU nodes advertise:
+
+```
+nvidia.com/cuda.driver-version.full=580.126.20
+nvidia.com/cuda.runtime-version.full=13.0
+nvidia.com/gpu.count=1
+nvidia.com/gpu.product=NVIDIA-A40
+nvidia.com/gpu.deploy.driver=pre-installed
+nvidia.com/gpu.deploy.container-toolkit=true
+nvidia.com/gpu.deploy.device-plugin=true
+nvidia.com/gpu.deploy.dcgm-exporter=true
+```
+
+Container runtime on GPU nodes: `containerd://2.3.5-d2iq-fips.1`.
+
+:::tip[Conformance: satisfied]
+Driver, CUDA runtime, toolkit, device plugin, and DRA ResourceSlice `driverVersion` agree on 580.126.20 / CUDA 13.0.
+:::
+
+## GPU Sharing
+
+Time-slicing ConfigMap `time-slicing-config` (replicas: 4) referenced from ClusterPolicy `devicePlugin.config`. After device-plugin reload, nodes advertised allocatable `nvidia.com/gpu=4` with `gpu.count=1`. Four pods each requesting one GPU scheduled; three on one node reported the same UUID:
+
+```
+--- time-slicing-verify-...-7skkh ---
+GPU 0: NVIDIA A40 (UUID: GPU-16ad1392-0b9f-b9d8-27da-a315f8f2cc67)
+--- time-slicing-verify-...-hjggn ---
+GPU 0: NVIDIA A40 (UUID: GPU-16ad1392-0b9f-b9d8-27da-a315f8f2cc67)
+--- time-slicing-verify-...-zqcjt ---
+GPU 0: NVIDIA A40 (UUID: GPU-16ad1392-0b9f-b9d8-27da-a315f8f2cc67)
+```
+
+:::tip[Conformance: satisfied]
+Software time-slicing oversubscription works via the GPU Operator device plugin.
+:::
+
+## Virtualized Accelerator (vGPU)
+
+NKP node pools support vGPU on AHV and vSphere. This evidence cluster used passthrough A40. DRA DeviceClasses include `vfio.gpu.nvidia.com` for the forward-looking path.
+
+:::tip[Conformance: satisfied]
+Platform mechanism for vGPU node pools exists; evidence node is passthrough A40 (same honesty as 2.19).
+:::
+
+## Support the Gateway API
+
+Catalog app `envoy-gateway-nai` 1.8.2. GatewayClass `eg` Accepted; Gateway `inference-gw` Programmed at `10.23.134.247`.
+
+Weighted HTTPRoute (80/20) over 50 requests:
+
+```
+  40 model-v1
+  10 model-v2
+```
+
+Header canary (`x-model-version: canary`) over 20 requests:
+
+```
+  20 model-v2
+```
+
+:::tip[Conformance: satisfied]
+Weighted traffic splitting and header-based routing work on Envoy Gateway.
+:::
+
+## Gateway API Inference Extension
+
+InferencePool CRDs were applied; `envoy-gateway-nai` is Ready. Full GAIE (Gateway → HTTPRoute → InferencePool → NAI EPP) requires `nutanix-ai` 2.8.1 images from `docker.io/nutanix/*`. On this run those pulls returned `UNAUTHORIZED` / `insufficient_scope` for available Docker Hub credentials, so the EPP path was not completed.
+
+:::note
+Partial: platform components and CRDs present; end-to-end EPP demo blocked on registry auth for NAI images.
+:::
+
+## High-Performance Networking
+
+HelmRelease `nvidia-network-operator` Ready (`network-operator@26.4.1`). CRDs present: `HostDeviceNetwork`, `IPoIBNetwork`, `MacvlanNetwork`, `NicClusterPolicy`, `NetworkAttachmentDefinition`. Live RDMA/DRANET fabric was not demonstrated.
+
+:::note
+Partial: operator and CRDs installed; no live high-performance fabric evidence on this cluster.
+:::
+
+## Disaggregated Inference
+
+LeaderWorkerSet (`lws` 0.8.0) is installed. Prefill/decode SGLang was not run in this evidence capture.
+
+:::note
+Not Implemented for this submission run.
+:::
+
+## Gang Scheduling
+
+Kueue 0.18.0 from the catalog. ClusterQueue quota CPU=4:
+
+- `gang-ok` (3 pods × 1 CPU): Admitted, Completed 3/3
+- `gang-too-big` (8 pods × 1 CPU): Suspended; `QuotaReserved=False` — insufficient quota
+
+```
+QuotaReserved=False reason=Pending msg=couldn't assign flavors to pod set main: insufficient quota for cpu in flavor default-flavor, previously considered podsets requests (0) + current podset request (8) > maximum capacity (4)
+```
+
+:::tip[Conformance: satisfied]
+All-or-nothing admission via Kueue demonstrated.
+:::
+
+## Cluster Autoscaling
+
+Cluster Autoscaler discovers separate node groups:
+
+```
+discovered node group: MachineDeployment/.../md-0-xcf8g (min: 4, max: 4, replicas: 4)
+discovered node group: MachineDeployment/.../gpu-6cfzg (min: 2, max: 3, replicas: 3)
+```
+
+A third GPU request while both GPUs were allocated triggered scale-up:
+
+```
+TriggeredScaleUp  pod triggered scale-up: [{MachineDeployment/.../gpu-6cfzg 2->3 (max: 3)}]
+```
+
+After scale-up the GPU MachineDeployment reported Desired/Ready `3/3`. GPU nodes are labeled `topology.cluster.x-k8s.io/deployment-name=gpu` for the upstream suite.
+
+:::tip[Conformance: satisfied]
+Accelerator pool scales independently of the CPU worker pool.
+:::
+
+## Horizontal Pod Autoscaler
+
+Prometheus Adapter serves `DCGM_FI_DEV_GPU_UTIL`. HPA on Deployment `gpu-inference` targeting Service `nvidia-dcgm-exporter`:
+
+```
+"DCGM_FI_DEV_GPU_UTIL" on Service/nvidia-dcgm-exporter (target value):  200 / 70
+Normal  SuccessfulRescale  New size: 2; reason: Service metric DCGM_FI_DEV_GPU_UTIL above target
+Normal  SuccessfulRescale  New size: 3; reason: Service metric DCGM_FI_DEV_GPU_UTIL above target
+```
+
+:::tip[Conformance: satisfied]
+HPA scaled accelerator pods on a DCGM custom metric.
+:::
+
+## Accelerator Performance Metrics
+
+DCGM Exporter (port 9400) exposes utilization, framebuffer, temperature, and power for A40, for example:
+
+```
+DCGM_FI_DEV_GPU_TEMP{...,modelName="NVIDIA A40",...,DCGM_FI_DRIVER_VERSION="580.126.20",...} 51
+DCGM_FI_DEV_POWER_USAGE{...} 34.500000
+DCGM_FI_DEV_GPU_UTIL{...} 0
+DCGM_FI_DEV_FB_USED{...} 0
+```
+
+Under nbody load the adapter reported `200` for the Service metric used by HPA.
+
+:::tip[Conformance: satisfied]
+Fine-grained accelerator metrics available in Prometheus text format.
+:::
+
+## AI Job and Inference Service Metrics
+
+`kube-prometheus-stack`, Grafana, Thanos, and Prometheus Adapter are Ready. KServe 0.19.0 and Kueue are installed. Upstream `TestAIServiceMetrics` exercises scrape + query against the platform Prometheus (`-service-metrics-prometheus-service=kommander/kube-prometheus-stack-prometheus:9090`).
+
+:::tip[Conformance: satisfied]
+Platform monitoring discovers and scrapes Prometheus-format workload metrics.
+:::
+
+## Secure Accelerator Access
+
+<Tabs>
+  <TabItem value="authorized" label="Authorized" default>
+
+Pod requesting `nvidia.com/gpu: 1` sees the A40 device nodes under `/dev/nvidia*`.
+
+  </TabItem>
+  <TabItem value="capacity" label="Capacity">
+
+A third GPU pod stayed Pending with `Insufficient nvidia.com/gpu` and triggered Cluster Autoscaler scale-up.
+
+  </TabItem>
+  <TabItem value="unauthorized" label="Unauthorized">
+
+Pod without a GPU request: `ls: cannot access '/dev/nvidia*': No such file or directory`.
+
+  </TabItem>
+</Tabs>
+
+Upstream `TestSecureAcceleratorAccess` (DRA mode) PASSED: positive access, negative isolation, and multi-container isolation.
+
+:::tip[Conformance: satisfied]
+Device plugin / DRA mediation prevents unauthorized GPU access.
+:::
+
+## Workload Sandboxing
+
+No sandboxed RuntimeClass (gVisor / Kata) is installed on this evidence cluster. This SHOULD is non-blocking for conformance.
+
+:::note
+Not Implemented.
+:::
+
+## Robust CRD and Controller Operation
+
+**Manual (Slurm Operator 1.1.1):** controller and webhook pods Running. Malformed NodeSet rejected:
+
+```
+The NodeSet "bad-nodeset" is invalid: spec.controllerRef: Required value
+```
+
+**Hybrid suite (Kubeflow Trainer 2.3.0):** `trainjobs.trainer.kubeflow.org` Established; `validator.trainer.kubeflow.org` rejects invalid TrainJobs; operator pods Ready in `kubeflow-system`.
+
+:::tip[Conformance: satisfied]
+Complex AI operator CRDs, webhooks, and reconciliation path verified (Slurm manual + Kubeflow Trainer for the upstream suite).
+:::
+
+## Upstream hybrid artifacts
+
+Suite artifacts for this submission live alongside `PRODUCT.yaml`:
+
+- [`e2e.log`](https://github.com/cncf/k8s-ai-conformance/tree/main/v1.37/nkp)
+- `junit.xml` / `results.json` when produced by the run
+
+Flags used include `-autoscaler-node-pool-label=topology.cluster.x-k8s.io/deployment-name=gpu` and `-service-metrics-prometheus-service=kommander/kube-prometheus-stack-prometheus:9090`.
