@@ -34,7 +34,7 @@ const (
 // installGatewayAPICRDs applies the Gateway API CRDs that NKP provides at runtime.
 // Objects that already exist (for example, when running against an NKP cluster) are left as they are.
 func installGatewayAPICRDs(ctx context.Context) error {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, ngfGatewayAPICRDsURL, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, ngfGatewayAPICRDsURL, http.NoBody)
 	if err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func installGatewayAPICRDs(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("downloading Gateway API CRDs: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("downloading Gateway API CRDs: unexpected status %s", resp.Status)
