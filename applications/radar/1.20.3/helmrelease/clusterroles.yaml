@@ -1,0 +1,32 @@
+# Who may open /radar through NKP sign-in, the way NKP's own dashboards are
+# gated. What each person can see and change is then decided by their own
+# Kubernetes RBAC, which Radar applies by acting as them.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: radar-dashboard-view
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
+rules:
+  - nonResourceURLs: ["/radar", "/radar/*"]
+    verbs: ["get", "head", "post"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: radar-dashboard-edit
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+rules:
+  - nonResourceURLs: ["/radar", "/radar/*"]
+    verbs: ["get", "head", "patch", "post", "put", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: radar-dashboard-admin
+  labels:
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+rules:
+  - nonResourceURLs: ["/radar", "/radar/*"]
+    verbs: ["*"]
