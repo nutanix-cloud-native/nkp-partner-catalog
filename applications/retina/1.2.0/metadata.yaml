@@ -1,0 +1,24 @@
+schema: catalog.nkp.nutanix.com/v1/application-metadata
+allowMultipleInstances: true
+category:
+- observability
+description: Kubernetes observability with Retina
+displayName: Retina
+icon: ""
+licensing:
+- Pro
+- Ultimate
+overview: |-
+  Retina provides Kubernetes network observability using Hubble-compatible telemetry.
+
+  Prerequisites:
+  * An existing NKP workload cluster
+  * kubectl access to the target workload cluster
+  * A supported CNI already installed
+  * Helm 3.8 or later for manual troubleshooting
+  * Network access to ghcr.io
+  * Linux node kernel/eBPF compatibility
+scope:
+- project
+supportLink: https://retina.sh/
+---

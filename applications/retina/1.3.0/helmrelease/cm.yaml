@@ -1,0 +1,409 @@
+apiVersion: v1
+data:
+  values.yaml: |
+    agent:
+      container:
+        retina:
+          args:
+          - hubble-control-plane
+          - --config-dir
+          - /retina/config
+          command:
+          - /retina/controller
+          healthProbeBindAddress: :18081
+          metricsBindAddress: :18080
+          ports:
+            containerPort: 10093
+      enabled: true
+      init:
+        enabled: true
+        name: retina-agent-init
+        repository: ghcr.io/microsoft/retina/retina-init
+        tag: v1.3.0
+      leaderElection: false
+      name: retina-agent
+      pullPolicy: Always
+      repository: ghcr.io/microsoft/retina/retina-agent
+      tag: v1.3.0
+      tolerations: []
+    agent_win:
+      name: retina-agent-win
+    apiServer:
+      host: 0.0.0.0
+      port: 10093
+    azure:
+      appinsights:
+        instrumentation_key: app-insights-instrumentation-key
+    bypassLookupIPOfInterest: true
+    certgen:
+      affinity: {}
+      annotations:
+        cronJob: {}
+        job: {}
+      extraVolumeMounts: []
+      extraVolumes: []
+      image:
+        override: null
+        pullPolicy: Always
+        repository: mcr.microsoft.com/oss/cilium/certgen
+        tag: v0.1.9
+        useDigest: false
+      podLabels: {}
+      tolerations: []
+      ttlSecondsAfterFinished: 1800
+    cluster:
+      name: default
+    dataAggregationLevel: high
+    debug:
+      enabled: false
+    enableAnnotations: false
+    enablePodLevel: true
+    enableTCX: auto
+    enableTelemetry: false
+    enabledPlugin_linux: '["linuxutil","packetforward","packetparser","dns", "dropreason"]'
+    enabledPlugin_win: '["hnsstats"]'
+    externalWorkloads:
+      enabled: false
+    fullnameOverride: retina-svc
+    hubble:
+      annotations: {}
+      enabled: true
+      eventBufferCapacity: "4095"
+      eventQueueSize: "16383"
+      export:
+        dynamic:
+          config:
+            configMapName: cilium-flowlog-config
+            content:
+            - excludeFilters: []
+              fieldMask: []
+              filePath: /var/run/cilium/hubble/events.log
+              includeFilters: []
+              name: all
+            createConfigMap: true
+          enabled: false
+        fileMaxBackups: 5
+        fileMaxSizeMb: 10
+        static:
+          allowList: []
+          denyList: []
+          enabled: false
+          fieldMask: []
+          filePath: /var/run/cilium/hubble/events.log
+      listenAddress: :4244
+      metrics:
+        dashboards:
+          annotations: {}
+          enabled: false
+          label: grafana_dashboard
+          labelValue: "1"
+          namespace: null
+        enableOpenMetrics: false
+        enabled:
+        - flow:sourceEgressContext=pod;destinationIngressContext=pod
+        - tcp:sourceEgressContext=pod;destinationIngressContext=pod
+        - dns:query;sourceEgressContext=pod;destinationIngressContext=pod
+        - drop:sourceEgressContext=pod;destinationIngressContext=pod
+        port: 9965
+        serviceAnnotations: {}
+        serviceMonitor:
+          annotations: {}
+          enabled: false
+          interval: 10s
+          jobLabel: ""
+          labels: {}
+          metricRelabelings: null
+          relabelings:
+          - replacement: ${1}
+            sourceLabels:
+            - __meta_kubernetes_pod_node_name
+            targetLabel: node
+      peerService:
+        clusterDomain: cluster.local
+        servicePort: 4244
+        targetPort: 4244
+      preferIpv6: false
+      redact:
+        enabled: false
+        http:
+          headers:
+            allow: []
+            deny: []
+          urlQuery: false
+          userInfo: true
+        kafka:
+          apiKey: false
+      relay:
+        affinity:
+          podAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  k8s-app: retina
+              namespaceSelector:
+                matchLabels:
+                  kubernetes.io/metadata.name: kube-system
+              topologyKey: kubernetes.io/hostname
+        annotations: {}
+        dialTimeout: null
+        enabled: true
+        extraEnv: []
+        extraVolumeMounts: []
+        extraVolumes: []
+        gops:
+          enabled: true
+          port: 9893
+        image:
+          digest: sha256:19cd56e7618832257bf88b2f281287cb57f9f7fcb9e04775a6198d4bc4daffae
+          override: null
+          pullPolicy: Always
+          repository: mcr.microsoft.com/oss/cilium/hubble-relay
+          tag: v1.15.0
+          useDigest: false
+        listenHost: ""
+        listenPort: "4245"
+        nodeSelector:
+          kubernetes.io/os: linux
+        podAnnotations: {}
+        podDisruptionBudget:
+          enabled: false
+          maxUnavailable: 1
+          minAvailable: null
+        podLabels: {}
+        podSecurityContext:
+          fsGroup: 65532
+        pprof:
+          address: localhost
+          enabled: false
+          port: 6062
+        priorityClassName: ""
+        prometheus:
+          enabled: false
+          port: 9966
+          serviceMonitor:
+            annotations: {}
+            enabled: false
+            interval: 10s
+            labels: {}
+            metricRelabelings: null
+            relabelings: null
+        replicas: 1
+        resources: {}
+        retryTimeout: null
+        rollOutPods: false
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          runAsGroup: 65532
+          runAsNonRoot: true
+          runAsUser: 65532
+        service:
+          nodePort: 31234
+          trafficDistribution: ""
+          type: ClusterIP
+        sortBufferDrainTimeout: null
+        sortBufferLenMax: null
+        terminationGracePeriodSeconds: 1
+        tls:
+          client:
+            cert: ""
+            key: ""
+          server:
+            cert: ""
+            enabled: false
+            extraDnsNames: []
+            extraIpAddresses: []
+            key: ""
+            mtls: true
+            relayName: ui.hubble-relay.cilium.io
+        tolerations: []
+        topologySpreadConstraints: []
+        updateStrategy:
+          rollingUpdate:
+            maxUnavailable: 1
+          type: RollingUpdate
+      skipUnknownCGroupIDs: null
+      socketPath: /var/run/cilium/hubble.sock
+      tls:
+        auto:
+          certManagerIssuerRef: {}
+          certValidityDuration: 1
+          enabled: false
+          method: cronJob
+          schedule: '*/10 * * * *'
+        enabled: false
+        server:
+          cert: ""
+          extraDnsNames: []
+          extraIpAddresses: []
+          key: ""
+      ui:
+        affinity: {}
+        annotations: {}
+        backend:
+          extraEnv: []
+          extraVolumeMounts: []
+          extraVolumes: []
+          image:
+            digest: sha256:b73dd1ac1b7159d42cdba31433964313e756daafefffad5e91c3b61b47c3782f
+            override: null
+            pullPolicy: Always
+            repository: mcr.microsoft.com/oss/cilium/hubble-ui-backend
+            tag: v0.12.2
+            useDigest: true
+          livenessProbe:
+            enabled: false
+          readinessProbe:
+            enabled: false
+          resources: {}
+          securityContext: {}
+        baseUrl: /
+        enabled: true
+        frontend:
+          extraEnv: []
+          extraVolumeMounts: []
+          extraVolumes: []
+          image:
+            digest: sha256:8c53cdaebb4ae863ad061387a68ea06e38777d2911e6c0e570be1932bb4ba526
+            override: null
+            pullPolicy: Always
+            repository: mcr.microsoft.com/oss/cilium/hubble-ui
+            tag: v0.12.2
+            useDigest: true
+          resources: {}
+          securityContext: {}
+          server:
+            ipv6:
+              enabled: true
+        ingress:
+          annotations: {}
+          className: ""
+          enabled: false
+          hosts:
+          - chart-example.local
+          labels: {}
+          tls: []
+        nodeSelector:
+          kubernetes.io/os: linux
+        podAnnotations: {}
+        podDisruptionBudget:
+          enabled: false
+          maxUnavailable: 1
+          minAvailable: null
+        podLabels: {}
+        priorityClassName: ""
+        replicas: 1
+        rollOutPods: false
+        securityContext:
+          fsGroup: 1001
+          runAsGroup: 1001
+          runAsUser: 1001
+        service:
+          annotations: {}
+          nodePort: 31235
+          trafficDistribution: ""
+          type: ClusterIP
+        standalone:
+          enabled: false
+          tls:
+            certsVolume: {}
+        tls:
+          client:
+            cert: ""
+            key: ""
+        tolerations: []
+        topologySpreadConstraints: []
+        updateStrategy:
+          rollingUpdate:
+            maxUnavailable: 1
+          type: RollingUpdate
+    imagePullSecrets: []
+    logLevel: info
+    metricsInterval: 10s
+    metricsIntervalDuration: 10s
+    monitorSockPath: /var/run/cilium/monitor1_2.sock
+    nameOverride: retina
+    namespace: kube-system
+    operator:
+      container:
+        args:
+        - manage-cilium-crds
+        - --config-dir
+        - /retina
+        command:
+        - /retina-operator
+      enabled: true
+      endpointGCInterval: 5m
+      identityGCInterval: 15m
+      leaderElection: true
+      pullPolicy: Always
+      repository: ghcr.io/microsoft/retina/retina-operator
+      tag: v1.3.0
+      tolerations: []
+    os:
+      linux: true
+      windows: true
+    packetParserRingBuffer: disabled
+    packetParserRingBufferSize: 8388608
+    priorityClassName: ""
+    remoteContext: false
+    resources:
+      limits:
+        cpu: 500m
+        memory: 500Mi
+      requests:
+        cpu: 500m
+        memory: 500Mi
+    retinaPort: 10093
+    securityContext:
+      capabilities:
+        add:
+        - SYS_ADMIN
+        - SYS_RESOURCE
+        - NET_ADMIN
+        - IPC_LOCK
+      privileged: false
+      windowsOptions:
+        runAsUserName: NT AUTHORITY\SYSTEM
+    service:
+      name: retina
+      port: 10093
+      targetPort: 10093
+      type: ClusterIP
+    serviceAccount:
+      annotations: {}
+      name: retina-agent
+    serviceAccounts:
+      hubblecertgen:
+        annotations: {}
+        automount: true
+        create: true
+        name: hubble-generate-certs
+      relay:
+        annotations: {}
+        automount: false
+        create: true
+        name: hubble-relay
+      ui:
+        annotations: {}
+        automount: true
+        create: true
+        name: hubble-ui
+    tls:
+      ca:
+        cert: ""
+        certValidityDuration: 1095
+        key: ""
+      caBundle:
+        enabled: false
+        key: ca.crt
+        name: cilium-root-ca.crt
+        useSecret: false
+      secretsBackend: local
+    volumeMounts_win:
+      retina-config-win: retina
+kind: ConfigMap
+metadata:
+  name: ${releaseName}-config-defaults
+  namespace: ${releaseNamespace}
