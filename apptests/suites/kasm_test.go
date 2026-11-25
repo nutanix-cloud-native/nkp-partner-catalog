@@ -18,6 +18,7 @@ import (
 	apimeta "github.com/fluxcd/pkg/apis/meta"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	ctrlClient "sigs.k8s.io/controller-runtime/pkg/client"
@@ -94,8 +95,10 @@ var _ = Describe("kasm Tests", Label("kasm"), func() {
 			err := SetupKindCluster()
 			Expect(err).ToNot(HaveOccurred())
 
-			err = env.InstallLatestFlux(ctx)
-			Expect(err).ToNot(HaveOccurred())
+			if !useExistingCluster {
+				err = env.InstallLatestFlux(ctx)
+				Expect(err).ToNot(HaveOccurred())
+			}
 		})
 
 		AfterAll(func() {
@@ -110,6 +113,10 @@ var _ = Describe("kasm Tests", Label("kasm"), func() {
 		It("should install successfully with default config", func() {
 			tlsSecret := createSelfSignedTLSSecret("kasm-tls-secret", catalog.DefaultNamespace)
 			err := k8sClient.Create(ctx, tlsSecret)
+			if apierrors.IsAlreadyExists(err) {
+				_ = k8sClient.Delete(ctx, tlsSecret)
+				err = k8sClient.Create(ctx, tlsSecret)
+			}
 			Expect(err).ToNot(HaveOccurred())
 
 			k = catalog.NewAppScenario("kasm", *appVersion).(*catalog.App)
@@ -169,8 +176,10 @@ var _ = Describe("kasm Tests", Label("kasm"), func() {
 			err := SetupKindCluster()
 			Expect(err).ToNot(HaveOccurred())
 
-			err = env.InstallLatestFlux(ctx)
-			Expect(err).ToNot(HaveOccurred())
+			if !useExistingCluster {
+				err = env.InstallLatestFlux(ctx)
+				Expect(err).ToNot(HaveOccurred())
+			}
 		})
 
 		AfterAll(func() {
@@ -185,7 +194,12 @@ var _ = Describe("kasm Tests", Label("kasm"), func() {
 		It("should install the previous version successfully", func() {
 			tlsSecret := createSelfSignedTLSSecret("kasm-tls-secret", catalog.DefaultNamespace)
 			err := k8sClient.Create(ctx, tlsSecret)
+			if apierrors.IsAlreadyExists(err) {
+				_ = k8sClient.Delete(ctx, tlsSecret)
+				err = k8sClient.Create(ctx, tlsSecret)
+			}
 			Expect(err).ToNot(HaveOccurred())
+
 			err = k.InstallPreviousVersion(ctx, env)
 			Expect(err).ToNot(HaveOccurred())
 

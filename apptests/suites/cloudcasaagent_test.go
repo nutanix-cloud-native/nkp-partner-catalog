@@ -26,8 +26,10 @@ var _ = Describe("cloudcasa-agent Tests", Label("cloudcasa-agent"), func() {
 			err := SetupKindCluster()
 			Expect(err).ToNot(HaveOccurred())
 
-			err = env.InstallLatestFlux(ctx)
-			Expect(err).ToNot(HaveOccurred())
+			if !useExistingCluster {
+				err = env.InstallLatestFlux(ctx)
+				Expect(err).ToNot(HaveOccurred())
+			}
 		})
 
 		AfterAll(func() {
